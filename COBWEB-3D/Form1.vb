@@ -2924,8 +2924,8 @@
                 oBook = Nothing
                 oExcel.Quit()
                 oExcel = Nothing
+                logged = False
             End If
-
         End If
     End Sub
 
@@ -3406,6 +3406,32 @@
             Next
         Next
 
+        'saves x location
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 0) & "_"
+        Next
+
+        'saves y location
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 1) & "_"
+        Next
+
+        'saves z location
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 2) & "_"
+        Next
+
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 4) & "_"
+        Next
+
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 3) & "_"
+        Next
+
+        For i = 1 To agent
+            save = save & generator.staticagentid(i) & "_"
+        Next
 
         save = save & "|"
         SaveFilepro.ShowDialog()
@@ -3502,11 +3528,12 @@
             generator.agentname(i) = import(lastimport)
         Next
 
-
+        Dim tot As Integer
 
         For i = 1 To agent
             lastimport = lastimport + 1
             generator.agentcount(i) = import(lastimport)
+            tot += import(lastimport)
         Next
 
 
@@ -3591,6 +3618,37 @@
             Next
         Next
 
+        Dim agloc(tot, 4)
+
+        For i = 1 To tot
+            lastimport += 1
+            agloc(i, 0) = import(lastimport)
+        Next
+
+        For i = 1 To tot
+            lastimport += 1
+            agloc(i, 1) = import(lastimport)
+        Next
+
+        For i = 1 To tot
+            lastimport += 1
+            agloc(i, 2) = import(lastimport)
+        Next
+
+        For i = 1 To tot
+            lastimport += 1
+            agloc(i, 3) = import(lastimport)
+        Next
+
+        For i = 1 To tot
+            lastimport += 1
+            agloc(i, 4) = import(lastimport)
+        Next
+
+        For i = 1 To agent
+            lastimport += 1
+            generator.staticagentid(i) = import(lastimport)
+        Next
 
         '........applying the setting..............
         Randomize()
@@ -3598,6 +3656,7 @@
 
         Dim number As Integer
         For a = 1 To agent
+            Dim m As Integer = 0
             For i = 1 To generator.agentcount(a)
                 number = number + 1
                 Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
@@ -3642,8 +3701,20 @@
                 generator.agentlocation(number, 9) = 0
                 generator.agentlocation(number, 10) = 0
 
-            Next
+                For j = 1 To tot
+                    If agloc(j, 3) = a Then
+                        If j > m Then
+                            m = j
+                            generator.agentlocation(number, 0) = agloc(j, 0)
+                            generator.agentlocation(number, 1) = agloc(j, 1)
+                            generator.agentlocation(number, 2) = agloc(j, 2)
+                            generator.agentlocation(number, 3) = agloc(j, 4)
+                            Exit For
+                        End If
+                    End If
+                Next
 
+            Next
         Next
 
 
@@ -3727,6 +3798,7 @@
         Call picshow()
 
         tick = 0
+        Call staticagentcheck()
     End Sub
 
     Private Sub InteractionsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InteractionsToolStripMenuItem.Click
@@ -3735,10 +3807,6 @@
 
     Private Sub PopulationGraphToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PopulationGraphToolStripMenuItem.Click
         Form7.Show()
-    End Sub
-
-    Private Sub AddAgentsToolStripMenuItem_Click_1(sender As Object, e As EventArgs) Handles AddAgentsToolStripMenuItem.Click
-        frmAdd.Show()
     End Sub
 
     Private Sub CatalysisToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CatalysisToolStripMenuItem.Click
@@ -3911,5 +3979,13 @@
                 End If
             Next
         Next
+    End Sub
+
+    Private Sub InSpecificPositionsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InSpecificPositionsToolStripMenuItem.Click
+        frmCrossSection.Show()
+    End Sub
+
+    Private Sub InRangeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InRangeToolStripMenuItem.Click
+        frmAdd.Show()
     End Sub
 End Class

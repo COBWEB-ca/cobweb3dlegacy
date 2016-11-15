@@ -184,6 +184,18 @@
     <Compile Include="frmCatalysis.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmCrossSection.Designer.vb">
+      <DependentUpon>frmCrossSection.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmCrossSection.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmDirection.Designer.vb">
+      <DependentUpon>frmDirection.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmDirection.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmInitialProperties.Designer.vb">
       <DependentUpon>frmInitialProperties.vb</DependentUpon>
     </Compile>
@@ -270,6 +282,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmCatalysis.resx">
       <DependentUpon>frmCatalysis.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCrossSection.resx">
+      <DependentUpon>frmCrossSection.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmDirection.resx">
+      <DependentUpon>frmDirection.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmInitialProperties.resx">
       <DependentUpon>frmInitialProperties.vb</DependentUpon>

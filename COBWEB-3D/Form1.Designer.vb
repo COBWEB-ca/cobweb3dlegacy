@@ -35,6 +35,8 @@ Partial Class Form1
         Me.EditToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TickToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AddAgentsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.InRangeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.InSpecificPositionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SizeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AIToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -64,6 +66,8 @@ Partial Class Form1
         Me.speedbar = New System.Windows.Forms.ToolStripProgressBar()
         Me.spacebar = New System.Windows.Forms.ToolStripStatusLabel()
         Me.viewlabel = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripProgressBar1 = New System.Windows.Forms.ToolStripProgressBar()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.SaveFilepro = New System.Windows.Forms.SaveFileDialog()
         Me.OpenFilepro = New System.Windows.Forms.OpenFileDialog()
@@ -137,15 +141,28 @@ Partial Class Form1
         'TickToolStripMenuItem
         '
         Me.TickToolStripMenuItem.Name = "TickToolStripMenuItem"
-        Me.TickToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
+        Me.TickToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.TickToolStripMenuItem.Text = "Tick"
         '
         'AddAgentsToolStripMenuItem
         '
+        Me.AddAgentsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InRangeToolStripMenuItem, Me.InSpecificPositionsToolStripMenuItem})
         Me.AddAgentsToolStripMenuItem.Enabled = False
         Me.AddAgentsToolStripMenuItem.Name = "AddAgentsToolStripMenuItem"
-        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
+        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.AddAgentsToolStripMenuItem.Text = "Add Agents"
+        '
+        'InRangeToolStripMenuItem
+        '
+        Me.InRangeToolStripMenuItem.Name = "InRangeToolStripMenuItem"
+        Me.InRangeToolStripMenuItem.Size = New System.Drawing.Size(179, 22)
+        Me.InRangeToolStripMenuItem.Text = "In a Range"
+        '
+        'InSpecificPositionsToolStripMenuItem
+        '
+        Me.InSpecificPositionsToolStripMenuItem.Name = "InSpecificPositionsToolStripMenuItem"
+        Me.InSpecificPositionsToolStripMenuItem.Size = New System.Drawing.Size(179, 22)
+        Me.InSpecificPositionsToolStripMenuItem.Text = "In Specific Positions"
         '
         'ViewToolStripMenuItem
         '
@@ -279,7 +296,7 @@ Partial Class Form1
         '
         'StatusStrip1
         '
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.timelabel, Me.ToolStripStatusLabel2, Me.stoplabel, Me.ToolStripStatusLabel4, Me.speedbar, Me.spacebar, Me.viewlabel})
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.timelabel, Me.ToolStripStatusLabel2, Me.stoplabel, Me.ToolStripStatusLabel4, Me.speedbar, Me.spacebar, Me.viewlabel, Me.ToolStripStatusLabel3, Me.ToolStripProgressBar1})
         Me.StatusStrip1.Location = New System.Drawing.Point(0, 534)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Size = New System.Drawing.Size(1215, 22)
@@ -331,6 +348,19 @@ Partial Class Form1
         '
         Me.viewlabel.Name = "viewlabel"
         Me.viewlabel.Size = New System.Drawing.Size(0, 17)
+        '
+        'ToolStripStatusLabel3
+        '
+        Me.ToolStripStatusLabel3.Name = "ToolStripStatusLabel3"
+        Me.ToolStripStatusLabel3.Size = New System.Drawing.Size(59, 17)
+        Me.ToolStripStatusLabel3.Text = "Loading..."
+        Me.ToolStripStatusLabel3.Visible = False
+        '
+        'ToolStripProgressBar1
+        '
+        Me.ToolStripProgressBar1.Name = "ToolStripProgressBar1"
+        Me.ToolStripProgressBar1.Size = New System.Drawing.Size(100, 16)
+        Me.ToolStripProgressBar1.Visible = False
         '
         'SaveFileDialog1
         '
@@ -424,4 +454,8 @@ Partial Class Form1
     Friend WithEvents AddAgentsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CatalysisToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents AbioticFactorsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripStatusLabel3 As ToolStripStatusLabel
+    Friend WithEvents ToolStripProgressBar1 As ToolStripProgressBar
+    Friend WithEvents InRangeToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents InSpecificPositionsToolStripMenuItem As ToolStripMenuItem
 End Class
