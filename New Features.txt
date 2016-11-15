@@ -1,0 +1,24 @@
+1.)	Stationary agents (which are represented by cubes instead of pyramids)
+2.)	Probability of interactions occurring without a catalyst
+3.)	Probability of interactions occurring in the presence of a catalyst (the agent which acts as the catalyst can be selected) within a certain distance of the potential interaction
+4.)	A table that shows all interactions and the ability to remove a specific interaction
+5.)	Adding agents manually (in a specific location) is now possible
+6.)	Agents can initially be placed within a specific range and with a particular direction
+7.)	Energy values are recorded in an excel spreadsheet (not just the agent population)
+8.)	A population graph was added that shows total agent population vs. time (tick)
+9.)	The interface which allows the user to choose which agents are produced in a reproductive event was improved (a table was added)
+10.)	It is now possible to make certain regions unfavourable for agents so the selected agent will avoid them (an agent could only prefer a region previously)
+11.)	The regions which are favourable or unfavourable can be seen visually (that region of space will be another colour if the user enables the option)
+12.)	It is now possible to specify changes in energy per tick for localized regions (previously, energy changes per tick could only be set globally). This allows certain regions to be unfavorable because the agent loses energy at a greater rate. These regions can also be removed which restores the global rate of energy change in those areas. 
+13.)	When new agents are produced in reproductive events, they can be made to be produced in locations close to the original interaction. This prevents new agents from being produced in random locations that could be quite far from the original interaction.
+14.)	It is now possible for agents to avoid a region completely by enabling the absolute range option. The agents in the older version wouldn’t avoid the area completely, rather their destinations would be set outside of the region and upon contact with another agent the destination could be placed back in the region that is supposed to be avoided.  
+15.)	Fixed an issue where there was no limit to the number of agents that could be added initially if the user specified a specific starting location and direction. This caused a large number of agents to be created (the agents weren’t visible though, but they appeared in the data sheet). 
+16.)	Fixed an issue with the population graph adding data points continuously when it was opened even though the program was paused and the number of ticks wasn’t changing.
+17.)	Added the ability to export the interactions table to an excel spreadsheet. This option can be found in the interactions window. 
+18.)	It is now possible to see the range of agents (by enabling the “visualize range” option) in all views (not just the x,y view)
+19.)	Static agents can have reservoirs so when they consume another agent, their reservoirs fill up by a specified amount. 
+20.)	The capacity of the reservoir can be changed by the user. 
+21.)	Static agents with a reservoir can release other agents. The types of agents released, the decrease in reservoir levels per agent released and the number of agents being released per tick can be modified. 
+22.)	In terms of graphics, static agents that have a reservoir are also represented as cubes, but they have a bar showing reservoir levels.  
+23.) 	Agent positions, directions and whether or not the agent is static are saved
+24.)	It is now possible to add agents in specific locations by selecting positions from a cross-section of the 3D grid
