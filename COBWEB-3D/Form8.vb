@@ -79,6 +79,13 @@ Public Class frmAdd
                     generator.agentlocation(Form1.total, 8) = generator.initialenergy(agenttobeproduced(i))
                     generator.agentlocation(Form1.total, 9) = 0
                     generator.agentlocation(Form1.total, 10) = 0
+                    generator.agentcount(agenttobeproduced(i)) = 0
+                    For f = 1 To Form1.total
+                        If generator.agentlocation(f, 4) = agenttobeproduced(i) Then
+                            generator.agentcount(agenttobeproduced(i)) += 1
+                        End If
+                    Next
+
                     'placing the agents
                     generator.gfxxy.Clear(Color.White)
                     Call generator.gridxy()
@@ -130,6 +137,13 @@ Public Class frmAdd
                 generator.agentlocation(Form1.total, 8) = generator.initialenergy(agenttobeproduced(i))
                 generator.agentlocation(Form1.total, 9) = 0
                 generator.agentlocation(Form1.total, 10) = 0
+
+                generator.agentcount(agenttobeproduced(i)) = 0
+                For f = 1 To Form1.total
+                    If generator.agentlocation(f, 4) = agenttobeproduced(i) Then
+                        generator.agentcount(agenttobeproduced(i)) += 1
+                    End If
+                Next
             Next
 
             'placing the agents

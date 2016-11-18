@@ -584,6 +584,570 @@
         End If
     End Sub
 
+    'x,y view
+    Sub creatorc(ByVal xlocation As String, ByVal ylocation As Integer, ByVal zlocation As Integer, ByVal direction As Integer, ByVal colour As System.Drawing.Color, ByVal s As Integer)
+        Dim diag As Single
+        Dim jump As Double = cellxyx
+        For i = 1 To zlocation - 1
+            jump = jump * (sizeratio)
+            diag = diag + jump
+        Next
+        Dim angle As Single = Math.Atan(xn / yn)
+        Dim a As Integer = Math.Sin(angle) * diag
+        Dim b As Integer = Math.Cos(angle) * diag
+
+        Dim topfrontrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
+        Dim topfrontrighty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
+        Dim topfrontleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
+        Dim topfrontlefty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
+
+        Dim bottomfrontrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
+        Dim bottomfrontrighty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
+        Dim bottomfrontleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
+        Dim bottomfrontlefty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
+
+        jump = jump * (sizeratio)
+        diag = diag + jump
+
+        angle = Math.Atan(xn / yn)
+        a = Math.Sin(angle) * diag
+        b = Math.Cos(angle) * diag
+
+        Dim topbackrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
+        Dim topbackrighty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
+        Dim topbackleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
+        Dim topbacklefty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
+
+        Dim bottombackrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
+        Dim bottombackrighty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
+        Dim bottombackleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
+        Dim bottombacklefty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
+
+
+        'generator.gfxxy.DrawLine(Pens.Red, topfrontleftx, topfrontlefty, topfrontrightx, topfrontrighty)
+        'generator.gfxxy.DrawLine(Pens.Red, bottomfrontleftx, bottomfrontlefty, bottomfrontrightx, bottomfrontrighty)
+        'generator.gfxxy.DrawLine(Pens.Red, topbackleftx, topbacklefty, topbackrightx, topbackrighty)
+        'generator.gfxxy.DrawLine(Pens.Red, bottombackleftx, bottombacklefty, bottombackrightx, bottombackrighty)
+
+
+
+        Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
+        Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
+        Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
+        Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
+
+
+        Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
+        Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
+        Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
+        Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
+
+
+        Dim dashValues As Single() = {1, 2}
+        Dim graypen As New Pen(Color.Gray, 1)
+        Dim myBrush As New SolidBrush(colour)
+        graypen.DashPattern = dashValues
+
+        If s < 0 Then
+            Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
+            Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
+            Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
+            Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
+            Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
+            Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
+            Dim brush As New SolidBrush(Color.FromArgb(150, colour.R, colour.G, colour.B))
+
+            generator.gfCrossSection.FillPolygon(brush, backface)
+            generator.gfCrossSection.FillPolygon(brush, rightface)
+            generator.gfCrossSection.FillPolygon(brush, leftface)
+            generator.gfCrossSection.FillPolygon(brush, topface)
+            generator.gfCrossSection.FillPolygon(brush, bottomface)
+
+            generator.gfCrossSection.FillPolygon(brush, frontface)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottombackleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, topfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
+            Exit Sub
+        End If
+
+        'draws cubes for static agents
+        If generator.staticagent(s) = 2 Then
+            Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
+            Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
+            Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
+            Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
+            Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
+            Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
+            Dim brush As New SolidBrush(Color.FromArgb(150, colour.R, colour.G, colour.B))
+
+            generator.gfCrossSection.FillPolygon(brush, backface)
+            generator.gfCrossSection.FillPolygon(brush, rightface)
+            generator.gfCrossSection.FillPolygon(brush, leftface)
+            generator.gfCrossSection.FillPolygon(brush, topface)
+            generator.gfCrossSection.FillPolygon(brush, bottomface)
+
+            If generator.agentreservoir(s, 0) = 0 Then
+                generator.gfCrossSection.FillPolygon(brush, frontface)
+            End If
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottombackleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, topfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
+
+            If generator.agentreservoir(s, 0) = 2 Then
+                'new code - bars that show the capacity of the static agent
+                Dim scalingfactor As Decimal = (topfrontrightx - topfrontleftx) * 0.25
+                Dim progressbarlength As Decimal = Math.Abs(topfrontrighty - bottomfrontrighty)
+
+                Dim capacity As Decimal = generator.agentreservoir(s, 1)
+                Dim actuallevel As Decimal = generator.agentreservoir(s, 2)
+                If actuallevel >= capacity Then
+                    actuallevel = capacity
+                End If
+
+                Dim progressbarscalingfactor As Decimal = 0
+                If capacity > 0 Then
+                    progressbarscalingfactor = actuallevel / capacity
+                End If
+
+                Dim topfrontrightleftx As Integer = topfrontrightx - scalingfactor
+                Dim topfrontrightrightx As Integer = topfrontrightx
+
+                Dim bottomfrontrightleftx As Integer = bottomfrontrightx - scalingfactor
+                Dim bottomfrontrightrightx As Integer = bottomfrontrightx
+
+                Dim topfrontrightleft As New System.Drawing.Point(topfrontrightleftx, topfrontrighty)
+                Dim topfrontrightright As New System.Drawing.Point(topfrontrightrightx, topfrontrighty)
+
+                Dim bottomfrontrightleft As New System.Drawing.Point(bottomfrontrightleftx, bottomfrontrighty)
+                Dim bottomfrontrightright As New System.Drawing.Point(bottomfrontrightrightx, bottomfrontrighty)
+
+                Dim newy As Decimal = bottomfrontrighty - (progressbarlength * progressbarscalingfactor)
+                Dim progressbarlefttop As New System.Drawing.Point(bottomfrontrightleftx, newy)
+                Dim progressbarrighttop As New System.Drawing.Point(bottomfrontrightx, newy)
+                generator.gfxxy.DrawLine(Pens.Black, progressbarlefttop, progressbarrighttop)
+
+                Dim frontfaceleft As Point() = {topfrontrightleft, topfrontleft, bottomfrontleft, bottomfrontrightleft}
+                Dim frontfaceright As Point() = {topfrontright, bottomfrontright, bottomfrontrightleft, topfrontrightleft}
+                Dim frontfacerightbar As Point() = {bottomfrontright, bottomfrontrightleft, progressbarlefttop, progressbarrighttop}
+                Dim frontfacebarfiller As Point() = {topfrontright, topfrontrightleft, progressbarlefttop, progressbarrighttop}
+
+                Dim col As New SolidBrush(Color.FromArgb(150, Color.White.R, Color.White.G, Color.White.B))
+                Dim bar As New SolidBrush(Color.FromArgb(150, Color.GreenYellow.R, Color.GreenYellow.G, Color.GreenYellow.B))
+
+                'generator.gfxxy.FillPolygon(col, frontfaceright)
+                generator.gfCrossSection.FillPolygon(brush, frontfaceleft)
+                generator.gfCrossSection.FillPolygon(col, frontfacebarfiller)
+                generator.gfCrossSection.FillPolygon(bar, frontfacerightbar)
+                'new code
+            End If
+
+            Exit Sub
+        End If
+
+        If direction = 6 Then
+
+            Dim beakx As Integer = topbackleftx + (Math.Abs(topbackleftx - topbackrightx) / 2)
+            Dim beaky As Integer = topbacklefty + (Math.Abs(topbacklefty - bottombacklefty) / 2)
+            Dim beak As New System.Drawing.Point(beakx, beaky)
+
+            Dim top As Point() = {topfrontleft, beak, topfrontright}
+            Dim right As Point() = {topfrontright, beak, bottomfrontright}
+            Dim bottom As Point() = {bottomfrontleft, beak, bottomfrontright}
+            Dim left As Point() = {topfrontleft, beak, bottomfrontleft}
+            generator.gfCrossSection.FillPolygon(myBrush, top)
+            generator.gfCrossSection.FillPolygon(myBrush, right)
+            generator.gfCrossSection.FillPolygon(myBrush, bottom)
+            generator.gfCrossSection.FillPolygon(myBrush, left)
+
+            generator.gfCrossSection.DrawLine(graypen, topfrontleft, beak)
+            generator.gfCrossSection.DrawLine(graypen, bottomfrontleft, beak)
+            generator.gfCrossSection.DrawLine(graypen, bottomfrontright, beak)
+            generator.gfCrossSection.DrawLine(graypen, topfrontright, beak)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
+
+        ElseIf direction = 5 Then
+            Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topfrontrightx) / 2)
+            Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - bottomfrontlefty) / 2)
+            Dim beak As New System.Drawing.Point(beakx, beaky)
+
+
+            Dim top As Point() = {topbackleft, beak, topbackright}
+            Dim right As Point() = {topbackright, beak, bottombackright}
+            Dim bottom As Point() = {bottombackleft, beak, bottombackright}
+            Dim left As Point() = {topbackleft, beak, bottombackleft}
+            generator.gfCrossSection.FillPolygon(myBrush, top)
+            generator.gfCrossSection.FillPolygon(myBrush, right)
+            generator.gfCrossSection.FillPolygon(myBrush, bottom)
+            generator.gfCrossSection.FillPolygon(myBrush, left)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
+
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottombackleft)
+            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
+
+        ElseIf direction = 2 Then
+            If ylocation <= yn / 2 Then
+                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
+                Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
+                Dim right As Point() = {bottomfrontright, beak, bottombackright}
+                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
+                Dim bottom As Point() = {bottomfrontleft, bottombackleft, bottombackright, bottomfrontright}
+                generator.gfCrossSection.FillPolygon(myBrush, front)
+                generator.gfCrossSection.FillPolygon(myBrush, right)
+                generator.gfCrossSection.FillPolygon(myBrush, left)
+                generator.gfCrossSection.FillPolygon(myBrush, bottom)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottombackright)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
+
+                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottombackrighty) / Math.Abs(beakx - bottombackrightx))
+                Dim pointx As Single = bottombackrightx - (Math.Abs(bottomfrontrighty - bottombackrighty) / Math.Tan(ang))
+
+                If pointx > bottomfrontrightx Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, bottombackright, beak)
+                End If
+
+                ang = Math.Atan(Math.Abs(beaky - bottombacklefty) / Math.Abs(beakx - bottombackleftx))
+                pointx = (Math.Abs(bottomfrontlefty - bottombacklefty) / Math.Tan(ang)) + bottombackleftx
+
+
+                If pointx < bottomfrontleftx Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, bottombackleft)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, beak, bottombackleft)
+                End If
+
+            ElseIf ylocation >= yn / 2 Then
+                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
+                Dim beaky As Integer = topbacklefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
+                Dim right As Point() = {bottomfrontright, beak, bottombackright}
+                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
+                generator.gfCrossSection.FillPolygon(myBrush, front)
+                generator.gfCrossSection.FillPolygon(myBrush, right)
+                generator.gfCrossSection.FillPolygon(myBrush, left)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
+
+                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottomfrontlefty) / Math.Abs(beakx - topfrontleftx))
+                Dim pointx As Single = (Math.Abs(bottombacklefty - bottomfrontlefty) / Math.Tan(ang)) + bottomfrontleftx
+
+                If pointx < bottombackleftx Then
+                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, beak)
+                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, bottomfrontleft)
+                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, bottombackright)
+                Else
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
+                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, bottombackright)
+                End If
+
+                ang = Math.Atan(Math.Abs(beaky - bottomfrontrighty) / Math.Abs(beakx - topfrontrightx))
+                pointx = bottomfrontrightx - (Math.Abs(bottombackrighty - bottomfrontrighty) / Math.Tan(ang))
+
+
+                If pointx < bottombackrightx Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, bottombackright)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottombackright)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, beak, bottombackright)
+                    generator.gfCrossSection.DrawLine(graypen, bottomfrontright, bottombackright)
+                End If
+
+            End If
+
+        ElseIf direction = 1 Then
+            If ylocation <= yn / 2 Then
+                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
+                Dim beaky As Integer = bottomfrontlefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+                Dim front As Point() = {topfrontleft, beak, topfrontright}
+                Dim right As Point() = {topfrontright, beak, topbackright}
+                Dim left As Point() = {topfrontleft, topbackleft, beak}
+                generator.gfCrossSection.FillPolygon(myBrush, front)
+                generator.gfCrossSection.FillPolygon(myBrush, right)
+                generator.gfCrossSection.FillPolygon(myBrush, left)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
+                generator.gfCrossSection.DrawLine(graypen, topbackright, topbackleft)
+
+                Dim ang As Single = Math.Atan(Math.Abs(beaky - topfrontrighty) / Math.Abs(beakx - topfrontrightx))
+                Dim pointx As Single = topfrontrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
+
+                If pointx < topbackrightx Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, topbackright)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, topbackright, beak)
+                    generator.gfCrossSection.DrawLine(graypen, topfrontright, topbackright)
+                End If
+
+                ang = Math.Atan(Math.Abs(beaky - topfrontlefty) / Math.Abs(beakx - topfrontleftx))
+                pointx = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topfrontleftx
+
+
+                If pointx > topbackleftx Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, topbackleft)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, beak, topbackleft)
+                    generator.gfCrossSection.DrawLine(graypen, topbackleft, topfrontleft)
+                End If
+
+            ElseIf ylocation >= yn / 2 Then
+                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
+                Dim beaky As Integer = bottombacklefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+                Dim front As Point() = {topfrontleft, beak, topfrontright}
+                Dim right As Point() = {topfrontright, beak, topbackright}
+                Dim left As Point() = {topfrontleft, topbackleft, beak}
+                Dim top As Point() = {topfrontleft, topbackleft, topbackright, topfrontright}
+                generator.gfCrossSection.FillPolygon(myBrush, front)
+                generator.gfCrossSection.FillPolygon(myBrush, right)
+                generator.gfCrossSection.FillPolygon(myBrush, left)
+                generator.gfCrossSection.FillPolygon(myBrush, top)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
+
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topbackleft)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, topfrontright)
+
+                Dim ang As Single = Math.Atan(Math.Abs(beaky - topbacklefty) / Math.Abs(beakx - bottombackleftx))
+                Dim pointx As Single = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topbackleftx
+
+                If pointx > topfrontleftx Then
+                    generator.gfCrossSection.DrawLine(graypen, topbackleft, beak)
+                Else
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
+                End If
+
+                ang = Math.Atan(Math.Abs(beaky - topbackrighty) / Math.Abs(beakx - bottombackrightx))
+                pointx = topbackrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
+
+
+                If pointx > topfrontrightx Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, topbackright)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, beak, topbackright)
+                End If
+            End If
+
+
+        ElseIf direction = 4 Then
+            If xlocation <= xn / 2 Then
+
+                Dim beakx As Integer = (Math.Abs(topfrontrightx - topbackrightx) / 2) + topfrontrightx
+                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+
+                Dim top As Point() = {topfrontleft, topbackleft, beak}
+                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
+                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
+
+                generator.gfCrossSection.FillPolygon(myBrush, top)
+                generator.gfCrossSection.FillPolygon(myBrush, middle)
+                generator.gfCrossSection.FillPolygon(myBrush, bottom)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
+
+                Dim ang As Single = Math.Atan((Math.Abs(topfrontrighty - bottombackrighty) / 2) / ((Math.Abs(topfrontrightx - topbackrightx) / 2) + (topfrontrightx - topfrontleftx)))
+                Dim pointy As Single = (Math.Tan(ang) * (a - topfrontleftx)) + topfrontlefty
+
+                If topbacklefty < pointy Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topbackleft)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, topfrontleft, topbackleft)
+                    generator.gfCrossSection.DrawLine(graypen, topbackleft, beak)
+                End If
+
+                pointy = bottomfrontlefty - (Math.Tan(ang) * (a - topfrontleftx))
+
+                If bottombacklefty < pointy Then
+                    generator.gfCrossSection.DrawLine(graypen, bottomfrontleft, bottombackleft)
+                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, beak)
+                Else
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
+                End If
+
+                generator.gfCrossSection.DrawLine(graypen, topbackleft, bottombackleft)
+
+
+            ElseIf xlocation >= xn / 2 Then
+
+                Dim beakx As Integer = topfrontrightx - (Math.Abs(topfrontrightx - topbackrightx) / 2)
+                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+
+                Dim top As Point() = {topfrontleft, topbackleft, beak}
+                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
+                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
+                Dim back As Point() = {topfrontleft, bottomfrontleft, bottombackleft, topbackleft}
+
+                generator.gfCrossSection.FillPolygon(myBrush, top)
+                generator.gfCrossSection.FillPolygon(myBrush, middle)
+                generator.gfCrossSection.FillPolygon(myBrush, bottom)
+                generator.gfCrossSection.FillPolygon(myBrush, back)
+
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, bottomfrontleft)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
+
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
+
+
+                Dim ang As Single
+                ang = Math.Atan((Math.Abs(beaky - bottombacklefty)) / (Math.Abs(beakx - bottombackleftx)))
+                Dim pointy As Single
+                pointy = bottombacklefty - (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
+                If pointy > bottomfrontlefty Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, beak)
+                End If
+
+                ang = Math.Atan((Math.Abs(beaky - topbacklefty)) / (Math.Abs(beakx - topbackleftx)))
+                pointy = topbacklefty + (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
+
+                If pointy < topfrontlefty Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, topbackleft, beak)
+                End If
+            End If
+
+
+        ElseIf direction = 3 Then
+            If xlocation <= xn / 2 Then
+                Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topbackleftx) / 2)
+                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+
+                Dim top As Point() = {topfrontright, topbackright, beak}
+                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
+                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
+                Dim back As Point() = {bottomfrontright, bottombackright, topbackright, topfrontright}
+
+                generator.gfCrossSection.FillPolygon(myBrush, top)
+                generator.gfCrossSection.FillPolygon(myBrush, middle)
+                generator.gfCrossSection.FillPolygon(myBrush, bottom)
+                generator.gfCrossSection.FillPolygon(myBrush, back)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, topbackright)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
+
+                Dim ang As Single = Math.Atan(Math.Abs(beakx - topbackrightx) / Math.Abs(beaky - topbackrighty))
+                Dim pointy As Single = topbackrighty + ((topbackrightx - topfrontrightx) / Math.Tan(ang))
+
+                If topfrontrighty > pointy Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, topbackright, beak)
+                End If
+
+                ang = Math.Atan(Math.Abs(beakx - bottombackrightx) / Math.Abs(beaky - bottombackrighty))
+                pointy = bottombackrighty - ((bottombackrightx - bottomfrontrightx) / Math.Tan(ang))
+
+                If bottomfrontrighty < pointy Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, bottombackright, beak)
+                End If
+
+            ElseIf xlocation > xn / 2 Then
+                Dim beakx As Integer = topfrontleftx - (Math.Abs(topfrontleftx - topbackleftx) / 2)
+                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
+                Dim beak As New System.Drawing.Point(beakx, beaky)
+                Dim top As Point() = {topfrontright, topbackright, beak}
+                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
+                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
+                generator.gfCrossSection.FillPolygon(myBrush, top)
+                generator.gfCrossSection.FillPolygon(myBrush, middle)
+                generator.gfCrossSection.FillPolygon(myBrush, bottom)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
+                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
+                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
+                generator.gfCrossSection.DrawLine(graypen, topbackright, bottombackright)
+
+                Dim ang As Single = Math.Atan(Math.Abs(beakx - topfrontrightx) / Math.Abs(beaky - topfrontrighty))
+                Dim pointy As Single = topfrontrighty + ((topfrontrightx - topbackrightx) / Math.Tan(ang))
+
+                If topbackrighty < pointy Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, topbackright)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, topbackright, beak)
+                    generator.gfCrossSection.DrawLine(graypen, topfrontright, topbackright)
+                End If
+
+                ang = Math.Atan(Math.Abs(beakx - bottomfrontrightx) / Math.Abs(beaky - bottomfrontrighty))
+                pointy = bottomfrontrighty - ((bottomfrontrightx - bottombackrightx) / Math.Tan(ang))
+
+                If bottombackrighty > pointy Then
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
+                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
+                Else
+                    generator.gfCrossSection.DrawLine(graypen, bottombackright, beak)
+                    generator.gfCrossSection.DrawLine(graypen, bottombackright, bottomfrontright)
+                End If
+
+            End If
+
+        End If
+    End Sub
+
     Public Sub rangecreatorxy(ByVal s As Integer)
         'test code - produces a semi transparent cube (made up of smaller cubes) to show the target range of an agent
         Dim xstart As Integer = 0
@@ -2875,7 +3439,6 @@
 
     End Sub
 
-
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Timerxy.Start()
         Timerxy.Stop()
@@ -3655,68 +4218,67 @@
         total = 0
 
         Dim number As Integer
-        For a = 1 To agent
-            Dim m As Integer = 0
-            For i = 1 To generator.agentcount(a)
-                number = number + 1
-                Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
-                Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
-                Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
+            For a = 1 To agent
+                Dim m As Integer = 0
+                For i = 1 To generator.agentcount(a)
+                    number = number + 1
+                    Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
+                    Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
+                    Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
 
-                Dim dx As Integer
-                Dim dy As Integer
-                Dim dz As Integer
+                    Dim dx As Integer
+                    Dim dy As Integer
+                    Dim dz As Integer
 
-                Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
-                Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
-                Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
-                Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
-                Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
-                Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
+                    Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
+                    Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
+                    Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
+                    Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
+                    Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
+                    Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
 
-                dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
-                dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-                dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
-
-
-                Do While generator.occupied(x, y, z) = True
-                    x = CInt(Math.Floor((xn) * Rnd())) + 1
-                    y = CInt(Math.Floor((yn) * Rnd())) + 1
-                    z = CInt(Math.Floor((zn) * Rnd())) + 1
-                Loop
+                    dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                    dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
 
 
-                generator.occupied(x, y, z) = True
+                    Do While generator.occupied(x, y, z) = True
+                        x = CInt(Math.Floor((xn) * Rnd())) + 1
+                        y = CInt(Math.Floor((yn) * Rnd())) + 1
+                        z = CInt(Math.Floor((zn) * Rnd())) + 1
+                    Loop
 
-                Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                generator.agentlocation(number, 0) = x
-                generator.agentlocation(number, 1) = y
-                generator.agentlocation(number, 2) = z
-                generator.agentlocation(number, 3) = d
-                generator.agentlocation(number, 4) = a
-                generator.agentlocation(number, 5) = dx
-                generator.agentlocation(number, 6) = dy
-                generator.agentlocation(number, 7) = dz
-                generator.agentlocation(number, 8) = generator.initialenergy(a)
-                generator.agentlocation(number, 9) = 0
-                generator.agentlocation(number, 10) = 0
 
-                For j = 1 To tot
-                    If agloc(j, 3) = a Then
-                        If j > m Then
-                            m = j
-                            generator.agentlocation(number, 0) = agloc(j, 0)
-                            generator.agentlocation(number, 1) = agloc(j, 1)
-                            generator.agentlocation(number, 2) = agloc(j, 2)
-                            generator.agentlocation(number, 3) = agloc(j, 4)
-                            Exit For
+                    generator.occupied(x, y, z) = True
+
+                    Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+                    generator.agentlocation(number, 0) = x
+                    generator.agentlocation(number, 1) = y
+                    generator.agentlocation(number, 2) = z
+                    generator.agentlocation(number, 3) = d
+                    generator.agentlocation(number, 4) = a
+                    generator.agentlocation(number, 5) = dx
+                    generator.agentlocation(number, 6) = dy
+                    generator.agentlocation(number, 7) = dz
+                    generator.agentlocation(number, 8) = generator.initialenergy(a)
+                    generator.agentlocation(number, 9) = 0
+                    generator.agentlocation(number, 10) = 0
+
+                    For j = 1 To tot
+                        If agloc(j, 3) = a Then
+                            If j > m Then
+                                m = j
+                                generator.agentlocation(number, 0) = agloc(j, 0)
+                                generator.agentlocation(number, 1) = agloc(j, 1)
+                                generator.agentlocation(number, 2) = agloc(j, 2)
+                                generator.agentlocation(number, 3) = agloc(j, 4)
+                                Exit For
+                            End If
                         End If
-                    End If
+                    Next
+
                 Next
-
             Next
-        Next
-
 
         '...........................................................................................................
 

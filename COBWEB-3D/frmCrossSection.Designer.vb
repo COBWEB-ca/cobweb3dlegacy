@@ -31,6 +31,9 @@ Partial Class frmCrossSection
         Me.Button2 = New System.Windows.Forms.Button()
         Me.Button3 = New System.Windows.Forms.Button()
         Me.Button4 = New System.Windows.Forms.Button()
+        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.Button5 = New System.Windows.Forms.Button()
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ComboBox1
@@ -69,7 +72,7 @@ Partial Class frmCrossSection
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(612, 12)
+        Me.Button1.Location = New System.Drawing.Point(54, 344)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(179, 44)
         Me.Button1.TabIndex = 4
@@ -86,9 +89,9 @@ Partial Class frmCrossSection
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(455, 55)
+        Me.Button2.Location = New System.Drawing.Point(54, 471)
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(129, 21)
+        Me.Button2.Size = New System.Drawing.Size(179, 21)
         Me.Button2.TabIndex = 6
         Me.Button2.Text = "Next Page"
         Me.Button2.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -97,9 +100,9 @@ Partial Class frmCrossSection
         '
         'Button3
         '
-        Me.Button3.Location = New System.Drawing.Point(321, 55)
+        Me.Button3.Location = New System.Drawing.Point(54, 444)
         Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(129, 21)
+        Me.Button3.Size = New System.Drawing.Size(179, 21)
         Me.Button3.TabIndex = 7
         Me.Button3.Text = "Previous Page"
         Me.Button3.TextAlign = System.Drawing.ContentAlignment.TopCenter
@@ -116,12 +119,32 @@ Partial Class frmCrossSection
         Me.Button4.TextAlign = System.Drawing.ContentAlignment.TopCenter
         Me.Button4.UseVisualStyleBackColor = True
         '
+        'PictureBox1
+        '
+        Me.PictureBox1.Location = New System.Drawing.Point(12, 75)
+        Me.PictureBox1.Name = "PictureBox1"
+        Me.PictureBox1.Size = New System.Drawing.Size(263, 263)
+        Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.PictureBox1.TabIndex = 9
+        Me.PictureBox1.TabStop = False
+        '
+        'Button5
+        '
+        Me.Button5.Location = New System.Drawing.Point(54, 394)
+        Me.Button5.Name = "Button5"
+        Me.Button5.Size = New System.Drawing.Size(179, 44)
+        Me.Button5.TabIndex = 10
+        Me.Button5.Text = "Cancel"
+        Me.Button5.UseVisualStyleBackColor = True
+        '
         'frmCrossSection
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.AutoScroll = True
-        Me.ClientSize = New System.Drawing.Size(805, 553)
+        Me.ClientSize = New System.Drawing.Size(1058, 603)
+        Me.Controls.Add(Me.Button5)
+        Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.Button4)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.Button2)
@@ -133,6 +156,7 @@ Partial Class frmCrossSection
         Me.Controls.Add(Me.ComboBox1)
         Me.Name = "frmCrossSection"
         Me.Text = "Cross Section"
+        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -147,4 +171,6 @@ Partial Class frmCrossSection
     Friend WithEvents Button2 As Button
     Friend WithEvents Button3 As Button
     Friend WithEvents Button4 As Button
+    Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents Button5 As Button
 End Class

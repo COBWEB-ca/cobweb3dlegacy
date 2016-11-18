@@ -5,6 +5,8 @@
     Public picxz As New Bitmap(Form1.sizexzx, Form1.sizexzz)
     Public gfxxz As Graphics = System.Drawing.Graphics.FromImage(picxz)
 
+    Public picCrossSection As New Bitmap(Form1.sizexyx, Form1.sizexyy)
+    Public gfCrossSection As Graphics = System.Drawing.Graphics.FromImage(picCrossSection)
 
     Public piczy As New Bitmap(Form1.sizezyz, Form1.sizezyy)
     Public gfxzy As Graphics = System.Drawing.Graphics.FromImage(piczy)
