@@ -9,6 +9,14 @@
 8:energy
 9:age
 10: time from the previous asexual reproduction 
+11: Amount of x
+12: Amount of y
+13: utility function
+14: current utility
+15: utility function parameter a
+16: utility function parameter b
+17: gain/loss
+
 
 If d = 1 Then
                 Call Form1.creator(x, y, z, "down", generator.agentcolour(ag))
@@ -93,4 +101,26 @@ agent type (static agent type), agent type released
 5 - z distance
 6 - first agent in interaction
 7 - second agent in interaction
+
+product
+1 - x transfer
+2 - y transfer
+9 - agent that is the buyer
+10 - agent that is the seller
+5) = x
+exchange
+1 - whether or not an item is being exchanged (2 - eing exchanged, 0 - inactive)
+2 - Initial quantity for 1st agent
+3 - number of items being transferred
+4 - transfer of currency
+5 - initial quantity for 2nd agent
+6 - utility function for that product
+7 - a (constant)
+8 - b (constant)
+
+agentproduct
+1 - quantity of product
+2 - utility for product
+
+(multiple products, but single utility function for all products. each product has its own utility function)
 
