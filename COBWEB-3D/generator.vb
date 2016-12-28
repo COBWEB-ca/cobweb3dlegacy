@@ -13,7 +13,7 @@
 
     Public agentcount(Form1.agent) As Integer
     Public agentname(Form1.agent) As String
-    Public agentlocation(100000, 10) As Integer
+    Public agentlocation(100000, 115) As Decimal
     Public agentrange(Form1.agent, 2, 1) As Integer
     Public agentrangeabsolute(Form1.agent) As Boolean
     Public agentcolour(Form1.agent) As System.Drawing.Color
@@ -60,6 +60,19 @@
     Public reservoiragentid(Form1.agent, 2) As Integer
     Public reservoirchange(Form1.agent, Form1.agent, 1) As Integer
     Public reservoiragentreleased(Form1.agent, Form1.agent, 8) As Decimal
+
+    Public product(Form1.agent, Form1.agent, 12) As String
+    Public exchange(Form1.agent, Form1.agent, 100, 10) As Decimal
+    Public exchangenames(Form1.agent, Form1.agent, 100) As String
+    Public agentproduct(Form1.total, 100, 2) As Decimal
+
+    Public abiotic(Form1.agent, Form1.xn, Form1.yn, Form1.zn) As Integer
+    Public abioticenable As Boolean
+    Public interactioncount(Form1.agent) As Integer
+
+    'Public tradingzones(Form1.xn, Form1.yn, Form1.zn, 1) As Decimal '0 is for the actual value of the zone, 1  is the zone that the cube belongs to
+    Public zones(1000, 8) As Decimal '7 is the actual value, 1-6 are for the coordinates of the zone, 1000 different zones are possible, 8 is for the number of items traded in that zone
+    Public agentsight As Decimal = 4
 
     Sub topgridxy()
 

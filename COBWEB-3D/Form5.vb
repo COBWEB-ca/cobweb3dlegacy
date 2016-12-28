@@ -20,6 +20,8 @@
             generator.action(ComboBoxagent.SelectedIndex + 1, ComboBox1.SelectedIndex + 1, 1, 0, 0) = 4
         ElseIf CheckBoxconsume.Checked = True And CheckBoxproduce.Checked = True And CheckBoxdeminish.Checked = True Then
             generator.action(ComboBoxagent.SelectedIndex + 1, ComboBox1.SelectedIndex + 1, 1, 0, 0) = 7
+        ElseIf CheckBox1.Checked = True And CheckBoxconsume.Checked = False And CheckBoxdeminish.Checked = False And CheckBoxproduce.Checked = False Then
+            generator.action(ComboBoxagent.SelectedIndex + 1, ComboBox1.SelectedIndex + 1, 1, 0, 0) = 8 'exchange
         ElseIf CheckBoxconsume.Checked = False And CheckBoxproduce.Checked = False And CheckBoxdeminish.Checked = False Then
             generator.action(ComboBoxagent.SelectedIndex + 1, ComboBox1.SelectedIndex + 1, 1, 0, 0) = 0
         End If
@@ -85,34 +87,47 @@
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 2 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 3 Then
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 4 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 5 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 6 Then
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 7 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
+                    ElseIf generator.action(a, b, 1, 0, 0) = 8 Then
+                        CheckBox1.Checked = True
+                        CheckBoxdeminish.Checked = False
+                        CheckBoxconsume.Checked = False
+                        CheckBoxproduce.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 0 Then
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     End If
 
 
@@ -142,34 +157,47 @@
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 2 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 3 Then
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 4 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 5 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 6 Then
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 7 Then
                         CheckBoxconsume.Checked = True
                         CheckBoxproduce.Checked = True
                         CheckBoxdeminish.Checked = True
+                        CheckBox1.Checked = False
+                    ElseIf generator.action(a, b, 1, 0, 0) = 8 Then
+                        CheckBox1.Checked = True
+                        CheckBoxdeminish.Checked = False
+                        CheckBoxconsume.Checked = False
+                        CheckBoxproduce.Checked = False
                     ElseIf generator.action(a, b, 1, 0, 0) = 0 Then
                         CheckBoxconsume.Checked = False
                         CheckBoxproduce.Checked = False
                         CheckBoxdeminish.Checked = False
+                        CheckBox1.Checked = False
                     End If
 
 
@@ -283,5 +311,33 @@
         ElseIf result = DialogResult.No Then
             Button4.BackColor = Color.Red
         End If
+    End Sub
+
+    Private Sub CheckBox1_CheckedChanged_1(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+        If CheckBox1.Checked = True Then
+            CheckBoxconsume.Checked = False
+            CheckBoxdeminish.Checked = False
+            CheckBoxproduce.Checked = False
+            CheckBoxconsume.Enabled = False
+            CheckBoxdeminish.Enabled = False
+            CheckBoxproduce.Enabled = False
+            Button5.Enabled = True
+        Else
+            CheckBoxconsume.Enabled = True
+            CheckBoxdeminish.Enabled = True
+            CheckBoxproduce.Enabled = True
+            Button5.Enabled = False
+        End If
+        Call check()
+    End Sub
+
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+        If ComboBoxagent.SelectedIndex < 0 Or ComboBox1.SelectedIndex < 0 Then
+            MessageBox.Show("Please select agents.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+        holdera = ComboBoxagent.SelectedIndex + 1
+        holderb = ComboBox1.SelectedIndex + 1
+        frmexchange.Show()
     End Sub
 End Class

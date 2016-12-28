@@ -111,6 +111,18 @@
     <Compile Include="AI.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="exchange.Designer.vb">
+      <DependentUpon>exchange.vb</DependentUpon>
+    </Compile>
+    <Compile Include="exchange.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="exchangedata.Designer.vb">
+      <DependentUpon>exchangedata.vb</DependentUpon>
+    </Compile>
+    <Compile Include="exchangedata.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Form1.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -122,6 +134,12 @@
       <DependentUpon>Form10.vb</DependentUpon>
     </Compile>
     <Compile Include="Form10.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form11.Designer.vb">
+      <DependentUpon>Form11.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Form11.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form2.Designer.vb">
@@ -176,6 +194,12 @@
       <DependentUpon>frmAbiotic.vb</DependentUpon>
     </Compile>
     <Compile Include="frmAbiotic.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAbioticMovement.Designer.vb">
+      <DependentUpon>frmAbioticMovement.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmAbioticMovement.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmCatalysis.Designer.vb">
@@ -242,16 +266,31 @@
     <Compile Include="Ratio.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="utility.Designer.vb">
+      <DependentUpon>utility.vb</DependentUpon>
+    </Compile>
+    <Compile Include="utility.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AI.resx">
       <DependentUpon>AI.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="exchange.resx">
+      <DependentUpon>exchange.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="exchangedata.resx">
+      <DependentUpon>exchangedata.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form10.resx">
       <DependentUpon>Form10.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form11.resx">
+      <DependentUpon>Form11.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.vb</DependentUpon>
@@ -279,6 +318,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmAbiotic.resx">
       <DependentUpon>frmAbiotic.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAbioticMovement.resx">
+      <DependentUpon>frmAbioticMovement.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCatalysis.resx">
       <DependentUpon>frmCatalysis.vb</DependentUpon>
@@ -309,6 +351,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Ratio.resx">
       <DependentUpon>Ratio.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="utility.resx">
+      <DependentUpon>utility.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

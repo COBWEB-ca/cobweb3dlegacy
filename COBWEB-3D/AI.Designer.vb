@@ -49,9 +49,13 @@ Partial Class AI
         Me.CheckBox4 = New System.Windows.Forms.CheckBox()
         Me.HelpProvider1 = New System.Windows.Forms.HelpProvider()
         Me.Button2 = New System.Windows.Forms.Button()
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.CheckBox6 = New System.Windows.Forms.CheckBox()
+        Me.CheckBox5 = New System.Windows.Forms.CheckBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
+        Me.GroupBox4.SuspendLayout()
         Me.SuspendLayout()
         '
         'Label28
@@ -209,11 +213,10 @@ Partial Class AI
         '
         'Button1
         '
-        Me.Button1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button1.Location = New System.Drawing.Point(12, 304)
+        Me.Button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom
+        Me.Button1.Location = New System.Drawing.Point(12, 363)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(586, 29)
+        Me.Button1.Size = New System.Drawing.Size(590, 33)
         Me.Button1.TabIndex = 12
         Me.Button1.Text = "Apply"
         Me.Button1.UseVisualStyleBackColor = True
@@ -231,9 +234,9 @@ Partial Class AI
         '
         'chkStatic
         '
-        Me.chkStatic.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.chkStatic.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.chkStatic.AutoSize = True
-        Me.chkStatic.Location = New System.Drawing.Point(12, 281)
+        Me.chkStatic.Location = New System.Drawing.Point(12, 283)
         Me.chkStatic.Name = "chkStatic"
         Me.chkStatic.Size = New System.Drawing.Size(287, 17)
         Me.chkStatic.TabIndex = 14
@@ -242,9 +245,9 @@ Partial Class AI
         '
         'CheckBox2
         '
-        Me.CheckBox2.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.CheckBox2.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.CheckBox2.AutoSize = True
-        Me.CheckBox2.Location = New System.Drawing.Point(299, 258)
+        Me.CheckBox2.Location = New System.Drawing.Point(299, 260)
         Me.CheckBox2.Name = "CheckBox2"
         Me.CheckBox2.Size = New System.Drawing.Size(139, 17)
         Me.CheckBox2.TabIndex = 15
@@ -254,9 +257,9 @@ Partial Class AI
         '
         'CheckBox3
         '
-        Me.CheckBox3.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.CheckBox3.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.CheckBox3.AutoSize = True
-        Me.CheckBox3.Location = New System.Drawing.Point(12, 258)
+        Me.CheckBox3.Location = New System.Drawing.Point(12, 260)
         Me.CheckBox3.Name = "CheckBox3"
         Me.CheckBox3.Size = New System.Drawing.Size(214, 17)
         Me.CheckBox3.TabIndex = 16
@@ -265,10 +268,10 @@ Partial Class AI
         '
         'CheckBox4
         '
-        Me.CheckBox4.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.CheckBox4.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.CheckBox4.AutoSize = True
         Me.CheckBox4.Enabled = False
-        Me.CheckBox4.Location = New System.Drawing.Point(299, 281)
+        Me.CheckBox4.Location = New System.Drawing.Point(299, 283)
         Me.CheckBox4.Name = "CheckBox4"
         Me.CheckBox4.Size = New System.Drawing.Size(153, 17)
         Me.CheckBox4.TabIndex = 17
@@ -277,26 +280,60 @@ Partial Class AI
         '
         'Button2
         '
+        Me.Button2.Anchor = System.Windows.Forms.AnchorStyles.None
         Me.Button2.Enabled = False
-        Me.Button2.Location = New System.Drawing.Point(449, 277)
+        Me.Button2.Location = New System.Drawing.Point(458, 275)
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(149, 23)
+        Me.Button2.Size = New System.Drawing.Size(144, 29)
         Me.Button2.TabIndex = 18
         Me.Button2.Text = "Reservoir Capacity"
         Me.Button2.UseVisualStyleBackColor = True
+        '
+        'GroupBox4
+        '
+        Me.GroupBox4.Controls.Add(Me.CheckBox6)
+        Me.GroupBox4.Controls.Add(Me.CheckBox5)
+        Me.GroupBox4.Location = New System.Drawing.Point(12, 310)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(590, 48)
+        Me.GroupBox4.TabIndex = 19
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Swarming Behaviour:"
+        Me.GroupBox4.Visible = False
+        '
+        'CheckBox6
+        '
+        Me.CheckBox6.AutoSize = True
+        Me.CheckBox6.Location = New System.Drawing.Point(178, 19)
+        Me.CheckBox6.Name = "CheckBox6"
+        Me.CheckBox6.Size = New System.Drawing.Size(200, 17)
+        Me.CheckBox6.TabIndex = 1
+        Me.CheckBox6.Text = "Enable Swarming for All Agent Types"
+        Me.CheckBox6.UseVisualStyleBackColor = True
+        '
+        'CheckBox5
+        '
+        Me.CheckBox5.AutoSize = True
+        Me.CheckBox5.Location = New System.Drawing.Point(13, 19)
+        Me.CheckBox5.Name = "CheckBox5"
+        Me.CheckBox5.Size = New System.Drawing.Size(159, 17)
+        Me.CheckBox5.TabIndex = 0
+        Me.CheckBox5.Text = "Enable Swarming Behaviour"
+        Me.CheckBox5.UseVisualStyleBackColor = True
         '
         'AI
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(614, 345)
+        Me.ClientSize = New System.Drawing.Size(614, 402)
+        Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.CheckBox4)
         Me.Controls.Add(Me.CheckBox3)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.CheckBox2)
         Me.Controls.Add(Me.chkStatic)
         Me.Controls.Add(Me.CheckBox1)
-        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.GroupBox1)
@@ -310,6 +347,8 @@ Partial Class AI
         Me.GroupBox2.PerformLayout()
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
+        Me.GroupBox4.ResumeLayout(False)
+        Me.GroupBox4.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -340,4 +379,7 @@ Partial Class AI
     Friend WithEvents CheckBox4 As CheckBox
     Friend WithEvents HelpProvider1 As HelpProvider
     Friend WithEvents Button2 As Button
+    Friend WithEvents GroupBox4 As GroupBox
+    Friend WithEvents CheckBox6 As CheckBox
+    Friend WithEvents CheckBox5 As CheckBox
 End Class

@@ -32,6 +32,10 @@ Partial Class Form5
         Me.Label3 = New System.Windows.Forms.Label()
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Button6 = New System.Windows.Forms.Button()
+        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
+        Me.Button5 = New System.Windows.Forms.Button()
+        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.CheckBoxdeminish = New System.Windows.Forms.CheckBox()
         Me.RadioButton1 = New System.Windows.Forms.RadioButton()
@@ -55,7 +59,7 @@ Partial Class Form5
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(12, 344)
+        Me.Button1.Location = New System.Drawing.Point(12, 375)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(491, 28)
         Me.Button1.TabIndex = 0
@@ -136,16 +140,60 @@ Partial Class Form5
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.Button6)
+        Me.GroupBox1.Controls.Add(Me.CheckBox2)
+        Me.GroupBox1.Controls.Add(Me.Button5)
+        Me.GroupBox1.Controls.Add(Me.CheckBox1)
         Me.GroupBox1.Controls.Add(Me.Button2)
         Me.GroupBox1.Controls.Add(Me.CheckBoxdeminish)
         Me.GroupBox1.Controls.Add(Me.CheckBoxconsume)
         Me.GroupBox1.Controls.Add(Me.CheckBoxproduce)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 71)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(491, 49)
+        Me.GroupBox1.Size = New System.Drawing.Size(491, 80)
         Me.GroupBox1.TabIndex = 11
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Actions:"
+        '
+        'Button6
+        '
+        Me.Button6.Enabled = False
+        Me.Button6.Location = New System.Drawing.Point(350, 44)
+        Me.Button6.Name = "Button6"
+        Me.Button6.Size = New System.Drawing.Size(135, 23)
+        Me.Button6.TabIndex = 16
+        Me.Button6.Text = "Transformation Options"
+        Me.Button6.UseVisualStyleBackColor = True
+        '
+        'CheckBox2
+        '
+        Me.CheckBox2.AutoSize = True
+        Me.CheckBox2.Location = New System.Drawing.Point(248, 48)
+        Me.CheckBox2.Name = "CheckBox2"
+        Me.CheckBox2.Size = New System.Drawing.Size(96, 17)
+        Me.CheckBox2.TabIndex = 15
+        Me.CheckBox2.Text = "Transformation"
+        Me.CheckBox2.UseVisualStyleBackColor = True
+        '
+        'Button5
+        '
+        Me.Button5.Enabled = False
+        Me.Button5.Location = New System.Drawing.Point(86, 44)
+        Me.Button5.Name = "Button5"
+        Me.Button5.Size = New System.Drawing.Size(135, 23)
+        Me.Button5.TabIndex = 14
+        Me.Button5.Text = "Exchange Options"
+        Me.Button5.UseVisualStyleBackColor = True
+        '
+        'CheckBox1
+        '
+        Me.CheckBox1.AutoSize = True
+        Me.CheckBox1.Location = New System.Drawing.Point(6, 48)
+        Me.CheckBox1.Name = "CheckBox1"
+        Me.CheckBox1.Size = New System.Drawing.Size(74, 17)
+        Me.CheckBox1.TabIndex = 13
+        Me.CheckBox1.Text = "Exchange"
+        Me.CheckBox1.UseVisualStyleBackColor = True
         '
         'Button2
         '
@@ -192,9 +240,9 @@ Partial Class Form5
         Me.Label4.AutoSize = True
         Me.Label4.Location = New System.Drawing.Point(26, 45)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(253, 13)
+        Me.Label4.Size = New System.Drawing.Size(250, 13)
         Me.Label4.TabIndex = 13
-        Me.Label4.Text = "Fixed amound of energy transferred when consumes"
+        Me.Label4.Text = "Fixed amount of energy transferred when consumes"
         '
         'TextBox2
         '
@@ -206,7 +254,7 @@ Partial Class Form5
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(9, 209)
+        Me.Label5.Location = New System.Drawing.Point(9, 240)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(139, 13)
         Me.Label5.TabIndex = 16
@@ -214,7 +262,7 @@ Partial Class Form5
         '
         'TextBox3
         '
-        Me.TextBox3.Location = New System.Drawing.Point(154, 206)
+        Me.TextBox3.Location = New System.Drawing.Point(154, 237)
         Me.TextBox3.Name = "TextBox3"
         Me.TextBox3.Size = New System.Drawing.Size(349, 20)
         Me.TextBox3.TabIndex = 17
@@ -227,14 +275,14 @@ Partial Class Form5
         Me.Panel1.Controls.Add(Me.RadioButton1)
         Me.Panel1.Controls.Add(Me.Label3)
         Me.Panel1.Controls.Add(Me.TextBox1)
-        Me.Panel1.Location = New System.Drawing.Point(12, 126)
+        Me.Panel1.Location = New System.Drawing.Point(12, 157)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(491, 74)
         Me.Panel1.TabIndex = 18
         '
         'TextBox4
         '
-        Me.TextBox4.Location = New System.Drawing.Point(230, 232)
+        Me.TextBox4.Location = New System.Drawing.Point(230, 263)
         Me.TextBox4.Name = "TextBox4"
         Me.TextBox4.Size = New System.Drawing.Size(273, 20)
         Me.TextBox4.TabIndex = 19
@@ -242,7 +290,7 @@ Partial Class Form5
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(9, 235)
+        Me.Label6.Location = New System.Drawing.Point(9, 266)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(215, 13)
         Me.Label6.TabIndex = 20
@@ -254,7 +302,7 @@ Partial Class Form5
         Me.GroupBox2.Controls.Add(Me.Button3)
         Me.GroupBox2.Controls.Add(Me.TextBox5)
         Me.GroupBox2.Controls.Add(Me.CheckBox3)
-        Me.GroupBox2.Location = New System.Drawing.Point(12, 258)
+        Me.GroupBox2.Location = New System.Drawing.Point(12, 289)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(491, 80)
         Me.GroupBox2.TabIndex = 21
@@ -305,7 +353,7 @@ Partial Class Form5
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(511, 384)
+        Me.ClientSize = New System.Drawing.Size(511, 415)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.TextBox4)
@@ -357,4 +405,8 @@ Partial Class Form5
     Friend WithEvents CheckBox3 As CheckBox
     Friend WithEvents Button3 As Button
     Friend WithEvents Button4 As Button
+    Friend WithEvents Button5 As Button
+    Friend WithEvents CheckBox1 As CheckBox
+    Friend WithEvents Button6 As Button
+    Friend WithEvents CheckBox2 As CheckBox
 End Class

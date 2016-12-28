@@ -294,4 +294,20 @@
         Next
 
     End Sub
+
+    Private Sub CheckBox5_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox5.CheckedChanged
+        If CheckBox5.Checked = True Then
+
+        Else
+
+        End If
+    End Sub
+
+    Private Sub CheckBox6_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox6.CheckedChanged
+        If CheckBox6.Checked = True Then
+
+        Else
+
+        End If
+    End Sub
 End Class

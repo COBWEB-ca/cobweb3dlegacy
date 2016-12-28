@@ -41,6 +41,7 @@
     Private oBook As Object
     Private oSheet As Object
     Private oSheet2 As Object
+    Private oSheet3 As Object
     Private logged As Boolean = False
     Private exceldir As String
 
@@ -2618,6 +2619,15 @@
 
     Private Sub Timerxy_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timerxy.Tick
 
+        'Dim dddx As Integer = CInt(Math.Floor((xn - 1 + 1) * Rnd())) + 1
+        'Dim dddy As Integer = CInt(Math.Floor((yn - 1 + 1) * Rnd())) + 1
+        'Dim dddz As Integer = CInt(Math.Floor((zn - 1 + 1) * Rnd())) + 1
+        'Do While generator.occupied(dddx, dddy, dddz) = True
+        '    dddx = CInt(Math.Floor((xn - 1 + 1) * Rnd())) + 1
+        '    dddy = CInt(Math.Floor((yn - 1 + 1) * Rnd())) + 1
+        '    dddz = CInt(Math.Floor((zn - 1 + 1) * Rnd())) + 1
+        'Loop
+
         For i = 1 To total
 
             If generator.agentchange = True Then
@@ -2698,6 +2708,7 @@
                         generator.agentlocation(i, 6) = dy
                         generator.agentlocation(i, 7) = dz
                     End If
+
                 End If
 
             ElseIf generator.staticagent(i) = 2 Then
@@ -2706,12 +2717,15 @@
                 dz = z
                 generator.occupied(x, y, z) = True
             End If
-
+            'new code
+            Call abiotic(i, x, y, z)
             'Call reservoirrelase(i)
 
             Dim xdiff As Integer = Math.Abs(dx - x)
             Dim ydiff As Integer = Math.Abs(dy - y)
             Dim zdiff As Integer = Math.Abs(dz - z)
+
+            'this large if statement is responsible for assigning the next position for an agent (allows agent to go towards its destination)
             If xdiff >= ydiff And xdiff >= zdiff Then
 
                 If dx > x And generator.agentlocation(i, 3) = 4 Then
@@ -2834,7 +2848,8 @@
                 End If
 
             End If
-
+            'new code
+            'Call swarming(i, x, y, z, 1, 1, 1)
 
         Next
 
@@ -2872,7 +2887,6 @@
         End If
 
 
-
         tick = tick + 1
         timelabel.Text = tick
 
@@ -2891,9 +2905,11 @@
 
             oSheet.Cells(tick + 1, 1) = tick
             oSheet2.Cells(tick + 1, 1) = tick
+            oSheet3.cells(tick + 1, 1) = tick
             For i = 1 To agent
                 oSheet.Cells(tick + 1, i + 1) = agentpop(i)
                 oSheet2.Cells(tick + 1, i + 1) = generator.agentlocation(i, 8)
+                oSheet3.cells(tick + 1, i + 1) = generator.interactioncount(i)
             Next
         End If
 
@@ -2910,6 +2926,468 @@
             Timerxy.Stop()
         End If
 
+    End Sub
+
+    Private goal(2) As Integer
+    'enables swarming behaviour (if the neighbouring agents are facing a certain way then the current agent also faces and moves in the same direction)
+    'each swarm has a common destination (if agents in a swarm had different destinations, they would scatter)
+    Sub swarming(ByVal i, ByVal x, ByVal y, ByVal z, ByVal dx, ByVal dy, ByVal dz)
+
+        Dim direction(6) As Integer
+        Dim count As Integer
+        Dim avposition(5) As Decimal
+
+        For l = 1 To 3 'the extent to which the agent sees its surroundings (can be changed)
+            For xxi = (x - l) To (x + l)
+                For yyi = (y - l) To (y + l)
+                    For zzi = (z - l) To (y + l)
+                        If xxi >= 0 And xxi <= xn And yyi >= 0 And yyi <= yn And zzi >= 0 And zzi <= zn Then 'ensure that coordinates are not out of bounds
+                            For k = 1 To total
+                                If generator.agentlocation(k, 0) = xxi And generator.agentlocation(k, 1) = yyi And generator.agentlocation(k, 2) = zzi And xxi <> x And yyi <> y And zzi <> z Then
+                                    If generator.agentlocation(k, 3) = 1 Then
+                                        direction(1) += 1
+                                    ElseIf generator.agentlocation(k, 3) = 2 Then
+                                        direction(2) += 1
+                                    ElseIf generator.agentlocation(k, 3) = 3 Then
+                                        direction(3) += 1
+                                    ElseIf generator.agentlocation(k, 3) = 4 Then
+                                        direction(4) += 1
+                                    ElseIf generator.agentlocation(k, 3) = 5 Then
+                                        direction(5) += 1
+                                    ElseIf generator.agentlocation(k, 3) = 6 Then
+                                        direction(6) += 1
+                                    End If
+                                    count += 1
+                                    avposition(0) += xxi
+                                    avposition(1) += yyi
+                                    avposition(2) += zzi
+                                End If
+                            Next
+                        End If
+                    Next
+                Next
+            Next
+        Next
+
+        If count <> 0 Then
+            avposition(3) = CInt(avposition(0) / count)
+            avposition(4) = CInt(avposition(1) / count)
+            avposition(5) = CInt(avposition(2) / count)
+        End If
+
+        If avposition(3) > xn Then
+            avposition(3) = xn
+        ElseIf avposition(3) < 0 Then
+            avposition(3) = 0
+        End If
+        If avposition(4) > yn Then
+            avposition(4) = yn
+        ElseIf avposition(4) < 0 Then
+            avposition(4) = 0
+        End If
+        If avposition(5) > zn Then
+            avposition(5) = zn
+        ElseIf avposition(5) < 0 Then
+            avposition(5) = 0
+        End If
+
+        generator.agentlocation(i, 5) = avposition(3)
+        generator.agentlocation(i, 6) = avposition(4)
+        generator.agentlocation(i, 7) = avposition(5)
+
+        Dim rangexupper As Integer = generator.agentrange(generator.agentlocation(i, 4), 0, 1)
+        Dim rangexlower As Integer = generator.agentrange(generator.agentlocation(i, 4), 0, 0)
+        Dim rangeyupper As Integer = generator.agentrange(generator.agentlocation(i, 4), 1, 1)
+        Dim rangeylower As Integer = generator.agentrange(generator.agentlocation(i, 4), 1, 0)
+        Dim rangezupper As Integer = generator.agentrange(generator.agentlocation(i, 4), 2, 1)
+        Dim rangezlower As Integer = generator.agentrange(generator.agentlocation(i, 4), 2, 0)
+
+        'aligns nearby agents if they are close enough together (when the average position is already occupied). if agents are alreadt aligned, then they move in the direction they are facing (ensures
+        'that the swarm continues to move. (The swarm should turn if it reaches the edge of the grid rather than stopping)
+        If Math.Abs(avposition(3) - x) <= 1 And Math.Abs(avposition(4) - y) <= 1 And Math.Abs(avposition(5) - z) <= 1 Then
+            For g = 1 To 6
+                If direction(g) = direction.ToArray.Max Then
+                    'If generator.agentlocation(i, 3) = g Then
+
+                    'If generator.agentlocation(i, 3) = 1 Then
+                    '    If (y + 1) <= yn Then
+                    '        generator.agentlocation(i, 6) = y + 1
+                    '        generator.agentlocation(i, 5) = x
+                    '        generator.agentlocation(i, 7) = z
+                    '    Else
+                    '        generator.agentlocation(i, 7) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 6) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 5) = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                    '    End If
+                    'ElseIf generator.agentlocation(i, 3) = 2 Then
+                    '    If (y - 1) >= 0 Then
+                    '        generator.agentlocation(i, 6) = y - 1
+                    '        generator.agentlocation(i, 5) = x
+                    '        generator.agentlocation(i, 7) = z
+                    '    Else
+                    '        generator.agentlocation(i, 7) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 6) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 5) = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                    '    End If
+                    'ElseIf generator.agentlocation(i, 3) = 3 Then
+                    '    If (x - 1) >= 0 Then
+                    '        generator.agentlocation(i, 5) = x - 1
+                    '        generator.agentlocation(i, 6) = y
+                    '        generator.agentlocation(i, 7) = z
+                    '    Else
+                    '        generator.agentlocation(i, 7) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 6) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 5) = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                    '    End If
+                    'ElseIf generator.agentlocation(i, 3) = 4 Then
+                    '    If (x + 1) <= xn Then
+                    '        generator.agentlocation(i, 5) = x + 1
+                    '        generator.agentlocation(i, 6) = y
+                    '        generator.agentlocation(i, 7) = z
+                    '    Else
+                    '        generator.agentlocation(i, 7) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 6) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 5) = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                    '    End If
+                    'ElseIf generator.agentlocation(i, 3) = 5 Then
+                    '    If (z - 1) >= 0 Then
+                    '        generator.agentlocation(i, 7) = z - 1
+                    '        generator.agentlocation(i, 5) = x
+                    '        generator.agentlocation(i, 6) = y
+                    '    Else
+                    '        generator.agentlocation(i, 7) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 6) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 5) = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                    '    End If
+                    'ElseIf generator.agentlocation(i, 3) = 6 Then
+                    '    If (z + 1) <= zn Then
+                    '        generator.agentlocation(i, 7) = z + 1
+                    '        generator.agentlocation(i, 5) = x
+                    '        generator.agentlocation(i, 6) = y
+                    '    Else
+                    '        generator.agentlocation(i, 7) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 6) = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                    '        generator.agentlocation(i, 5) = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                    '        'generator.agentlocation(i, 3) = 4 'turns right
+
+                    '    End If
+                    'End If
+
+                    'goal destination
+                    If generator.agentlocation(i, 0) = goal(0) And generator.agentlocation(i, 1) = goal(1) And generator.agentlocation(i, 2) = goal(2) Then
+                        goal(0) = CInt(Math.Floor((xn - 1 + 1) * Rnd())) + 1
+                        goal(1) = CInt(Math.Floor((yn - 1 + 1) * Rnd())) + 1
+                        goal(2) = CInt(Math.Floor((zn - 1 + 1) * Rnd())) + 1
+                    End If
+                    generator.agentlocation(i, 5) = goal(0)
+                    generator.agentlocation(i, 6) = goal(1)
+                    generator.agentlocation(i, 7) = goal(2)
+                    'Else
+                    '    generator.agentlocation(i, 3) = g
+                    'End If
+                End If
+            Next
+        End If
+    End Sub
+
+    Sub tradezones(ByVal opp As Integer)
+        Dim conditions As Decimal = 1
+
+        For i = 1 To 1000
+            Dim xlow As Integer = generator.zones(i, 1)
+            Dim xup As Integer = generator.zones(i, 2)
+            Dim ylow As Integer = generator.zones(i, 3)
+            Dim yup As Integer = generator.zones(i, 4)
+            Dim zlow As Integer = generator.zones(i, 5)
+            Dim zup As Integer = generator.zones(i, 6)
+            If xlow = 0 Or xup = 0 Or ylow = 0 Or yup = 0 Or zlow = 0 Or zup = 0 Then
+                Exit For
+            End If
+
+            For xi = xlow To xup
+                For yi = ylow To yup
+                    For zi = zlow To zup
+                        For agenti = 1 To agent
+                            generator.abiotic(agenti, xi, yi, zi) = generator.zones(i, 7)
+                        Next
+                    Next
+                Next
+            Next
+        Next
+    End Sub
+
+    Sub tradezonemovement(ByVal k, ByVal x, ByVal y, ByVal z) 'agents go to the zone with the highest value (ie. global maximum); essentially test code (not used by the program)
+        Dim conditions As Decimal = 0
+        Dim targetrange(6) As Decimal
+
+        For i = 1 To 1000
+            Dim xlow As Integer = generator.zones(i, 1)
+            Dim xup As Integer = generator.zones(i, 2)
+            Dim ylow As Integer = generator.zones(i, 3)
+            Dim yup As Integer = generator.zones(i, 4)
+            Dim zlow As Integer = generator.zones(i, 5)
+            Dim zup As Integer = generator.zones(i, 6)
+            If xlow = 0 Or xup = 0 Or ylow = 0 Or yup = 0 Or zlow = 0 Or zup = 0 Then
+                Exit For
+            End If
+
+            If conditions < generator.zones(i, 7) Then
+                conditions = generator.zones(i, 7)
+                For j = 1 To 6
+                    targetrange(j) = generator.zones(i, j)
+                Next
+            End If
+        Next
+
+        Dim dx As Integer = CInt(Math.Floor((targetrange(2) - targetrange(1) + 1) * Rnd())) + targetrange(1)
+        Dim dy As Integer = CInt(Math.Floor((targetrange(4) - targetrange(3) + 1) * Rnd())) + targetrange(3)
+        Dim dz As Integer = CInt(Math.Floor((targetrange(6) - targetrange(5) + 1) * Rnd())) + targetrange(5)
+
+        generator.agentlocation(k, 5) = dx
+        generator.agentlocation(k, 6) = dy
+        generator.agentlocation(k, 7) = dz
+    End Sub
+
+    Sub locationutility(ByVal j, ByVal x, ByVal y, ByVal z) 'agents look at the central zone and the closest zone and determine the utility (based on distance) for both. agents go to the zone resulting in the highest utility
+        Dim locationcentral(3) As Integer
+        Dim locationnearest(3) As Integer
+
+        Dim centralzone(8) As Decimal
+        For i = 1 To 1000
+            Dim xlow As Integer = generator.zones(i, 1)
+            Dim xup As Integer = generator.zones(i, 2)
+            Dim ylow As Integer = generator.zones(i, 3)
+            Dim yup As Integer = generator.zones(i, 4)
+            Dim zlow As Integer = generator.zones(i, 5)
+            Dim zup As Integer = generator.zones(i, 6)
+            If xlow = 0 Or xup = 0 Or ylow = 0 Or yup = 0 Or zlow = 0 Or zup = 0 Then
+                Exit For
+            End If
+            If centralzone(7) < generator.zones(i, 7) Then
+                For j = 1 To 7
+                    centralzone(j) = generator.zones(i, j)
+                Next
+                centralzone(8) = i
+            End If
+        Next
+
+        Dim closestzone As Integer
+        Dim currentzone As Integer
+
+        'determines current zone
+        For i = 1 To 1000
+            Dim xlow As Integer = generator.zones(i, 1)
+            Dim xup As Integer = generator.zones(i, 2)
+            Dim ylow As Integer = generator.zones(i, 3)
+            Dim yup As Integer = generator.zones(i, 4)
+            Dim zlow As Integer = generator.zones(i, 5)
+            Dim zup As Integer = generator.zones(i, 6)
+            If xlow = 0 Or xup = 0 Or ylow = 0 Or yup = 0 Or zlow = 0 Or zup = 0 Then
+                Exit For
+            End If
+            If x >= xlow And x <= xup And y >= ylow And y <= yup And z >= zlow And z <= zup Then
+                'current zone
+                currentzone = i
+            End If
+        Next
+
+        'determines closest zone that is not the current zone
+        Dim distance As Decimal = 1000000
+        Dim centraldistance As Decimal
+        For i = 1 To 1000
+            Dim xlow As Integer = generator.zones(i, 1)
+            Dim xup As Integer = generator.zones(i, 2)
+            Dim ylow As Integer = generator.zones(i, 3)
+            Dim yup As Integer = generator.zones(i, 4)
+            Dim zlow As Integer = generator.zones(i, 5)
+            Dim zup As Integer = generator.zones(i, 6)
+            Dim xavg As Decimal = (xlow + xup) / 2
+            Dim yavg As Decimal = (ylow + yup) / 2
+            Dim zavg As Decimal = (zlow + zup) / 2
+            Dim xdiff As Decimal = Math.Abs(x - xavg)
+            Dim ydiff As Decimal = Math.Abs(y - yavg)
+            Dim zdiff As Decimal = Math.Abs(z - zavg)
+            Dim dist As Decimal = Math.Sqrt((xdiff ^ 2) + (ydiff ^ 2) + (zdiff ^ 2))
+            If xlow = 0 Or xup = 0 Or ylow = 0 Or yup = 0 Or zlow = 0 Or zup = 0 Then
+                Exit For
+            End If
+
+            If distance > dist Then
+                distance = dist
+                If x >= xlow = False And x <= xup = False And y >= ylow = False And y <= yup = False And z >= zlow = False And z <= zup = False Then
+                    closestzone = i
+                End If
+            End If
+
+            If i = centralzone(8) Then 'calculates distance to central zone 
+                Dim xlowi As Integer = generator.zones(i, 1)
+                Dim xupi As Integer = generator.zones(i, 2)
+                Dim ylowi As Integer = generator.zones(i, 3)
+                Dim yupi As Integer = generator.zones(i, 4)
+                Dim zlowi As Integer = generator.zones(i, 5)
+                Dim zupi As Integer = generator.zones(i, 6)
+                Dim xavgi As Decimal = (xlowi + xupi) / 2
+                Dim yavgi As Decimal = (ylowi + yupi) / 2
+                Dim zavgi As Decimal = (zlowi + zupi) / 2
+                Dim xdiffi As Decimal = Math.Abs(x - xavgi)
+                Dim ydiffi As Decimal = Math.Abs(y - yavgi)
+                Dim zdiffi As Decimal = Math.Abs(z - zavgi)
+                centraldistance = Math.Sqrt((xdiffi ^ 2) + (ydiffi ^ 2) + (zdiffi ^ 2))
+            End If
+        Next
+
+        'utility calculation (for closest zone and central zone); uses distances to calculate utility
+        Dim distances(2) As Decimal
+        distances(1) = distance
+        distances(2) = centraldistance
+
+        Dim zonevalue(2) As Decimal
+        zonevalue(1) = generator.zones(closestzone, 7)
+        zonevalue(2) = generator.zones(centralzone(8), 7)
+
+        'function (compares the utility and zone values)
+        Dim centralzoneprob As Decimal = 0 'by default, agents will always prefer the central zone
+        Dim closestzoneprob As Decimal = 0 'by default, agents will not go to the closest zone
+        Dim utility(2) As Decimal
+        Dim zonediff As Decimal = Math.Abs(zonevalue(1) - zonevalue(2))
+        Dim distdiff As Decimal = Math.Abs(distances(1) - distances(2))
+
+        utility(1) = zonevalue(1) - distances(1)
+        utility(2) = zonevalue(2) - distances(2)
+
+        If utility(2) >= utility(1) Or utility(2) < utility(1) Then
+            'agent goes to a random location in the central zone
+            Dim xlowi As Integer = generator.zones(centralzone(8), 1)
+            Dim xupi As Integer = generator.zones(centralzone(8), 2)
+            Dim ylowi As Integer = generator.zones(centralzone(8), 3)
+            Dim yupi As Integer = generator.zones(centralzone(8), 4)
+            Dim zlowi As Integer = generator.zones(centralzone(8), 5)
+            Dim zupi As Integer = generator.zones(centralzone(8), 6)
+
+            generator.agentlocation(j, 6) = CInt(Math.Floor((yupi - ylowi + 1) * Rnd())) + ylowi
+            generator.agentlocation(j, 7) = CInt(Math.Floor((zupi - zlowi + 1) * Rnd())) + zlowi
+            generator.agentlocation(j, 5) = CInt(Math.Floor((xupi - xlowi + 1) * Rnd())) + xlowi
+        ElseIf utility(2) < utility(1) Then
+            'agent goes to a random location in the closest zone
+            Dim xlowi As Integer = generator.zones(closestzone, 1)
+            Dim xupi As Integer = generator.zones(closestzone, 2)
+            Dim ylowi As Integer = generator.zones(closestzone, 3)
+            Dim yupi As Integer = generator.zones(closestzone, 4)
+            Dim zlowi As Integer = generator.zones(closestzone, 5)
+            Dim zupi As Integer = generator.zones(closestzone, 6)
+
+            generator.agentlocation(j, 6) = CInt(Math.Floor((yupi - ylowi + 1) * Rnd())) + ylowi
+            generator.agentlocation(j, 7) = CInt(Math.Floor((zupi - zlowi + 1) * Rnd())) + zlowi
+            generator.agentlocation(j, 5) = CInt(Math.Floor((xupi - xlowi + 1) * Rnd())) + xlowi
+        End If
+    End Sub
+
+    Sub abiotic(ByVal j, ByVal x, ByVal y, ByVal z) 'in the case of zones, agents scan their surroundings and go to the highest value zone they find. (ie. could be local maximum or potentially the global maximum)
+        If generator.abioticenable = False Then 'prevents agents from scanning their surrounding area to avoid slowing down the program
+            'Call tradezonemovement(j, x, y, z) 'for testing only
+            Exit Sub
+        End If
+
+        'Try
+        '    Call locationutility(j, x, y, z) 'for testing only (should be called from the timer sub)
+        'Catch ex As Exception
+        '    MessageBox.Show(ex.ToString)
+        'End Try
+
+        'Call tradezonemovement(j, x, y, z) 
+        'Exit Sub
+
+        'new code
+        'For xi = 1 To xn
+        '    For yi = 1 To yn
+        '        For zi = 1 To zn
+        '            For agenti = 1 To Me.agent
+        '                generator.abiotic(agenti, xi, yi, zi) = generator.tradingzones(xi, yi, zi, 0)
+        '            Next
+        '        Next
+        '    Next
+        'Next
+
+        Dim agent As Integer = generator.agentlocation(j, 4)
+
+        Dim conditions As Integer = generator.abiotic(agent, x, y, z)
+        Dim initial As Integer = generator.abiotic(agent, x, y, z)
+        Dim loc(3) As Integer
+        Dim localconditions(3 ^ 3) As Decimal
+        Dim count As Integer = 1
+
+        Dim rand As Integer = CInt(Math.Floor((2 - 1 + 1) * Rnd())) + 1 'prevents agent from prefering the top left corner due to the loop only starting with the smallest x,y,z values
+
+        If rand = 1 Then
+            For i = 1 To generator.agentsight 'the extent to which the agent sees its surroundings (can be changed)
+                For xxi = (x - i) To (x + i)
+                    For yyi = (y - i) To (y + i)
+                        For zzi = (z - i) To (z + i)
+                            If xxi >= 0 And xxi <= xn And yyi >= 0 And yyi <= yn And zzi >= 0 And zzi <= zn Then
+                                If generator.abiotic(agent, xxi, yyi, zzi) > conditions Then
+                                    loc(1) = xxi
+                                    loc(2) = yyi
+                                    loc(3) = zzi
+                                    conditions = generator.abiotic(agent, xxi, yyi, zzi)
+                                    localconditions(count) = generator.abiotic(agent, xxi, yyi, zzi)
+                                    count += 1
+                                End If
+                            End If
+                        Next
+                    Next
+                Next
+            Next
+        ElseIf rand = 2 Then
+            For i = 1 To generator.agentsight 'the extent to which the agent sees its surroundings (can be changed)
+                For xxi = (x + i) To (x - i) Step -1
+                    For yyi = (y + i) To (y - i) Step -1
+                        For zzi = (z + i) To (z - i) Step -1
+                            If xxi >= 0 And xxi <= xn And yyi >= 0 And yyi <= yn And zzi >= 0 And zzi <= zn Then
+                                If generator.abiotic(agent, xxi, yyi, zzi) > conditions Then
+                                    loc(1) = xxi
+                                    loc(2) = yyi
+                                    loc(3) = zzi
+                                    conditions = generator.abiotic(agent, xxi, yyi, zzi)
+                                    localconditions(count) = generator.abiotic(agent, xxi, yyi, zzi)
+                                    count += 1
+                                End If
+                            End If
+                        Next
+                    Next
+                Next
+            Next
+        End If
+
+        If conditions > initial Then 'the agent prefers to move towards more favourable regions
+            generator.agentlocation(j, 5) = loc(1)
+            generator.agentlocation(j, 6) = loc(2)
+            generator.agentlocation(j, 7) = loc(3)
+        ElseIf conditions = initial And conditions <> localconditions.ToArray.Min Then 'ensures that if another more favourable region is not found that the agent stays in favourable areas
+            Dim dx, dy, dz As Integer
+            Dim rangexupper As Integer = generator.agentrange(agent, 0, 1)
+            Dim rangexlower As Integer = generator.agentrange(agent, 0, 0)
+            Dim rangeyupper As Integer = generator.agentrange(agent, 1, 1)
+            Dim rangeylower As Integer = generator.agentrange(agent, 1, 0)
+            Dim rangezupper As Integer = generator.agentrange(agent, 2, 1)
+            Dim rangezlower As Integer = generator.agentrange(agent, 2, 0)
+            Do While dx > rangexupper Or dx < rangexlower Or dy > rangeyupper Or dy < rangeylower Or dz > rangezupper Or dz < rangezlower
+                dz = CInt(Math.Floor(((z + 3) - (z - 3) + 1) * Rnd())) + (z - 3)
+                dy = CInt(Math.Floor(((y + 3) - (y - 3) + 1) * Rnd())) + (y - 3)
+                dx = CInt(Math.Floor(((x + 3) - (x - 3) + 1) * Rnd())) + (x - 3)
+            Loop
+            Dim lim As Integer = 0
+            Do While generator.abiotic(agent, dx, dy, dz) < conditions And lim < 50
+                Do While dx > rangexupper Or dx < rangexlower Or dy > rangeyupper Or dy < rangeylower Or dz > rangezupper Or dz < rangezlower
+                    dz = CInt(Math.Floor(((z + 3) - (z - 3) + 1) * Rnd())) + (z - 3)
+                    dy = CInt(Math.Floor(((y + 3) - (y - 3) + 1) * Rnd())) + (y - 3)
+                    dx = CInt(Math.Floor(((x + 3) - (x - 3) + 1) * Rnd())) + (x - 3)
+                Loop
+                lim += 1
+            Loop
+            generator.agentlocation(j, 5) = dx
+            generator.agentlocation(j, 6) = dy
+            generator.agentlocation(j, 7) = dz
+        End If
     End Sub
 
     'allows turn energy to depend on the local region of the agent
@@ -3091,7 +3569,9 @@
             If generator.agentlocation(opp, 0) = opponentx And generator.agentlocation(opp, 1) = opponenty And generator.agentlocation(opp, 2) = opponentz And i <> opp Then
                 ag = generator.agentlocation(opp, 4)
                 If generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 2 Then
-                    Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call consume(opp, opponentx, opponenty, opponentz, i)
@@ -3103,7 +3583,9 @@
                     End If
 
                 ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 1 Then
-                    Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call produce(generator.agentlocation(i, 4), ag, i, opp)
@@ -3115,7 +3597,9 @@
                     End If
 
                 ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 3 Then
-                    Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp)
@@ -3128,50 +3612,58 @@
 
 
                 ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 4 Then
-                        Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
-                        If catalysispresence(i, opp) = True Then
-                            If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
-                                Call produce(generator.agentlocation(i, 4), ag, i, opp)
-                                Call consume(opp, opponentx, opponenty, opponentz, i)
-                            End If
-                        Else
-                            If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
-                                Call produce(generator.agentlocation(i, 4), ag, i, opp)
-                                Call consume(opp, opponentx, opponenty, opponentz, i)
-                            End If
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
+                    If catalysispresence(i, opp) = True Then
+                        If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
+                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call consume(opp, opponentx, opponenty, opponentz, i)
                         End If
-
-
-                    ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 5 Then
-                        Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
-                        If catalysispresence(i, opp) = True Then
-                            If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
-                                Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
-                            End If
-                        Else
-                            If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
-                                Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
-                            End If
+                    Else
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call consume(opp, opponentx, opponenty, opponentz, i)
                         End If
+                    End If
 
 
-                    ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 6 Then
-                        Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
-                        If catalysispresence(i, opp) = True Then
-                            If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
-                                Call produce(generator.agentlocation(i, 4), ag, i, opp)
-                                Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), 0)
-                            End If
-                        Else
-                            If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
-                                Call produce(generator.agentlocation(i, 4), ag, i, opp)
-                                Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), 0)
-                            End If
+                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 5 Then
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
+                    If catalysispresence(i, opp) = True Then
+                        If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
+                            Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
                         End If
+                    Else
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                            Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
+                        End If
+                    End If
 
 
-                    ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 7 Then
-                        Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
+                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 6 Then
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
+                    If catalysispresence(i, opp) = True Then
+                        If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
+                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), 0)
+                        End If
+                    Else
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), 0)
+                        End If
+                    End If
+
+
+                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 7 Then
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call produce(generator.agentlocation(i, 4), ag, i, opp)
@@ -3183,7 +3675,20 @@
                             Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
                         End If
                     End If
-
+                    'exchange
+                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 8 Then
+                    generator.interactioncount(generator.agentlocation(i, 4)) += 1
+                    generator.interactioncount(ag) += 1
+                    Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
+                    If catalysispresence(i, opp) = True Then
+                        If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
+                            Call exchange(i, opp)
+                        End If
+                    Else
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                            Call exchange(i, opp)
+                        End If
+                    End If
                 End If
             End If
         Next
@@ -3207,6 +3712,74 @@
         Next
         catalysispresence = False
     End Function
+
+    'allows for exchanges (currently for currency and product only. a more general exchange should be made possible later
+    Sub exchange(ByVal i, ByVal opp)
+        'new trading mechanism (for two items that can be traded)
+        Dim tempagenta As Decimal = 0
+        Dim tempagentb As Decimal = 0
+        Dim transfer(2) As Decimal
+        transfer(1) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 11)
+        transfer(2) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 12)
+        'MessageBox.Show(transfer(1) & vbCrLf & transfer(2))
+
+        If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
+            If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
+                tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
+            ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
+            ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
+                tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
+            ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
+                tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
+            End If
+        End If
+
+        If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
+            If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
+                tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
+            ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
+            ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
+                tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
+            ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
+                tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
+            End If
+        End If
+
+        If tempagenta > generator.agentlocation(i, 14) And tempagentb > generator.agentlocation(opp, 14) Then 'the exchange occurs
+            generator.agentlocation(i, 11) += (1 * generator.agentlocation(i, 17))
+            generator.agentlocation(i, 12) += (1 * generator.agentlocation(i, 17) * -1)
+            generator.agentlocation(opp, 11) += (1 * generator.agentlocation(opp, 17))
+            generator.agentlocation(opp, 12) += (1 * generator.agentlocation(opp, 17) * -1)
+            generator.agentlocation(i, 14) = tempagenta
+            generator.agentlocation(opp, 14) = tempagentb
+            Call trade(opp)
+        End If
+
+        If tempagenta < generator.agentlocation(i, 14) Then 'changes direction
+            generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
+        End If
+        If tempagentb < generator.agentlocation(opp, 14) Then 'changes direction
+            generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
+        End If
+    End Sub
+
+    Sub trade(ByVal opp)
+        For i = 1 To 1000
+            Dim xlow As Integer = generator.zones(i, 1)
+            Dim xup As Integer = generator.zones(i, 2)
+            Dim ylow As Integer = generator.zones(i, 3)
+            Dim yup As Integer = generator.zones(i, 4)
+            Dim zlow As Integer = generator.zones(i, 5)
+            Dim zup As Integer = generator.zones(i, 6)
+            If generator.agentlocation(opp, 0) > xlow And generator.agentlocation(opp, 0) < xup And generator.agentlocation(opp, 1) > ylow And generator.agentlocation(opp, 1) < yup And generator.agentlocation(opp, 2) > zlow And generator.agentlocation(opp, 2) < zup Then
+                'opponent agent is in this zone
+                generator.zones(i, 7) += 1 'adds 1 to the value for that zone everytime a transaction occurs in that zone
+            End If
+        Next
+        Call tradezones(opp)
+    End Sub
 
     Sub deminish(ByVal i, ByVal ix, ByVal iy, ByVal iz, ByVal opp)
 
@@ -3445,7 +4018,14 @@
     End Sub
 
     Private Sub ToolStripStatusLabel2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripStatusLabel2.Click
-        stoplabel.Text = InputBox("Enter the time limit:")
+        Dim input As String
+        input = InputBox("Enter the time limit:")
+        If IsNumeric(input) = False Then
+            MessageBox.Show("Please enter a numerical value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        stoplabel.Text = CInt(input)
     End Sub
 
     Private Sub ToolStripStatusLabel4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripStatusLabel4.Click
@@ -3530,25 +4110,33 @@
         Ratio.Show()
     End Sub
 
-
     'outputs population and energy values to a spreadsheet
     Private Sub LogDataToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LogDataToolStripMenuItem.Click
-        SaveFileDialog1.ShowDialog()
-        oExcel = CreateObject("Excel.Application")
-        oBook = oExcel.Workbooks.Add
-        oSheet = oBook.Worksheets(1)
-        oSheet2 = oBook.Worksheets(2)
-        oSheet.name = "Population"
-        oSheet2.name = "Energy"
+        Try
+            SaveFileDialog1.ShowDialog()
+            oExcel = CreateObject("Excel.Application")
+            oExcel.sheetsinnewworkbook = 3
+            oBook = oExcel.Workbooks.Add
+            oSheet = oBook.Worksheets(1)
+            oSheet2 = oBook.Worksheets(2)
+            oSheet3 = oBook.worksheets(3)
+            oSheet.name = "Population"
+            oSheet2.name = "Energy"
+            oSheet3.name = "Interactions"
 
-        oSheet.Cells(1, 1) = "Tick"
-        oSheet2.Cells(1, 1) = "Tick"
-        For i = 1 To agent
-            oSheet.Cells(1, i + 1) = generator.agentname(i)
-            oSheet2.Cells(1, i + 1) = generator.agentname(i)
-        Next
+            oSheet.Cells(1, 1) = "Tick"
+            oSheet2.Cells(1, 1) = "Tick"
+            oSheet3.cells(1, 1) = "Tick"
+            For i = 1 To agent
+                oSheet.Cells(1, i + 1) = generator.agentname(i)
+                oSheet2.Cells(1, i + 1) = generator.agentname(i)
+                oSheet3.Cells(1, i + 1) = generator.agentname(i)
+            Next
 
-        logged = True
+            logged = True
+        Catch ex As Exception
+            MessageBox.Show("Please ensure that Excel creates 2 or more worksheets when a new spreadsheet is created." & vbCrLf & vbCrLf & ex.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
     Private Sub FoodWebToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles collisionToolStripMenuItem.Click
@@ -3584,6 +4172,14 @@
             tempreservoir(1) = generator.agentreservoir(index, 1)
             tempreservoir(2) = generator.agentreservoir(index, 2)
 
+            Dim tempsellerbuyer As Integer = generator.agentlocation(index, 13)
+            Dim temputility As Decimal = generator.agentlocation(index, 14)
+            Dim tempcurrency As Decimal = generator.agentlocation(index, 11)
+            Dim tempproduct As Decimal = generator.agentlocation(index, 12)
+            Dim tempprice As Decimal = generator.agentlocation(index, 15)
+            Dim temp16 As Decimal = generator.agentlocation(index, 16)
+            Dim temp17 As Decimal = generator.agentlocation(index, 17)
+
             Dim tempdx As Integer = generator.agentlocation(index, 5)
             Dim tempdy As Integer = generator.agentlocation(index, 6)
             Dim tempdz As Integer = generator.agentlocation(index, 7)
@@ -3609,6 +4205,14 @@
                 generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
                 generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
                 generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
+
+                generator.agentlocation(previousposition + 1, 11) = generator.agentlocation(previousposition, 11)
+                generator.agentlocation(previousposition + 1, 12) = generator.agentlocation(previousposition, 12)
+                generator.agentlocation(previousposition + 1, 13) = generator.agentlocation(previousposition, 13)
+                generator.agentlocation(previousposition + 1, 14) = generator.agentlocation(previousposition, 14)
+                generator.agentlocation(previousposition + 1, 15) = generator.agentlocation(previousposition, 15)
+                generator.agentlocation(previousposition + 1, 16) = generator.agentlocation(previousposition, 16)
+                generator.agentlocation(previousposition + 1, 17) = generator.agentlocation(previousposition, 17)
 
                 'makes sure the new agent is static if the previous one was static
                 If generator.staticagent(previousposition) = 2 Then
@@ -3650,19 +4254,25 @@
 
             generator.agentlocation(previousposition + 1, 2) = tempz
             generator.agentlocation(previousposition + 1, 0) = tempx
-                generator.agentlocation(previousposition + 1, 1) = tempy
-                generator.agentlocation(previousposition + 1, 3) = tempd
-                generator.agentlocation(previousposition + 1, 4) = tempa
+            generator.agentlocation(previousposition + 1, 1) = tempy
+            generator.agentlocation(previousposition + 1, 3) = tempd
+            generator.agentlocation(previousposition + 1, 4) = tempa
 
-                generator.agentlocation(previousposition + 1, 5) = tempdx
-                generator.agentlocation(previousposition + 1, 6) = tempdy
-                generator.agentlocation(previousposition + 1, 7) = tempdz
+            generator.agentlocation(previousposition + 1, 5) = tempdx
+            generator.agentlocation(previousposition + 1, 6) = tempdy
+            generator.agentlocation(previousposition + 1, 7) = tempdz
 
-                generator.agentlocation(previousposition + 1, 8) = tempenergy
-                generator.agentlocation(previousposition + 1, 9) = tempage
-                generator.agentlocation(previousposition + 1, 10) = tempasr
+            generator.agentlocation(previousposition + 1, 8) = tempenergy
+            generator.agentlocation(previousposition + 1, 9) = tempage
+            generator.agentlocation(previousposition + 1, 10) = tempasr
 
-
+            generator.agentlocation(previousposition + 1, 11) = tempcurrency
+            generator.agentlocation(previousposition + 1, 12) = tempproduct
+            generator.agentlocation(previousposition + 1, 13) = tempsellerbuyer
+            generator.agentlocation(previousposition + 1, 14) = temputility
+            generator.agentlocation(previousposition + 1, 15) = tempprice
+            generator.agentlocation(previousposition + 1, 16) = temp16
+            generator.agentlocation(previousposition + 1, 17) = temp17
         Next
     End Sub
 
@@ -3679,6 +4289,14 @@
             tempreservoir(1) = generator.agentreservoir(index, 1)
             tempreservoir(2) = generator.agentreservoir(index, 2)
 
+            Dim tempsellerbuyer As Integer = generator.agentlocation(index, 13)
+            Dim temputility As Decimal = generator.agentlocation(index, 14)
+            Dim tempcurrency As Decimal = generator.agentlocation(index, 11)
+            Dim tempproduct As Decimal = generator.agentlocation(index, 12)
+            Dim tempprice As Decimal = generator.agentlocation(index, 15)
+            Dim temp16 As Decimal = generator.agentlocation(index, 16)
+            Dim temp17 As Decimal = generator.agentlocation(index, 17)
+
             Dim tempdx As Integer = generator.agentlocation(index, 5)
             Dim tempdy As Integer = generator.agentlocation(index, 6)
             Dim tempdz As Integer = generator.agentlocation(index, 7)
@@ -3689,99 +4307,6 @@
 
             Dim previousposition As Integer = index - 1
             Do While tempy > generator.agentlocation(previousposition, 1) And previousposition >= 1
-
-                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
-                    generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
-                    generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
-                    generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
-                    generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
-
-                    generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
-                    generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
-                    generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
-
-                    generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
-                    generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
-                    generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
-
-                If generator.staticagent(previousposition) = 2 Then
-                    generator.staticagent(previousposition + 1) = 2
-                ElseIf generator.staticagent(previousposition) = 0 Then
-                    generator.staticagent(previousposition + 1) = 0
-                End If
-
-                If generator.agentreservoir(previousposition, 0) = 2 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 2
-                    generator.agentreservoir(previousposition + 1, 1) = generator.agentreservoir(previousposition, 1)
-                    generator.agentreservoir(previousposition + 1, 2) = generator.agentreservoir(previousposition, 2)
-                ElseIf generator.agentreservoir(previousposition, 0) = 0 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 0
-                    generator.agentreservoir(previousposition + 1, 1) = 0
-                    generator.agentreservoir(previousposition + 1, 2) = 0
-                End If
-
-                previousposition = previousposition - 1
-
-
-            Loop
-
-            If tempstatic = 2 Then
-                generator.staticagent(previousposition + 1) = 2
-            ElseIf tempstatic = 0 Then
-                generator.staticagent(previousposition + 1) = 0
-            End If
-
-            If tempreservoir(0) = 2 Then
-                generator.agentreservoir(previousposition + 1, 0) = 2
-                generator.agentreservoir(previousposition + 1, 1) = tempreservoir(1)
-                generator.agentreservoir(previousposition + 1, 2) = tempreservoir(2)
-            ElseIf tempreservoir(0) = 0 Then
-                generator.agentreservoir(previousposition + 1, 0) = 0
-                generator.agentreservoir(previousposition + 1, 1) = 0
-                generator.agentreservoir(previousposition + 1, 2) = 0
-            End If
-
-            generator.agentlocation(previousposition + 1, 2) = tempz
-                generator.agentlocation(previousposition + 1, 0) = tempx
-                generator.agentlocation(previousposition + 1, 1) = tempy
-                generator.agentlocation(previousposition + 1, 3) = tempd
-                generator.agentlocation(previousposition + 1, 4) = tempa
-
-                generator.agentlocation(previousposition + 1, 5) = tempdx
-                generator.agentlocation(previousposition + 1, 6) = tempdy
-                generator.agentlocation(previousposition + 1, 7) = tempdz
-
-                generator.agentlocation(previousposition + 1, 8) = tempenergy
-                generator.agentlocation(previousposition + 1, 9) = tempage
-                generator.agentlocation(previousposition + 1, 10) = tempasr
-
-
-        Next
-    End Sub
-
-    Sub sortzy()
-        For index = 2 To total + 1
-            Dim tempz As Integer = generator.agentlocation(index, 2)
-            Dim tempx As Integer = generator.agentlocation(index, 0)
-            Dim tempy As Integer = generator.agentlocation(index, 1)
-            Dim tempd As Integer = generator.agentlocation(index, 3)
-            Dim tempa As Integer = generator.agentlocation(index, 4)
-            Dim tempstatic As Integer = generator.staticagent(index)
-            Dim tempreservoir(2) As Integer
-            tempreservoir(0) = generator.agentreservoir(index, 0)
-            tempreservoir(1) = generator.agentreservoir(index, 1)
-            tempreservoir(2) = generator.agentreservoir(index, 2)
-
-            Dim tempdx As Integer = generator.agentlocation(index, 5)
-            Dim tempdy As Integer = generator.agentlocation(index, 6)
-            Dim tempdz As Integer = generator.agentlocation(index, 7)
-
-            Dim tempenergy As Integer = generator.agentlocation(index, 8)
-            Dim tempage As Integer = generator.agentlocation(index, 9)
-            Dim tempasr As Integer = generator.agentlocation(index, 10)
-
-            Dim previousposition As Integer = index - 1
-            Do While tempx > generator.agentlocation(previousposition, 0) And previousposition >= 1
 
                 generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
                 generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
@@ -3796,6 +4321,14 @@
                 generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
                 generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
                 generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
+
+                generator.agentlocation(previousposition + 1, 11) = generator.agentlocation(previousposition, 11)
+                generator.agentlocation(previousposition + 1, 12) = generator.agentlocation(previousposition, 12)
+                generator.agentlocation(previousposition + 1, 13) = generator.agentlocation(previousposition, 13)
+                generator.agentlocation(previousposition + 1, 14) = generator.agentlocation(previousposition, 14)
+                generator.agentlocation(previousposition + 1, 15) = generator.agentlocation(previousposition, 15)
+                generator.agentlocation(previousposition + 1, 16) = generator.agentlocation(previousposition, 16)
+                generator.agentlocation(previousposition + 1, 17) = generator.agentlocation(previousposition, 17)
 
                 If generator.staticagent(previousposition) = 2 Then
                     generator.staticagent(previousposition + 1) = 2
@@ -3848,6 +4381,128 @@
             generator.agentlocation(previousposition + 1, 9) = tempage
             generator.agentlocation(previousposition + 1, 10) = tempasr
 
+            generator.agentlocation(previousposition + 1, 11) = tempcurrency
+            generator.agentlocation(previousposition + 1, 12) = tempproduct
+            generator.agentlocation(previousposition + 1, 13) = tempsellerbuyer
+            generator.agentlocation(previousposition + 1, 14) = temputility
+            generator.agentlocation(previousposition + 1, 15) = tempprice
+            generator.agentlocation(previousposition + 1, 16) = temp16
+            generator.agentlocation(previousposition + 1, 17) = temp17
+        Next
+    End Sub
+
+    Sub sortzy()
+        For index = 2 To total + 1
+            Dim tempz As Integer = generator.agentlocation(index, 2)
+            Dim tempx As Integer = generator.agentlocation(index, 0)
+            Dim tempy As Integer = generator.agentlocation(index, 1)
+            Dim tempd As Integer = generator.agentlocation(index, 3)
+            Dim tempa As Integer = generator.agentlocation(index, 4)
+            Dim tempstatic As Integer = generator.staticagent(index)
+            Dim tempreservoir(2) As Integer
+            tempreservoir(0) = generator.agentreservoir(index, 0)
+            tempreservoir(1) = generator.agentreservoir(index, 1)
+            tempreservoir(2) = generator.agentreservoir(index, 2)
+
+            Dim tempsellerbuyer As Integer = generator.agentlocation(index, 13)
+            Dim temputility As Decimal = generator.agentlocation(index, 14)
+            Dim tempcurrency As Decimal = generator.agentlocation(index, 11)
+            Dim tempproduct As Decimal = generator.agentlocation(index, 12)
+            Dim tempprice As Decimal = generator.agentlocation(index, 15)
+            Dim temp16 As Decimal = generator.agentlocation(index, 16)
+            Dim temp17 As Decimal = generator.agentlocation(index, 17)
+
+            Dim tempdx As Integer = generator.agentlocation(index, 5)
+            Dim tempdy As Integer = generator.agentlocation(index, 6)
+            Dim tempdz As Integer = generator.agentlocation(index, 7)
+
+            Dim tempenergy As Integer = generator.agentlocation(index, 8)
+            Dim tempage As Integer = generator.agentlocation(index, 9)
+            Dim tempasr As Integer = generator.agentlocation(index, 10)
+
+            Dim previousposition As Integer = index - 1
+            Do While tempx > generator.agentlocation(previousposition, 0) And previousposition >= 1
+
+                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
+                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
+                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
+                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
+                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
+
+                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
+                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
+                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
+
+                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
+                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
+                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
+
+                generator.agentlocation(previousposition + 1, 11) = generator.agentlocation(previousposition, 11)
+                generator.agentlocation(previousposition + 1, 12) = generator.agentlocation(previousposition, 12)
+                generator.agentlocation(previousposition + 1, 13) = generator.agentlocation(previousposition, 13)
+                generator.agentlocation(previousposition + 1, 14) = generator.agentlocation(previousposition, 14)
+                generator.agentlocation(previousposition + 1, 15) = generator.agentlocation(previousposition, 15)
+                generator.agentlocation(previousposition + 1, 16) = generator.agentlocation(previousposition, 16)
+                generator.agentlocation(previousposition + 1, 17) = generator.agentlocation(previousposition, 17)
+
+                If generator.staticagent(previousposition) = 2 Then
+                    generator.staticagent(previousposition + 1) = 2
+                ElseIf generator.staticagent(previousposition) = 0 Then
+                    generator.staticagent(previousposition + 1) = 0
+                End If
+
+                If generator.agentreservoir(previousposition, 0) = 2 Then
+                    generator.agentreservoir(previousposition + 1, 0) = 2
+                    generator.agentreservoir(previousposition + 1, 1) = generator.agentreservoir(previousposition, 1)
+                    generator.agentreservoir(previousposition + 1, 2) = generator.agentreservoir(previousposition, 2)
+                ElseIf generator.agentreservoir(previousposition, 0) = 0 Then
+                    generator.agentreservoir(previousposition + 1, 0) = 0
+                    generator.agentreservoir(previousposition + 1, 1) = 0
+                    generator.agentreservoir(previousposition + 1, 2) = 0
+                End If
+
+                previousposition = previousposition - 1
+
+
+            Loop
+
+            If tempstatic = 2 Then
+                generator.staticagent(previousposition + 1) = 2
+            ElseIf tempstatic = 0 Then
+                generator.staticagent(previousposition + 1) = 0
+            End If
+
+            If tempreservoir(0) = 2 Then
+                generator.agentreservoir(previousposition + 1, 0) = 2
+                generator.agentreservoir(previousposition + 1, 1) = tempreservoir(1)
+                generator.agentreservoir(previousposition + 1, 2) = tempreservoir(2)
+            ElseIf tempreservoir(0) = 0 Then
+                generator.agentreservoir(previousposition + 1, 0) = 0
+                generator.agentreservoir(previousposition + 1, 1) = 0
+                generator.agentreservoir(previousposition + 1, 2) = 0
+            End If
+
+            generator.agentlocation(previousposition + 1, 2) = tempz
+            generator.agentlocation(previousposition + 1, 0) = tempx
+            generator.agentlocation(previousposition + 1, 1) = tempy
+            generator.agentlocation(previousposition + 1, 3) = tempd
+            generator.agentlocation(previousposition + 1, 4) = tempa
+
+            generator.agentlocation(previousposition + 1, 5) = tempdx
+            generator.agentlocation(previousposition + 1, 6) = tempdy
+            generator.agentlocation(previousposition + 1, 7) = tempdz
+
+            generator.agentlocation(previousposition + 1, 8) = tempenergy
+            generator.agentlocation(previousposition + 1, 9) = tempage
+            generator.agentlocation(previousposition + 1, 10) = tempasr
+
+            generator.agentlocation(previousposition + 1, 11) = tempcurrency
+            generator.agentlocation(previousposition + 1, 12) = tempproduct
+            generator.agentlocation(previousposition + 1, 13) = tempsellerbuyer
+            generator.agentlocation(previousposition + 1, 14) = temputility
+            generator.agentlocation(previousposition + 1, 15) = tempprice
+            generator.agentlocation(previousposition + 1, 16) = temp16
+            generator.agentlocation(previousposition + 1, 17) = temp17
         Next
     End Sub
 
@@ -3887,7 +4542,7 @@
         Next
     End Sub
 
-    'doesn't save agent location
+    'saves agent location
     Private Sub SaveProjectToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveProjectToolStripMenuItem.Click
         save = ""
         save = xn & "_" & yn & "_" & zn & "_" & agent & "_"
@@ -3996,6 +4651,33 @@
             save = save & generator.staticagentid(i) & "_"
         Next
 
+        'saves reservoirs (issue saving reservoirs that are partially or completely filled)
+        For i = 1 To total
+            save = save & generator.agentreservoir(i, 0) & "_"
+        Next
+
+        'saves the capacity of reservoirs
+        For i = 1 To total
+            save = save & generator.agentreservoir(i, 1) & "_"
+        Next
+
+        'saves the current level in a reservoir
+        For i = 1 To total
+            save = save & generator.agentreservoir(i, 2) & "_"
+        Next
+
+        For i = 1 To agent
+            save = save & generator.reservoiragentid(i, 0) & "_"
+        Next
+
+        For i = 1 To agent
+            save = save & generator.reservoiragentid(i, 1) & "_"
+        Next
+
+        For i = 1 To agent
+            save = save & generator.reservoiragentid(i, 2) & "_"
+        Next
+
         save = save & "|"
         SaveFilepro.ShowDialog()
     End Sub
@@ -4080,6 +4762,9 @@
         AIToolStripMenuItem.Enabled = True
         collisionToolStripMenuItem.Enabled = True
 
+        AddAgentsToolStripMenuItem.Enabled = True
+        CatalysisToolStripMenuItem.Enabled = True
+        AbioticFactorsToolStripMenuItem.Enabled = True
 
 
         '....
@@ -4213,72 +4898,102 @@
             generator.staticagentid(i) = import(lastimport)
         Next
 
+        For i = 1 To total
+            lastimport += 1
+            generator.agentreservoir(i, 0) = import(lastimport)
+        Next
+
+        For i = 1 To total
+            lastimport += 1
+            generator.agentreservoir(i, 1) = import(lastimport)
+        Next
+
+        For i = 1 To total
+            lastimport += 1
+            generator.agentreservoir(i, 2) = import(lastimport)
+        Next
+
+        For i = 1 To agent
+            lastimport += 1
+            generator.reservoiragentid(i, 0) = import(lastimport)
+        Next
+
+        For i = 1 To agent
+            lastimport += 1
+            generator.reservoiragentid(i, 1) = import(lastimport)
+        Next
+
+        For i = 1 To agent
+            lastimport += 1
+            generator.reservoiragentid(i, 2) = import(lastimport)
+        Next
+
         '........applying the setting..............
         Randomize()
         total = 0
 
         Dim number As Integer
-            For a = 1 To agent
-                Dim m As Integer = 0
-                For i = 1 To generator.agentcount(a)
-                    number = number + 1
-                    Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
-                    Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
-                    Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
+        For a = 1 To agent
+            Dim m As Integer = 0
+            For i = 1 To generator.agentcount(a)
+                number = number + 1
+                Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
+                Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
+                Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
 
-                    Dim dx As Integer
-                    Dim dy As Integer
-                    Dim dz As Integer
+                Dim dx As Integer
+                Dim dy As Integer
+                Dim dz As Integer
 
-                    Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
-                    Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
-                    Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
-                    Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
-                    Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
-                    Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
+                Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
+                Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
+                Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
+                Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
+                Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
+                Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
 
-                    dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
-                    dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-                    dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
-
-
-                    Do While generator.occupied(x, y, z) = True
-                        x = CInt(Math.Floor((xn) * Rnd())) + 1
-                        y = CInt(Math.Floor((yn) * Rnd())) + 1
-                        z = CInt(Math.Floor((zn) * Rnd())) + 1
-                    Loop
+                dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
 
 
-                    generator.occupied(x, y, z) = True
+                Do While generator.occupied(x, y, z) = True
+                    x = CInt(Math.Floor((xn) * Rnd())) + 1
+                    y = CInt(Math.Floor((yn) * Rnd())) + 1
+                    z = CInt(Math.Floor((zn) * Rnd())) + 1
+                Loop
 
-                    Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                    generator.agentlocation(number, 0) = x
-                    generator.agentlocation(number, 1) = y
-                    generator.agentlocation(number, 2) = z
-                    generator.agentlocation(number, 3) = d
-                    generator.agentlocation(number, 4) = a
-                    generator.agentlocation(number, 5) = dx
-                    generator.agentlocation(number, 6) = dy
-                    generator.agentlocation(number, 7) = dz
-                    generator.agentlocation(number, 8) = generator.initialenergy(a)
-                    generator.agentlocation(number, 9) = 0
-                    generator.agentlocation(number, 10) = 0
 
-                    For j = 1 To tot
-                        If agloc(j, 3) = a Then
-                            If j > m Then
-                                m = j
-                                generator.agentlocation(number, 0) = agloc(j, 0)
-                                generator.agentlocation(number, 1) = agloc(j, 1)
-                                generator.agentlocation(number, 2) = agloc(j, 2)
-                                generator.agentlocation(number, 3) = agloc(j, 4)
-                                Exit For
-                            End If
+                generator.occupied(x, y, z) = True
+
+                Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+                generator.agentlocation(number, 0) = x
+                generator.agentlocation(number, 1) = y
+                generator.agentlocation(number, 2) = z
+                generator.agentlocation(number, 3) = d
+                generator.agentlocation(number, 4) = a
+                generator.agentlocation(number, 5) = dx
+                generator.agentlocation(number, 6) = dy
+                generator.agentlocation(number, 7) = dz
+                generator.agentlocation(number, 8) = generator.initialenergy(a)
+                generator.agentlocation(number, 9) = 0
+                generator.agentlocation(number, 10) = 0
+
+                For j = 1 To tot
+                    If agloc(j, 3) = a Then
+                        If j > m Then
+                            m = j
+                            generator.agentlocation(number, 0) = agloc(j, 0)
+                            generator.agentlocation(number, 1) = agloc(j, 1)
+                            generator.agentlocation(number, 2) = agloc(j, 2)
+                            generator.agentlocation(number, 3) = agloc(j, 4)
+                            Exit For
                         End If
-                    Next
-
+                    End If
                 Next
+
             Next
+        Next
 
         '...........................................................................................................
 
@@ -4338,7 +5053,11 @@
         Next
 
 
-
+        For i = 1 To agent
+            For j = 1 To agent
+                generator.interactionprobability(i, j) = 100
+            Next
+        Next
 
 
 
@@ -4376,7 +5095,7 @@
     End Sub
 
     Private Sub AbioticFactorsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AbioticFactorsToolStripMenuItem.Click
-        frmAbiotic.Show()
+        'frmAbiotic.Show()
     End Sub
 
     Private Sub reservoirrelase(ByVal i As Integer)
@@ -4549,5 +5268,31 @@
 
     Private Sub InRangeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InRangeToolStripMenuItem.Click
         frmAdd.Show()
+    End Sub
+
+    Private Sub DataOnExchangesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DataOnExchangesToolStripMenuItem.Click
+        exchangedata.Show()
+    End Sub
+
+    Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
+        MessageBox.Show("Cobweb 3D" & vbCrLf & "Version: 1.2.5" & vbCrLf & "Release Date: Nov. 28, 2016", "About", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+
+    Private Sub AbioticFactorsEnergyChangeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AbioticFactorsEnergyChangeToolStripMenuItem.Click
+        frmAbiotic.Show()
+    End Sub
+
+    Private Sub AbioticFactorsNonrandomMovementToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AbioticFactorsNonrandomMovementToolStripMenuItem.Click
+        frmAbioticMovement.Show()
+    End Sub
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        goal(0) = 9
+        goal(1) = 9
+        goal(2) = 4
+    End Sub
+
+    Private Sub EconomicZonesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EconomicZonesToolStripMenuItem.Click
+        Form11.Show()
     End Sub
 End Class
