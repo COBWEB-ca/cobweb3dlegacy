@@ -265,7 +265,7 @@ Partial Class utility
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(208, 26)
         Me.Button1.TabIndex = 10
-        Me.Button1.Text = "Close"
+        Me.Button1.Text = "Apply"
         Me.Button1.UseVisualStyleBackColor = True
         '
         'utility

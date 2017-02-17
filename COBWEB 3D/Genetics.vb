@@ -24,6 +24,12 @@
         If IsNumeric(chromosometext.Text) Then
             chromosomelabel2.Enabled = True
             chromosomecombo.Enabled = True
+            TextBox7.Enabled = True
+            TextBox6.Enabled = True
+            Button5.Enabled = True
+            Button6.Enabled = True
+            Label16.Enabled = True
+            Label14.Enabled = True
             chromosomecombo.Items.Clear()
             Dim chromosome As Integer = chromosometext.Text
             For i = 1 To chromosome
@@ -32,9 +38,33 @@
         ElseIf chromosometext.Text = "" Then
             chromosomelabel2.Enabled = False
             chromosomecombo.Enabled = False
+            TextBox7.Enabled = False
+            TextBox6.Enabled = False
+            Button5.Enabled = False
+            Button6.Enabled = False
+            Label16.Enabled = False
+            Label14.Enabled = False
         Else
             MsgBox("Please enter numbers only")
             chromosometext.Text = ""
+        End If
+    End Sub
+
+    Private Sub TextBox6_TextChanged(sender As Object, e As EventArgs) Handles TextBox6.TextChanged
+        If IsNumeric(TextBox6.Text) Then
+            If CInt(TextBox6.Text) > 0 Then
+                ComboBox3.Enabled = True
+                TextBox9.Enabled = True
+                For i = 1 To CInt(TextBox6.Text)
+                    ComboBox3.Items.Add("Gene " & i)
+                Next
+            Else
+                ComboBox3.Enabled = False
+                TextBox9.Enabled = False
+            End If
+        Else
+            ComboBox3.Enabled = False
+            TextBox9.Enabled = False
         End If
     End Sub
 End Class

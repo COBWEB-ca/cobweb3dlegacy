@@ -44,17 +44,25 @@ Partial Class frmexchange
         Me.TextBox6 = New System.Windows.Forms.TextBox()
         Me.ListBox3 = New System.Windows.Forms.ListBox()
         Me.GroupBox7 = New System.Windows.Forms.GroupBox()
+        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+        Me.TextBox5 = New System.Windows.Forms.TextBox()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.TextBox2 = New System.Windows.Forms.TextBox()
+        Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.TextBox11 = New System.Windows.Forms.TextBox()
         Me.Label14 = New System.Windows.Forms.Label()
         Me.TextBox12 = New System.Windows.Forms.TextBox()
         Me.Label15 = New System.Windows.Forms.Label()
         Me.Button2 = New System.Windows.Forms.Button()
-        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.GroupBox5.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
         Me.GroupBox7.SuspendLayout()
+        Me.GroupBox1.SuspendLayout()
         Me.SuspendLayout()
         '
         'TextBox3
@@ -181,7 +189,7 @@ Partial Class frmexchange
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(348, 159)
+        Me.Button1.Location = New System.Drawing.Point(348, 241)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(142, 37)
         Me.Button1.TabIndex = 15
@@ -257,17 +265,94 @@ Partial Class frmexchange
         '
         'GroupBox7
         '
-        Me.GroupBox7.Controls.Add(Me.CheckBox1)
+        Me.GroupBox7.Controls.Add(Me.GroupBox1)
         Me.GroupBox7.Controls.Add(Me.TextBox11)
         Me.GroupBox7.Controls.Add(Me.Label14)
         Me.GroupBox7.Controls.Add(Me.TextBox12)
         Me.GroupBox7.Controls.Add(Me.Label15)
         Me.GroupBox7.Location = New System.Drawing.Point(12, 93)
         Me.GroupBox7.Name = "GroupBox7"
-        Me.GroupBox7.Size = New System.Drawing.Size(330, 99)
+        Me.GroupBox7.Size = New System.Drawing.Size(330, 185)
         Me.GroupBox7.TabIndex = 26
         Me.GroupBox7.TabStop = False
         Me.GroupBox7.Text = "Transfer"
+        '
+        'GroupBox1
+        '
+        Me.GroupBox1.Controls.Add(Me.Label1)
+        Me.GroupBox1.Controls.Add(Me.Label4)
+        Me.GroupBox1.Controls.Add(Me.CheckBox1)
+        Me.GroupBox1.Controls.Add(Me.TextBox5)
+        Me.GroupBox1.Controls.Add(Me.Label3)
+        Me.GroupBox1.Controls.Add(Me.TextBox2)
+        Me.GroupBox1.Controls.Add(Me.TextBox1)
+        Me.GroupBox1.Location = New System.Drawing.Point(6, 66)
+        Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Size = New System.Drawing.Size(200, 119)
+        Me.GroupBox1.TabIndex = 35
+        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.Text = "Dynamic Quantities"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(6, 43)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(63, 13)
+        Me.Label1.TabIndex = 32
+        Me.Label1.Text = "Lower Limit:"
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(6, 95)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(57, 13)
+        Me.Label4.TabIndex = 34
+        Me.Label4.Text = "Increment:"
+        '
+        'CheckBox1
+        '
+        Me.CheckBox1.AutoSize = True
+        Me.CheckBox1.Location = New System.Drawing.Point(6, 19)
+        Me.CheckBox1.Name = "CheckBox1"
+        Me.CheckBox1.Size = New System.Drawing.Size(153, 17)
+        Me.CheckBox1.TabIndex = 28
+        Me.CheckBox1.Text = "Enable Dynamic Quantities"
+        Me.CheckBox1.UseVisualStyleBackColor = True
+        '
+        'TextBox5
+        '
+        Me.TextBox5.Location = New System.Drawing.Point(117, 92)
+        Me.TextBox5.Name = "TextBox5"
+        Me.TextBox5.Size = New System.Drawing.Size(77, 20)
+        Me.TextBox5.TabIndex = 31
+        Me.TextBox5.Text = "1"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(6, 69)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(63, 13)
+        Me.Label3.TabIndex = 33
+        Me.Label3.Text = "Upper Limit:"
+        '
+        'TextBox2
+        '
+        Me.TextBox2.Location = New System.Drawing.Point(117, 66)
+        Me.TextBox2.Name = "TextBox2"
+        Me.TextBox2.Size = New System.Drawing.Size(77, 20)
+        Me.TextBox2.TabIndex = 30
+        Me.TextBox2.Text = "1"
+        '
+        'TextBox1
+        '
+        Me.TextBox1.Location = New System.Drawing.Point(117, 40)
+        Me.TextBox1.Name = "TextBox1"
+        Me.TextBox1.Size = New System.Drawing.Size(77, 20)
+        Me.TextBox1.TabIndex = 29
+        Me.TextBox1.Text = "1"
         '
         'TextBox11
         '
@@ -305,28 +390,18 @@ Partial Class frmexchange
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(536, 159)
+        Me.Button2.Location = New System.Drawing.Point(543, 241)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(142, 37)
         Me.Button2.TabIndex = 27
         Me.Button2.Text = "Cancel"
         Me.Button2.UseVisualStyleBackColor = True
         '
-        'CheckBox1
-        '
-        Me.CheckBox1.AutoSize = True
-        Me.CheckBox1.Location = New System.Drawing.Point(9, 66)
-        Me.CheckBox1.Name = "CheckBox1"
-        Me.CheckBox1.Size = New System.Drawing.Size(117, 17)
-        Me.CheckBox1.TabIndex = 28
-        Me.CheckBox1.Text = "Dynamic Quantities"
-        Me.CheckBox1.UseVisualStyleBackColor = True
-        '
         'frmexchange
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(689, 204)
+        Me.ClientSize = New System.Drawing.Size(689, 282)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.GroupBox7)
         Me.Controls.Add(Me.GroupBox4)
@@ -345,6 +420,8 @@ Partial Class frmexchange
         Me.GroupBox4.PerformLayout()
         Me.GroupBox7.ResumeLayout(False)
         Me.GroupBox7.PerformLayout()
+        Me.GroupBox1.ResumeLayout(False)
+        Me.GroupBox1.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -380,4 +457,11 @@ Partial Class frmexchange
     Friend WithEvents ComboBox1 As ComboBox
     Friend WithEvents Button2 As Button
     Friend WithEvents CheckBox1 As CheckBox
+    Friend WithEvents TextBox5 As TextBox
+    Friend WithEvents TextBox2 As TextBox
+    Friend WithEvents TextBox1 As TextBox
+    Friend WithEvents Label1 As Label
+    Friend WithEvents Label4 As Label
+    Friend WithEvents Label3 As Label
+    Friend WithEvents GroupBox1 As GroupBox
 End Class

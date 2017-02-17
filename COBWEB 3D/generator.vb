@@ -61,7 +61,7 @@
     Public reservoirchange(Form1.agent, Form1.agent, 1) As Integer
     Public reservoiragentreleased(Form1.agent, Form1.agent, 8) As Decimal
 
-    Public product(Form1.agent, Form1.agent, 13) As String
+    Public product(Form1.agent, Form1.agent, 16) As String
     Public exchange(Form1.agent, Form1.agent, 100, 10) As Decimal
     Public exchangenames(Form1.agent, Form1.agent, 100) As String
     Public agentproduct(Form1.total, 100, 2) As Decimal

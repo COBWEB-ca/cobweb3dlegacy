@@ -43,6 +43,9 @@
 
         generator.product(Form5.holdera, Form5.holderb, 11) = CDec(TextBox12.Text)
         generator.product(Form5.holdera, Form5.holderb, 12) = CDec(TextBox11.Text)
+        generator.product(Form5.holdera, Form5.holderb, 16) = CInt(TextBox1.Text)
+        generator.product(Form5.holdera, Form5.holderb, 14) = CInt(TextBox2.Text)
+        generator.product(Form5.holdera, Form5.holderb, 15) = CInt(TextBox5.Text)
 
         Form5.Show()
         Me.Close()
@@ -61,6 +64,29 @@
             generator.product(Form5.holdera, Form5.holderb, 13) = 2
         ElseIf checkbox1.checked = False Then
             generator.product(Form5.holdera, Form5.holderb, 13) = 0
+        End If
+    End Sub
+
+    Private Sub TextBox2_TextChanged(sender As Object, e As EventArgs) Handles TextBox2.TextChanged
+        If IsNumeric(TextBox2.Text) Then
+            generator.product(Form5.holdera, Form5.holderb, 14) = CInt(TextBox2.Text)
+        End If
+    End Sub
+
+    Private Sub TextBox5_TextChanged(sender As Object, e As EventArgs) Handles TextBox5.TextChanged
+        If IsNumeric(TextBox5.Text) Then
+            generator.product(Form5.holdera, Form5.holderb, 15) = CInt(TextBox5.Text)
+        End If
+    End Sub
+
+    Private Sub TextBox11_TextChanged(sender As Object, e As EventArgs) Handles TextBox11.TextChanged
+        TextBox1.Text = TextBox11.Text
+        TextBox2.Text = CInt(TextBox11.Text) + 10
+    End Sub
+
+    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
+        If IsNumeric(TextBox1.Text) Then
+            generator.product(Form5.holdera, Form5.holderb, 16) = CInt(TextBox1.Text)
         End If
     End Sub
 End Class

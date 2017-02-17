@@ -3718,11 +3718,14 @@
         'new trading mechanism (for two items that can be traded)
         Dim tempagenta As Decimal = 0
         Dim tempagentb As Decimal = 0
-        Dim transfer(3) As Decimal
+        Dim transfer(6) As Decimal
         transfer(1) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 11)
         transfer(2) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 12)
         transfer(3) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 13) '0 is the default, 2 indicates a dynamic quantity
-        'MessageBox.Show(transfer(1) & vbCrLf & transfer(2))
+        transfer(4) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 14) 'the upper limit of the quantity of y that can be exchanged
+        transfer(5) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 15) 'the values by which quantity of y is incremented
+        transfer(6) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 16) 'the minimum quantity of y that can be exchanged
+        'MessageBox.Show(transfer(4) & vbCrLf & transfer(5) & vbCrLf & transfer(6))
 
         If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
             If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
@@ -3762,73 +3765,90 @@
             generator.agentlocation(opp, 19) = transfer(2) * generator.agentlocation(opp, 17) * -1
         End If
 
+
         If transfer(3) = 2 Then
-            Dim max(3) As Decimal
-            max(1) = generator.agentlocation(i, 14)
-            max(2) = generator.agentlocation(opp, 14)
+                Dim max(3) As Decimal
+                max(1) = generator.agentlocation(i, 14)
+                max(2) = generator.agentlocation(opp, 14)
+                Dim directionchange As Boolean = False
 
-            For prices = 1 To 20 'if an exchange is not possible at the origianl relative price, then the quantity of the second good traded is increased until an exchange becomes favourable
-                'the quantity of the second good is increased; the quantity of the first good stays constant
-                tempagenta = 0
-                tempagentb = 0
-
-                If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
-                    If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
-                        tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
-                    ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
-                        tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
-                    ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
-                        tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
-                    ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
-                        tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
+                For quantityY = transfer(6) To transfer(4) Step transfer(5) 'if an exchange is not possible at the original relative price, then the quantity of the second good traded is increased until an exchange becomes favourable
+                    'the quantity of the second good is increased; the quantity of the first good stays constant
+                    tempagenta = 0
+                    tempagentb = 0
+                    transfer(2) = quantityY
+                    If directionchange = False Then 'if a change in direction occurs, the quantity is not incremented
+                        transfer(2) = quantityY
+                    ElseIf directionchange = True Then
+                        quantityY = transfer(2)
+                        directionchange = False
                     End If
-                End If
 
-                If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
-                    If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
-                        tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
-                    ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
-                        tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
-                    ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
-                        tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
-                    ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
-                        tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
+                    If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
+                        If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
+                            tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
+                        ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                            tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
+                        ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
+                            tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
+                        ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
+                            tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
+                        End If
                     End If
+
+                    If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
+                        If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
+                            tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
+                        ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                            tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
+                        ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
+                            tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
+                        ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
+                            tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
+                        End If
+                    End If
+
+
+                    If tempagenta > max(1) And tempagentb > max(2) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
+                        max(1) = tempagenta
+                        max(2) = tempagentb
+                        max(3) = transfer(2)
+                    End If
+                    'MessageBox.Show(transfer(2) & vbCrLf & transfer(6) & vbCrLf & transfer(4))
+                    'If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
+                    '    generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
+                    '    directionchange = True
+                    'End If
+                    'If tempagentb <= generator.agentlocation(opp, 14) Then 'changes direction
+                    '    generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
+                    '    directionchange = True
+                    'End If
+                Next
+
+                If max(1) > generator.agentlocation(i, 14) And max(2) > generator.agentlocation(opp, 14) Then
+                    transfer(2) = max(3) 'new quantity of the second good being exchanged
+                    generator.agentlocation(i, 11) += (transfer(1) * generator.agentlocation(i, 17))
+                    generator.agentlocation(i, 12) += (transfer(2) * generator.agentlocation(i, 17) * -1)
+                    generator.agentlocation(opp, 11) += (transfer(1) * generator.agentlocation(opp, 17))
+                    generator.agentlocation(opp, 12) += (transfer(2) * generator.agentlocation(opp, 17) * -1)
+                    generator.agentlocation(i, 14) = max(1)
+                    generator.agentlocation(opp, 14) = max(2)
+                    Call trade(opp)
+                    generator.agentlocation(i, 18) = transfer(1) * generator.agentlocation(i, 17)
+                    generator.agentlocation(i, 19) = transfer(2) * generator.agentlocation(i, 17) * -1
+                    generator.agentlocation(opp, 18) = transfer(1) * generator.agentlocation(opp, 17)
+                    generator.agentlocation(opp, 19) = transfer(2) * generator.agentlocation(opp, 17) * -1
+                    Exit Sub
                 End If
 
-
-                If tempagenta > max(1) And tempagentb > max(2) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
-                    max(1) = tempagenta
-                    max(2) = tempagentb
-                    max(3) = transfer(2)
+                If max(1) <= generator.agentlocation(i, 14) Then 'changes direction
+                    generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
                 End If
-                transfer(2) += 1
-            Next
-
-            If max(1) > generator.agentlocation(i, 14) And max(2) > generator.agentlocation(opp, 14) Then
-                transfer(2) = max(3) 'new quantity of the second good being exchanged
-                generator.agentlocation(i, 11) += (transfer(1) * generator.agentlocation(i, 17))
-                generator.agentlocation(i, 12) += (transfer(2) * generator.agentlocation(i, 17) * -1)
-                generator.agentlocation(opp, 11) += (transfer(1) * generator.agentlocation(opp, 17))
-                generator.agentlocation(opp, 12) += (transfer(2) * generator.agentlocation(opp, 17) * -1)
-                generator.agentlocation(i, 14) = max(1)
-                generator.agentlocation(opp, 14) = max(2)
-                Call trade(opp)
-                generator.agentlocation(i, 18) = transfer(1) * generator.agentlocation(i, 17)
-                generator.agentlocation(i, 19) = transfer(2) * generator.agentlocation(i, 17) * -1
-                generator.agentlocation(opp, 18) = transfer(1) * generator.agentlocation(opp, 17)
-                generator.agentlocation(opp, 19) = transfer(2) * generator.agentlocation(opp, 17) * -1
+                If max(2) <= generator.agentlocation(opp, 14) Then 'changes direction
+                    generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
+                End If
                 Exit Sub
             End If
-
-            If max(1) <= generator.agentlocation(i, 14) Then 'changes direction
-                generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
-            End If
-            If max(2) <= generator.agentlocation(opp, 14) Then 'changes direction
-                generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
-            End If
-            Exit Sub
-        End If
 
         If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
             generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
