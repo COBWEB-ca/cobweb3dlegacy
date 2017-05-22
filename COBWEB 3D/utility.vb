@@ -1,16 +1,35 @@
 ﻿Public Class utility
     Private Sub utility_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If generator.product(Form5.holdera, Form5.holderb, 3) = 1 Then
+
+        Dim interaction(1) As Integer
+
+        For i = 1 To Form1.total
+            If generator.agentlocation(i, 4) = Form5.holdera And frmexchange.ComboBox1.SelectedIndex = 0 Then
+                interaction(0) = generator.agentlocation(i, 13)
+                interaction(1) = i
+                Exit For
+            ElseIf generator.agentlocation(i, 4) = Form5.holderb And frmexchange.ComboBox1.SelectedIndex = 1 Then
+                interaction(0) = generator.agentlocation(i, 13)
+                interaction(1) = i
+                Exit For
+            End If
+        Next
+
+        If interaction(0) = 1 Then
             RadioButton1.Checked = True
-        ElseIf generator.product(Form5.holdera, Form5.holderb, 3) = 2 Then
+        ElseIf interaction(0) = 2 Then
             RadioButton2.Checked = True
-        ElseIf generator.product(Form5.holdera, Form5.holderb, 3) = 3 Then
+            TextBox1.Text = generator.agentlocation(interaction(1), 15)
+            TextBox2.Text = generator.agentlocation(interaction(1), 16)
+        ElseIf interaction(0) = 3 Then
             RadioButton5.Checked = True
-        ElseIf generator.product(Form5.holdera, Form5.holderb, 3) = 4 Then
+            TextBox6.Text = generator.agentlocation(interaction(1), 15)
+            TextBox5.Text = generator.agentlocation(interaction(1), 16)
+        ElseIf interaction(0) = 4 Then
             RadioButton3.Checked = True
-        ElseIf generator.product(Form5.holdera, Form5.holderb, 3) = 5 Then
+        ElseIf interaction(0) = 5 Then
             RadioButton4.Checked = True
-        ElseIf generator.product(Form5.holdera, Form5.holderb, 3) = -1 Then
+        ElseIf interaction(0) = -1 Then
             RadioButton6.Checked = True
         End If
     End Sub

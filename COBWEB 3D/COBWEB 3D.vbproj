@@ -111,6 +111,12 @@
     <Compile Include="AI.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="automaticiterations.Designer.vb">
+      <DependentUpon>automaticiterations.vb</DependentUpon>
+    </Compile>
+    <Compile Include="automaticiterations.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="exchange.Designer.vb">
       <DependentUpon>exchange.vb</DependentUpon>
     </Compile>
@@ -276,6 +282,9 @@
   <ItemGroup>
     <EmbeddedResource Include="AI.resx">
       <DependentUpon>AI.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="automaticiterations.resx">
+      <DependentUpon>automaticiterations.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="exchange.resx">
       <DependentUpon>exchange.vb</DependentUpon>

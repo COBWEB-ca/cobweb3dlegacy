@@ -47,6 +47,8 @@ Partial Class Form1
         Me.AbioticFactorsEnergyChangeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AbioticFactorsNonrandomMovementToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.EconomicZonesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.GeneticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AutomaticRunsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProjectToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TopViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.SideViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -61,6 +63,7 @@ Partial Class Form1
         Me.DataOnExchangesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StopToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ResetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timerxy = New System.Windows.Forms.Timer(Me.components)
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
@@ -77,7 +80,6 @@ Partial Class Form1
         Me.SaveFilepro = New System.Windows.Forms.SaveFileDialog()
         Me.OpenFilepro = New System.Windows.Forms.OpenFileDialog()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
-        Me.GeneticsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -85,7 +87,7 @@ Partial Class Form1
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.EditToolStripMenuItem, Me.ViewToolStripMenuItem, Me.ProjectToolStripMenuItem, Me.GraphToolStripMenuItem, Me.HelpToolStripMenuItem, Me.StopToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.EditToolStripMenuItem, Me.ViewToolStripMenuItem, Me.ProjectToolStripMenuItem, Me.GraphToolStripMenuItem, Me.HelpToolStripMenuItem, Me.StopToolStripMenuItem, Me.ResetToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
         Me.MenuStrip1.Size = New System.Drawing.Size(1215, 24)
@@ -102,45 +104,45 @@ Partial Class Form1
         'NewToolStripMenuItem
         '
         Me.NewToolStripMenuItem.Name = "NewToolStripMenuItem"
-        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.NewToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.NewToolStripMenuItem.Text = "New Project"
         '
         'OpenProjectToolStripMenuItem
         '
         Me.OpenProjectToolStripMenuItem.Name = "OpenProjectToolStripMenuItem"
-        Me.OpenProjectToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.OpenProjectToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.OpenProjectToolStripMenuItem.Text = "Open Project"
         '
         'SaveProjectToolStripMenuItem
         '
         Me.SaveProjectToolStripMenuItem.Enabled = False
         Me.SaveProjectToolStripMenuItem.Name = "SaveProjectToolStripMenuItem"
-        Me.SaveProjectToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.SaveProjectToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.SaveProjectToolStripMenuItem.Text = "Save Project"
         '
         'LogDataToolStripMenuItem
         '
         Me.LogDataToolStripMenuItem.Enabled = False
         Me.LogDataToolStripMenuItem.Name = "LogDataToolStripMenuItem"
-        Me.LogDataToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.LogDataToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.LogDataToolStripMenuItem.Text = "Log Data"
         '
         'CreditToolStripMenuItem
         '
         Me.CreditToolStripMenuItem.Name = "CreditToolStripMenuItem"
-        Me.CreditToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.CreditToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.CreditToolStripMenuItem.Text = "Credit"
         '
         'AboutToolStripMenuItem
         '
         Me.AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
-        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.AboutToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.AboutToolStripMenuItem.Text = "About"
         '
         'QuitToolStripMenuItem
         '
         Me.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem"
-        Me.QuitToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.QuitToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
         Me.QuitToolStripMenuItem.Text = "Quit"
         '
         'EditToolStripMenuItem
@@ -153,7 +155,7 @@ Partial Class Form1
         'TickToolStripMenuItem
         '
         Me.TickToolStripMenuItem.Name = "TickToolStripMenuItem"
-        Me.TickToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.TickToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
         Me.TickToolStripMenuItem.Text = "Tick"
         '
         'AddAgentsToolStripMenuItem
@@ -161,7 +163,7 @@ Partial Class Form1
         Me.AddAgentsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InRangeToolStripMenuItem, Me.InSpecificPositionsToolStripMenuItem})
         Me.AddAgentsToolStripMenuItem.Enabled = False
         Me.AddAgentsToolStripMenuItem.Name = "AddAgentsToolStripMenuItem"
-        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
         Me.AddAgentsToolStripMenuItem.Text = "Add Agents"
         '
         'InRangeToolStripMenuItem
@@ -178,7 +180,7 @@ Partial Class Form1
         '
         'ViewToolStripMenuItem
         '
-        Me.ViewToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SizeToolStripMenuItem, Me.AIToolStripMenuItem, Me.collisionToolStripMenuItem, Me.CatalysisToolStripMenuItem, Me.AbioticFactorsToolStripMenuItem, Me.GeneticsToolStripMenuItem})
+        Me.ViewToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SizeToolStripMenuItem, Me.AIToolStripMenuItem, Me.collisionToolStripMenuItem, Me.CatalysisToolStripMenuItem, Me.AbioticFactorsToolStripMenuItem, Me.GeneticsToolStripMenuItem, Me.AutomaticRunsToolStripMenuItem})
         Me.ViewToolStripMenuItem.Name = "ViewToolStripMenuItem"
         Me.ViewToolStripMenuItem.Size = New System.Drawing.Size(56, 20)
         Me.ViewToolStripMenuItem.Text = "Project"
@@ -236,6 +238,19 @@ Partial Class Form1
         Me.EconomicZonesToolStripMenuItem.Name = "EconomicZonesToolStripMenuItem"
         Me.EconomicZonesToolStripMenuItem.Size = New System.Drawing.Size(287, 22)
         Me.EconomicZonesToolStripMenuItem.Text = "Economic Zones"
+        '
+        'GeneticsToolStripMenuItem
+        '
+        Me.GeneticsToolStripMenuItem.Enabled = False
+        Me.GeneticsToolStripMenuItem.Name = "GeneticsToolStripMenuItem"
+        Me.GeneticsToolStripMenuItem.Size = New System.Drawing.Size(159, 22)
+        Me.GeneticsToolStripMenuItem.Text = "Genetics"
+        '
+        'AutomaticRunsToolStripMenuItem
+        '
+        Me.AutomaticRunsToolStripMenuItem.Name = "AutomaticRunsToolStripMenuItem"
+        Me.AutomaticRunsToolStripMenuItem.Size = New System.Drawing.Size(159, 22)
+        Me.AutomaticRunsToolStripMenuItem.Text = "Automation"
         '
         'ProjectToolStripMenuItem
         '
@@ -326,6 +341,13 @@ Partial Class Form1
         Me.StopToolStripMenuItem.Name = "StopToolStripMenuItem"
         Me.StopToolStripMenuItem.Size = New System.Drawing.Size(43, 20)
         Me.StopToolStripMenuItem.Text = "Stop"
+        '
+        'ResetToolStripMenuItem
+        '
+        Me.ResetToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ResetToolStripMenuItem.Name = "ResetToolStripMenuItem"
+        Me.ResetToolStripMenuItem.Size = New System.Drawing.Size(47, 20)
+        Me.ResetToolStripMenuItem.Text = "Reset"
         '
         'Timerxy
         '
@@ -424,13 +446,6 @@ Partial Class Form1
         Me.PictureBox1.TabIndex = 1
         Me.PictureBox1.TabStop = False
         '
-        'GeneticsToolStripMenuItem
-        '
-        Me.GeneticsToolStripMenuItem.Enabled = False
-        Me.GeneticsToolStripMenuItem.Name = "GeneticsToolStripMenuItem"
-        Me.GeneticsToolStripMenuItem.Size = New System.Drawing.Size(159, 22)
-        Me.GeneticsToolStripMenuItem.Text = "Genetics"
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -508,4 +523,6 @@ Partial Class Form1
     Friend WithEvents AbioticFactorsNonrandomMovementToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents EconomicZonesToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents GeneticsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents AutomaticRunsToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ResetToolStripMenuItem As ToolStripMenuItem
 End Class

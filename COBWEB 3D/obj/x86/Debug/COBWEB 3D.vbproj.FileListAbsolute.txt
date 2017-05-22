@@ -330,3 +330,44 @@ E:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbioticMov
 G:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbioticMovement.resources
 E:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form11.resources
 G:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form11.resources
+G:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.automaticiterations.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.xml
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.pdb
+H:\Cobweb 3D - Under Development\COBWEB 3D\bin\Debug\COBWEB 3D.exe.manifest
+H:\Cobweb 3D - Under Development\COBWEB 3D\bin\Debug\COBWEB 3D.application
+H:\Cobweb 3D - Under Development\COBWEB 3D\bin\Debug\COBWEB 3D.exe
+H:\Cobweb 3D - Under Development\COBWEB 3D\bin\Debug\COBWEB 3D.pdb
+H:\Cobweb 3D - Under Development\COBWEB 3D\bin\Debug\COBWEB 3D.xml
+H:\Cobweb 3D - Under Development\COBWEB 3D\bin\Debug\Microsoft.VisualBasic.PowerPacks.Vs.xml
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbprojResolveAssemblyReference.cache
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.AI.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.automaticiterations.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmexchange.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.exchangedata.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form1.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form10.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form11.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form2.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form3.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form4.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form5.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.productions.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form7.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAdd.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form9.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbiotic.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbioticMovement.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCatalysis.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCrossSection.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmDirection.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInitialProperties.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInteractions.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.generator.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Genetics.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Resources.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Ratio.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.utility.resources
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbproj.GenerateResource.Cache
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe.manifest
+H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.application

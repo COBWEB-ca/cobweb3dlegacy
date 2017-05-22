@@ -5,6 +5,36 @@
 
         ComboBox1.Items.Add(generator.agentname(Form5.holdera))
         ComboBox1.Items.Add(generator.agentname(Form5.holderb))
+
+        If generator.product(Form5.holdera, Form5.holderb, 16) <> "" Then
+            TextBox1.Text = generator.product(Form5.holdera, Form5.holderb, 16)
+        Else
+            TextBox1.Text = 0
+        End If
+
+        If generator.product(Form5.holdera, Form5.holderb, 14) <> "" Then
+            TextBox2.Text = generator.product(Form5.holdera, Form5.holderb, 14)
+        Else
+            TextBox2.Text = 0
+        End If
+
+        If generator.product(Form5.holdera, Form5.holderb, 15) <> "" Then
+            TextBox5.Text = generator.product(Form5.holdera, Form5.holderb, 15)
+        Else
+            TextBox5.Text = 0
+        End If
+
+        If generator.product(Form5.holdera, Form5.holderb, 12) <> "" Then
+            TextBox11.Text = generator.product(Form5.holdera, Form5.holderb, 12)
+        Else
+            TextBox11.Text = 0
+        End If
+
+        If generator.product(Form5.holdera, Form5.holderb, 11) <> "" Then
+            TextBox12.Text = generator.product(Form5.holdera, Form5.holderb, 16)
+        Else
+            TextBox12.Text = 0
+        End If
     End Sub
 
     'assigns agents as buyers or seller and calculates the initial utiity 

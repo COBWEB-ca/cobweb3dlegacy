@@ -75,7 +75,6 @@ Partial Class utility
         Me.RadioButton1.Name = "RadioButton1"
         Me.RadioButton1.Size = New System.Drawing.Size(84, 17)
         Me.RadioButton1.TabIndex = 2
-        Me.RadioButton1.TabStop = True
         Me.RadioButton1.Text = "U = Sqrt(XY)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
         Me.RadioButton1.UseVisualStyleBackColor = True
         '
@@ -86,7 +85,6 @@ Partial Class utility
         Me.RadioButton2.Name = "RadioButton2"
         Me.RadioButton2.Size = New System.Drawing.Size(93, 17)
         Me.RadioButton2.TabIndex = 3
-        Me.RadioButton2.TabStop = True
         Me.RadioButton2.Text = "U = X^a * Y^b" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
         Me.RadioButton2.UseVisualStyleBackColor = True
         '
@@ -146,7 +144,6 @@ Partial Class utility
         Me.RadioButton6.Name = "RadioButton6"
         Me.RadioButton6.Size = New System.Drawing.Size(70, 17)
         Me.RadioButton6.TabIndex = 4
-        Me.RadioButton6.TabStop = True
         Me.RadioButton6.Text = "No Utility "
         Me.RadioButton6.UseVisualStyleBackColor = True
         '
@@ -157,7 +154,6 @@ Partial Class utility
         Me.RadioButton3.Name = "RadioButton3"
         Me.RadioButton3.Size = New System.Drawing.Size(88, 17)
         Me.RadioButton3.TabIndex = 3
-        Me.RadioButton3.TabStop = True
         Me.RadioButton3.Text = "U = Min(X, Y)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
         Me.RadioButton3.UseVisualStyleBackColor = True
         '
@@ -188,7 +184,6 @@ Partial Class utility
         Me.RadioButton4.Name = "RadioButton4"
         Me.RadioButton4.Size = New System.Drawing.Size(83, 17)
         Me.RadioButton4.TabIndex = 3
-        Me.RadioButton4.TabStop = True
         Me.RadioButton4.Text = "U = F(X) + Y"
         Me.RadioButton4.UseVisualStyleBackColor = True
         '
@@ -246,7 +241,6 @@ Partial Class utility
         Me.RadioButton5.Name = "RadioButton5"
         Me.RadioButton5.Size = New System.Drawing.Size(83, 17)
         Me.RadioButton5.TabIndex = 3
-        Me.RadioButton5.TabStop = True
         Me.RadioButton5.Text = "U = aX + bY"
         Me.RadioButton5.UseVisualStyleBackColor = True
         '

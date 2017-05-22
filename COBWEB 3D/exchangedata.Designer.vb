@@ -23,9 +23,9 @@ Partial Class exchangedata
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim ChartArea4 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend4 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series4 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.Panel1 = New System.Windows.Forms.Panel()
@@ -90,18 +90,18 @@ Partial Class exchangedata
         '
         'Chart1
         '
-        ChartArea4.AxisX.Title = "Utility"
-        ChartArea4.AxisY.Title = "Number of Agents"
-        ChartArea4.Name = "ChartArea1"
-        Me.Chart1.ChartAreas.Add(ChartArea4)
-        Legend4.Name = "Legend1"
-        Me.Chart1.Legends.Add(Legend4)
+        ChartArea1.AxisX.Title = "Utility"
+        ChartArea1.AxisY.Title = "Number of Agents"
+        ChartArea1.Name = "ChartArea1"
+        Me.Chart1.ChartAreas.Add(ChartArea1)
+        Legend1.Name = "Legend1"
+        Me.Chart1.Legends.Add(Legend1)
         Me.Chart1.Location = New System.Drawing.Point(963, 193)
         Me.Chart1.Name = "Chart1"
-        Series4.ChartArea = "ChartArea1"
-        Series4.Legend = "Legend1"
-        Series4.Name = "Utility Histogram"
-        Me.Chart1.Series.Add(Series4)
+        Series1.ChartArea = "ChartArea1"
+        Series1.Legend = "Legend1"
+        Series1.Name = "Utility Histogram"
+        Me.Chart1.Series.Add(Series1)
         Me.Chart1.Size = New System.Drawing.Size(640, 274)
         Me.Chart1.TabIndex = 8
         Me.Chart1.Text = "Chart1"
@@ -185,8 +185,11 @@ Partial Class exchangedata
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(178, 47)
         Me.Button2.TabIndex = 3
-        Me.Button2.Text = "Export Data"
+        Me.Button2.Text = "Export Summary"
         Me.Button2.UseVisualStyleBackColor = True
+        '
+        'SaveFileDialog1
+        '
         '
         'exchangedata
         '

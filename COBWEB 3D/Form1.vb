@@ -42,7 +42,7 @@
     Private oSheet As Object
     Private oSheet2 As Object
     Private oSheet3 As Object
-    Private logged As Boolean = False
+    Public logged As Boolean = False
     Private exceldir As String
 
     Public visualizerange As Integer
@@ -2627,6 +2627,12 @@
         '    dddy = CInt(Math.Floor((yn - 1 + 1) * Rnd())) + 1
         '    dddz = CInt(Math.Floor((zn - 1 + 1) * Rnd())) + 1
         'Loop
+        If tick = 0 Then
+            If generator.multipleiterations(0) > 0 Then
+                ToolStripStatusLabel3.Visible = True
+                ToolStripStatusLabel3.Text = "Iterations Left: " & generator.multipleiterations(0)
+            End If
+        End If
 
         For i = 1 To total
 
@@ -2893,7 +2899,7 @@
 
 
         'excel
-        If logged = True Then
+        If logged = True And generator.multipleiterations(0) = 0 Then
             Dim agentpop(agent) As Integer
             For p = 1 To agent
                 For pop = 1 To total
@@ -2911,6 +2917,27 @@
                 oSheet2.Cells(tick + 1, i + 1) = generator.agentlocation(i, 8)
                 oSheet3.cells(tick + 1, i + 1) = generator.interactioncount(i)
             Next
+        ElseIf logged = True And generator.multipleiterations(1) = 2 Then 'if multiple iterations are enabled 
+            Dim agentpop(agent) As Integer
+            For p = 1 To agent
+                For pop = 1 To total
+                    If generator.agentlocation(pop, 4) = p Then
+                        agentpop(p) = agentpop(p) + 1
+                    End If
+                Next
+            Next
+
+            oSheet.Cells(tick + 1, 1 + generator.multipleiterations(0) * agent) = tick
+            oSheet2.Cells(tick + 1, 1 + generator.multipleiterations(0) * agent) = tick
+            oSheet3.cells(tick + 1, 1 + generator.multipleiterations(0) * agent) = tick
+            For i = 1 To agent
+                oSheet.cells(1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentname(i) + " (" + generator.multipleiterations(0) + ")"
+                oSheet2.cells(1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentname(i) + " (" + generator.multipleiterations(0) + ")"
+                oSheet3.cells(1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentname(i) + " (" + generator.multipleiterations(0) + ")"
+                oSheet.Cells(tick + 1, i + 1 + generator.multipleiterations(0) * agent) = agentpop(i)
+                oSheet2.Cells(tick + 1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentlocation(i, 8)
+                oSheet3.cells(tick + 1, i + 1 + generator.multipleiterations(0) * agent) = generator.interactioncount(i)
+            Next
         End If
 
 
@@ -2921,11 +2948,22 @@
         End If
 
 
-
+        'stops simulation 
         If tick = stoplabel.Text Then
-            Timerxy.Stop()
-        End If
+            If generator.multipleiterations(0) = 0 Then
 
+                ToolStripStatusLabel3.Visible = False
+                Timerxy.Stop()
+            Else
+                generator.multipleiterations(0) -= 1
+                tick = 0
+                ToolStripStatusLabel3.Visible = True
+                ToolStripStatusLabel3.Text = "Iterations Left: " & generator.multipleiterations(0)
+
+                Call reset()
+
+            End If
+        End If
     End Sub
 
     Private goal(2) As Integer
@@ -3767,88 +3805,88 @@
 
 
         If transfer(3) = 2 Then
-                Dim max(3) As Decimal
-                max(1) = generator.agentlocation(i, 14)
-                max(2) = generator.agentlocation(opp, 14)
-                Dim directionchange As Boolean = False
+            Dim max(3) As Decimal
+            max(1) = generator.agentlocation(i, 14)
+            max(2) = generator.agentlocation(opp, 14)
+            Dim directionchange As Boolean = False
 
-                For quantityY = transfer(6) To transfer(4) Step transfer(5) 'if an exchange is not possible at the original relative price, then the quantity of the second good traded is increased until an exchange becomes favourable
-                    'the quantity of the second good is increased; the quantity of the first good stays constant
-                    tempagenta = 0
-                    tempagentb = 0
+            For quantityY = transfer(6) To transfer(4) Step transfer(5) 'if an exchange is not possible at the original relative price, then the quantity of the second good traded is increased until an exchange becomes favourable
+                'the quantity of the second good is increased; the quantity of the first good stays constant
+                tempagenta = 0
+                tempagentb = 0
+                transfer(2) = quantityY
+                If directionchange = False Then 'if a change in direction occurs, the quantity is not incremented
                     transfer(2) = quantityY
-                    If directionchange = False Then 'if a change in direction occurs, the quantity is not incremented
-                        transfer(2) = quantityY
-                    ElseIf directionchange = True Then
-                        quantityY = transfer(2)
-                        directionchange = False
-                    End If
-
-                    If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
-                        If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
-                            tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
-                        ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
-                            tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
-                        ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
-                            tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
-                        ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
-                            tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
-                        End If
-                    End If
-
-                    If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
-                        If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
-                            tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
-                        ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
-                            tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
-                        ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
-                            tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
-                        ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
-                            tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
-                        End If
-                    End If
-
-
-                    If tempagenta > max(1) And tempagentb > max(2) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
-                        max(1) = tempagenta
-                        max(2) = tempagentb
-                        max(3) = transfer(2)
-                    End If
-                    'MessageBox.Show(transfer(2) & vbCrLf & transfer(6) & vbCrLf & transfer(4))
-                    'If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
-                    '    generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
-                    '    directionchange = True
-                    'End If
-                    'If tempagentb <= generator.agentlocation(opp, 14) Then 'changes direction
-                    '    generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
-                    '    directionchange = True
-                    'End If
-                Next
-
-                If max(1) > generator.agentlocation(i, 14) And max(2) > generator.agentlocation(opp, 14) Then
-                    transfer(2) = max(3) 'new quantity of the second good being exchanged
-                    generator.agentlocation(i, 11) += (transfer(1) * generator.agentlocation(i, 17))
-                    generator.agentlocation(i, 12) += (transfer(2) * generator.agentlocation(i, 17) * -1)
-                    generator.agentlocation(opp, 11) += (transfer(1) * generator.agentlocation(opp, 17))
-                    generator.agentlocation(opp, 12) += (transfer(2) * generator.agentlocation(opp, 17) * -1)
-                    generator.agentlocation(i, 14) = max(1)
-                    generator.agentlocation(opp, 14) = max(2)
-                    Call trade(opp)
-                    generator.agentlocation(i, 18) = transfer(1) * generator.agentlocation(i, 17)
-                    generator.agentlocation(i, 19) = transfer(2) * generator.agentlocation(i, 17) * -1
-                    generator.agentlocation(opp, 18) = transfer(1) * generator.agentlocation(opp, 17)
-                    generator.agentlocation(opp, 19) = transfer(2) * generator.agentlocation(opp, 17) * -1
-                    Exit Sub
+                ElseIf directionchange = True Then
+                    quantityY = transfer(2)
+                    directionchange = False
                 End If
 
-                If max(1) <= generator.agentlocation(i, 14) Then 'changes direction
-                    generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
+                If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
+                    If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
+                        tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
+                    ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                        tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
+                    ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
+                        tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
+                    ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
+                        tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
+                    End If
                 End If
-                If max(2) <= generator.agentlocation(opp, 14) Then 'changes direction
-                    generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
+
+                If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
+                    If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
+                        tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
+                    ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                        tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
+                    ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
+                        tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
+                    ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
+                        tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
+                    End If
                 End If
+
+
+                If tempagenta > max(1) And tempagentb > max(2) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
+                    max(1) = tempagenta
+                    max(2) = tempagentb
+                    max(3) = transfer(2)
+                End If
+                'MessageBox.Show(transfer(2) & vbCrLf & transfer(6) & vbCrLf & transfer(4))
+                'If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
+                '    generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
+                '    directionchange = True
+                'End If
+                'If tempagentb <= generator.agentlocation(opp, 14) Then 'changes direction
+                '    generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
+                '    directionchange = True
+                'End If
+            Next
+
+            If max(1) > generator.agentlocation(i, 14) And max(2) > generator.agentlocation(opp, 14) Then
+                transfer(2) = max(3) 'new quantity of the second good being exchanged
+                generator.agentlocation(i, 11) += (transfer(1) * generator.agentlocation(i, 17))
+                generator.agentlocation(i, 12) += (transfer(2) * generator.agentlocation(i, 17) * -1)
+                generator.agentlocation(opp, 11) += (transfer(1) * generator.agentlocation(opp, 17))
+                generator.agentlocation(opp, 12) += (transfer(2) * generator.agentlocation(opp, 17) * -1)
+                generator.agentlocation(i, 14) = max(1)
+                generator.agentlocation(opp, 14) = max(2)
+                Call trade(opp)
+                generator.agentlocation(i, 18) = transfer(1) * generator.agentlocation(i, 17)
+                generator.agentlocation(i, 19) = transfer(2) * generator.agentlocation(i, 17) * -1
+                generator.agentlocation(opp, 18) = transfer(1) * generator.agentlocation(opp, 17)
+                generator.agentlocation(opp, 19) = transfer(2) * generator.agentlocation(opp, 17) * -1
                 Exit Sub
             End If
+
+            If max(1) <= generator.agentlocation(i, 14) Then 'changes direction
+                generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
+            End If
+            If max(2) <= generator.agentlocation(opp, 14) Then 'changes direction
+                generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
+            End If
+            Exit Sub
+        End If
 
         If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
             generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
@@ -5409,5 +5447,216 @@
 
     Private Sub GeneticsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GeneticsToolStripMenuItem.Click
         Genetics.Show()
+    End Sub
+
+    Private Sub AutomaticRunsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AutomaticRunsToolStripMenuItem.Click
+        automaticiterations.Show()
+    End Sub
+
+    Sub reset()
+        Randomize()
+        total = 0
+        tick = 0
+
+        Dim number As Integer
+
+        Dim agents(agent) As Integer
+
+        For a = 1 To agent
+            Dim agentsadded As Integer = 0
+            For i = 1 To generator.agentcount(a)
+                number = number + 1
+                Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
+                Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
+                Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
+
+                Dim dx As Integer
+                Dim dy As Integer
+                Dim dz As Integer
+
+                Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
+                Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
+                Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
+                Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
+                Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
+                Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
+
+
+
+                dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
+
+
+                Do While generator.occupied(x, y, z) = True
+                    x = CInt(Math.Floor((xn) * Rnd())) + 1
+                    y = CInt(Math.Floor((yn) * Rnd())) + 1
+                    z = CInt(Math.Floor((zn) * Rnd())) + 1
+                Loop
+
+                'this allows agents to start in a specific range. if all or almost all spaces in a region are occupied, the program moves onto the next agent type
+                If generator.agentstart(a, 0) = 2 Then
+                    Dim maxiterations As Double
+                    x = CInt(Math.Floor(((generator.agentstart(a, 1) - generator.agentstart(a, 2)) + 1) * Rnd()) + generator.agentstart(a, 2))
+                    y = CInt(Math.Floor(((generator.agentstart(a, 3) - generator.agentstart(a, 4)) + 1) * Rnd()) + generator.agentstart(a, 4))
+                    z = CInt(Math.Floor(((generator.agentstart(a, 5) - generator.agentstart(a, 6)) + 1) * Rnd()) + generator.agentstart(a, 6))
+                    Try
+                        Do While generator.occupied(x, y, z) = True And maxiterations < 100000
+                            x = CInt(Math.Floor((generator.agentstart(a, 1) - generator.agentstart(a, 2) + 1) * Rnd()) + generator.agentstart(a, 2))
+                            y = CInt(Math.Floor((generator.agentstart(a, 3) - generator.agentstart(a, 4) + 1) * Rnd()) + generator.agentstart(a, 4))
+                            z = CInt(Math.Floor((generator.agentstart(a, 5) - generator.agentstart(a, 6) + 1) * Rnd()) + generator.agentstart(a, 6))
+                            maxiterations += 1
+                        Loop
+                    Catch ex As Exception
+                        MessageBox.Show(x & " " & y & " " & z)
+                    End Try
+
+                    If maxiterations = 100000 Then
+                        i = generator.agentcount(a) + 1
+                        agents(a) = agentsadded
+                    End If
+                End If
+
+                generator.occupied(x, y, z) = True
+
+                If i <> generator.agentcount(a) + 1 Then
+                    Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+                    generator.agentlocation(number, 0) = x
+                    generator.agentlocation(number, 1) = y
+                    generator.agentlocation(number, 2) = z
+                    generator.agentlocation(number, 3) = d
+                    generator.agentlocation(number, 4) = a
+                    generator.agentlocation(number, 5) = dx
+                    generator.agentlocation(number, 6) = dy
+                    generator.agentlocation(number, 7) = dz
+                    generator.agentlocation(number, 8) = generator.initialenergy(a)
+                    generator.agentlocation(number, 9) = 0
+                    generator.agentlocation(number, 10) = 0
+                    agentsadded += 1
+                End If
+
+                If i = generator.agentcount(a) Then
+                    agents(a) = agentsadded
+                End If
+            Next
+
+        Next
+
+
+        For i = 1 To agent
+            total = total + agents(i)
+            'Form1.total = Form1.total + generator.agentcount(i)
+        Next
+
+
+
+        For index = 2 To total
+            Dim tempz As Integer = generator.agentlocation(index, 2)
+            Dim tempx As Integer = generator.agentlocation(index, 0)
+            Dim tempy As Integer = generator.agentlocation(index, 1)
+            Dim tempd As Integer = generator.agentlocation(index, 3)
+            Dim tempa As Integer = generator.agentlocation(index, 4)
+            Dim tempstatic As Integer = generator.staticagent(index)
+
+            Dim tempdx As Integer = generator.agentlocation(index, 5)
+            Dim tempdy As Integer = generator.agentlocation(index, 6)
+            Dim tempdz As Integer = generator.agentlocation(index, 7)
+
+            Dim tempenergy As Integer = generator.agentlocation(index, 8)
+            Dim tempage As Integer = generator.agentlocation(index, 9)
+            Dim tempasr As Integer = generator.agentlocation(index, 10)
+
+            Dim previousposition As Integer = index - 1
+            Do While tempz > generator.agentlocation(previousposition, 2) And previousposition >= 1
+                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
+                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
+                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
+                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
+                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
+
+                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
+                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
+                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
+
+                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
+                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
+                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
+
+                If generator.staticagent(previousposition) = 2 Then
+                    generator.staticagent(previousposition + 1) = 2
+                ElseIf generator.staticagent(previousposition) = 0 Then
+                    generator.staticagent(previousposition + 1) = 0
+                End If
+
+                previousposition = previousposition - 1
+            Loop
+
+            If tempstatic = 2 Then
+                generator.staticagent(previousposition + 1) = 2
+            ElseIf tempstatic = 0 Then
+                generator.staticagent(previousposition + 1) = 0
+            End If
+
+            generator.agentlocation(previousposition + 1, 2) = tempz
+            generator.agentlocation(previousposition + 1, 0) = tempx
+            generator.agentlocation(previousposition + 1, 1) = tempy
+            generator.agentlocation(previousposition + 1, 3) = tempd
+            generator.agentlocation(previousposition + 1, 4) = tempa
+
+            generator.agentlocation(previousposition + 1, 5) = tempdx
+            generator.agentlocation(previousposition + 1, 6) = tempdy
+            generator.agentlocation(previousposition + 1, 7) = tempdz
+
+            generator.agentlocation(previousposition + 1, 8) = tempenergy
+            generator.agentlocation(previousposition + 1, 9) = tempage
+            generator.agentlocation(previousposition + 1, 10) = tempasr
+
+        Next
+
+        'changes the direction of new agents according to user input
+        For i = 1 To agent
+            If generator.agentdirection(i) <> 0 Then
+                For a = 1 To total
+                    If generator.agentlocation(a, 4) = i Then
+                        generator.agentlocation(a, 3) = generator.agentdirection(i)
+                    End If
+                Next
+            End If
+        Next
+
+        generator.gfxxy.Clear(Color.White)
+        Call generator.gridxy()
+
+        generator.agentchange = True
+
+        ' placing the agents
+        For i = 1 To total
+            Dim x As Integer = generator.agentlocation(i, 0)
+            Dim y As Integer = generator.agentlocation(i, 1)
+            Dim z As Integer = generator.agentlocation(i, 2)
+            Dim d As Integer = generator.agentlocation(i, 3)
+            Dim ag As Integer = generator.agentlocation(i, 4)
+            Dim s As Integer = i
+            Call creator(x, y, z, d, generator.agentcolour(ag), s)
+        Next
+
+        For x = 1 To xn
+            For y = 1 To yn
+                For z = 1 To zn
+                    generator.occupied(x, y, z) = False
+                Next
+            Next
+        Next
+
+        For i = 1 To total
+            generator.occupied(generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2)) = True
+        Next
+
+        Call generator.topgridxy()
+        Call picshow()
+    End Sub
+
+    Private Sub ResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetToolStripMenuItem.Click
+        Call reset()
     End Sub
 End Class

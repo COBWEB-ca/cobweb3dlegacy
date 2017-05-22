@@ -74,6 +74,8 @@
     Public zones(1000, 8) As Decimal '7 is the actual value, 1-6 are for the coordinates of the zone, 1000 different zones are possible, 8 is for the number of items traded in that zone
     Public agentsight As Decimal = 4
 
+    Public multipleiterations(1) As Decimal
+
     Sub topgridxy()
 
         Dim overgrid As System.Drawing.Pen = New Pen(Brushes.Black, 2)
