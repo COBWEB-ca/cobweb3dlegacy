@@ -1,2641 +1,51 @@
-﻿Public Class Form1
-    'the variables for the resolution of the pic
-    Public sizexyx As Integer
-    Public sizexyy As Integer
+﻿Imports COBWEB_3D
 
-
-    Public sizexzx As Integer
-    Public sizexzz As Integer
-
-    Public sizezyy As Integer
-    Public sizezyz As Integer
+Public Class Form1
+    Private mRenderingEngine As RenderingEngine
+    Private mExcelLogger As ExcelLogger
 
     Public tick As Integer
-    Public sizeratio As Double = 3 / 4
 
+    ' Number of Agents
     Public agent As Integer
     Public total As Integer
 
-
-    'the variables for the size of grid
-    Public xn As Integer
-    Public yn As Integer
-    Public zn As Integer
-
-    'size of each cell
-    Public cellxyx As Single
-    Public cellxyy As Single
-    Public cellxzx As Single
-    Public cellxzz As Single
-    Public cellzyz As Single
-    Public cellzyy As Single
-
-    Dim havetodelete As Integer
-    Public view As String
-
-    Public save As String
-    Public timerexit As Boolean = False
-
-    'codes for excel file
-    Private oExcel As Object
-    Private oBook As Object
-    Private oSheet As Object
-    Private oSheet2 As Object
-    Private oSheet3 As Object
-    Public logged As Boolean = False
-    Private exceldir As String
+    ' The variables for the size of grid
+    Public xn As Integer = 0
+    Public yn As Integer = 0
+    Public zn As Integer = 0
 
     Public visualizerange As Integer
 
     Private localregion As Integer
 
-    Private progressbartest As Integer
+#Region "Properties"
+    Public Property RenderingEngine As RenderingEngine
+        Get
+            Return mRenderingEngine
+        End Get
+        Set(value As RenderingEngine)
+            mRenderingEngine = value
+        End Set
+    End Property
+#End Region
 
-    Sub picshow()
-        PictureBox1.Image = generator.picxy
+    Sub initializeSimulation()
+        mRenderingEngine = New RenderingEngine(xn, yn, zn)
+        Timerxy.Interval = 1
     End Sub
 
-    'x,y view
-    Sub creator(ByVal xlocation As String, ByVal ylocation As Integer, ByVal zlocation As Integer, ByVal direction As Integer, ByVal colour As System.Drawing.Color, ByVal s As Integer)
-        Dim diag As Single
-        Dim jump As Double = cellxyx
-        For i = 1 To zlocation - 1
-            jump = jump * (sizeratio)
-            diag = diag + jump
-        Next
-        Dim angle As Single = Math.Atan(xn / yn)
-        Dim a As Integer = Math.Sin(angle) * diag
-        Dim b As Integer = Math.Cos(angle) * diag
-
-        Dim topfrontrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim topfrontrighty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-        Dim topfrontleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim topfrontlefty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-
-        Dim bottomfrontrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim bottomfrontrighty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-        Dim bottomfrontleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim bottomfrontlefty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-
-        jump = jump * (sizeratio)
-        diag = diag + jump
-
-        angle = Math.Atan(xn / yn)
-        a = Math.Sin(angle) * diag
-        b = Math.Cos(angle) * diag
-
-        Dim topbackrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim topbackrighty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-        Dim topbackleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim topbacklefty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-
-        Dim bottombackrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim bottombackrighty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-        Dim bottombackleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim bottombacklefty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-
-
-        'generator.gfxxy.DrawLine(Pens.Red, topfrontleftx, topfrontlefty, topfrontrightx, topfrontrighty)
-        'generator.gfxxy.DrawLine(Pens.Red, bottomfrontleftx, bottomfrontlefty, bottomfrontrightx, bottomfrontrighty)
-        'generator.gfxxy.DrawLine(Pens.Red, topbackleftx, topbacklefty, topbackrightx, topbackrighty)
-        'generator.gfxxy.DrawLine(Pens.Red, bottombackleftx, bottombacklefty, bottombackrightx, bottombackrighty)
-
-
-
-        Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
-        Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
-        Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
-        Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
-
-
-        Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
-        Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
-        Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
-        Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
-
-
-        Dim dashValues As Single() = {1, 2}
-        Dim graypen As New Pen(Color.Gray, 1)
-        Dim myBrush As New SolidBrush(colour)
-        graypen.DashPattern = dashValues
-
-        'draws cubes for static agents
-        If generator.staticagent(s) = 2 Then
-            Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-            Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-            Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-            Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-            Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-            Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-            Dim brush As New SolidBrush(Color.FromArgb(150, colour.R, colour.G, colour.B))
-
-            generator.gfxxy.FillPolygon(brush, backface)
-            generator.gfxxy.FillPolygon(brush, rightface)
-            generator.gfxxy.FillPolygon(brush, leftface)
-            generator.gfxxy.FillPolygon(brush, topface)
-            generator.gfxxy.FillPolygon(brush, bottomface)
-
-            If generator.agentreservoir(s, 0) = 0 Then
-                generator.gfxxy.FillPolygon(brush, frontface)
-            End If
-
-            generator.gfxxy.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfxxy.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-            generator.gfxxy.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-            generator.gfxxy.DrawLine(Pens.Gray, topbackright, topfrontright)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-
-            generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfxxy.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-            If generator.agentreservoir(s, 0) = 2 Then
-                'new code - bars that show the capacity of the static agent
-                Dim scalingfactor As Decimal = (topfrontrightx - topfrontleftx) * 0.25
-                Dim progressbarlength As Decimal = Math.Abs(topfrontrighty - bottomfrontrighty)
-
-                Dim capacity As Decimal = generator.agentreservoir(s, 1)
-                Dim actuallevel As Decimal = generator.agentreservoir(s, 2)
-                If actuallevel >= capacity Then
-                    actuallevel = capacity
-                End If
-
-                Dim progressbarscalingfactor As Decimal = 0
-                If capacity > 0 Then
-                    progressbarscalingfactor = actuallevel / capacity
-                End If
-
-                Dim topfrontrightleftx As Integer = topfrontrightx - scalingfactor
-                Dim topfrontrightrightx As Integer = topfrontrightx
-
-                Dim bottomfrontrightleftx As Integer = bottomfrontrightx - scalingfactor
-                Dim bottomfrontrightrightx As Integer = bottomfrontrightx
-
-                Dim topfrontrightleft As New System.Drawing.Point(topfrontrightleftx, topfrontrighty)
-                Dim topfrontrightright As New System.Drawing.Point(topfrontrightrightx, topfrontrighty)
-
-                Dim bottomfrontrightleft As New System.Drawing.Point(bottomfrontrightleftx, bottomfrontrighty)
-                Dim bottomfrontrightright As New System.Drawing.Point(bottomfrontrightrightx, bottomfrontrighty)
-
-                Dim newy As Decimal = bottomfrontrighty - (progressbarlength * progressbarscalingfactor)
-                Dim progressbarlefttop As New System.Drawing.Point(bottomfrontrightleftx, newy)
-                Dim progressbarrighttop As New System.Drawing.Point(bottomfrontrightx, newy)
-                generator.gfxxy.DrawLine(Pens.Black, progressbarlefttop, progressbarrighttop)
-
-                Dim frontfaceleft As Point() = {topfrontrightleft, topfrontleft, bottomfrontleft, bottomfrontrightleft}
-                Dim frontfaceright As Point() = {topfrontright, bottomfrontright, bottomfrontrightleft, topfrontrightleft}
-                Dim frontfacerightbar As Point() = {bottomfrontright, bottomfrontrightleft, progressbarlefttop, progressbarrighttop}
-                Dim frontfacebarfiller As Point() = {topfrontright, topfrontrightleft, progressbarlefttop, progressbarrighttop}
-
-                Dim col As New SolidBrush(Color.FromArgb(150, Color.White.R, Color.White.G, Color.White.B))
-                Dim bar As New SolidBrush(Color.FromArgb(150, Color.GreenYellow.R, Color.GreenYellow.G, Color.GreenYellow.B))
-
-                'generator.gfxxy.FillPolygon(col, frontfaceright)
-                generator.gfxxy.FillPolygon(brush, frontfaceleft)
-                generator.gfxxy.FillPolygon(col, frontfacebarfiller)
-                generator.gfxxy.FillPolygon(bar, frontfacerightbar)
-                'new code
-            End If
-
-            Exit Sub
-        End If
-
-        If direction = 6 Then
-
-            Dim beakx As Integer = topbackleftx + (Math.Abs(topbackleftx - topbackrightx) / 2)
-            Dim beaky As Integer = topbacklefty + (Math.Abs(topbacklefty - bottombacklefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-            Dim top As Point() = {topfrontleft, beak, topfrontright}
-            Dim right As Point() = {topfrontright, beak, bottomfrontright}
-            Dim bottom As Point() = {bottomfrontleft, beak, bottomfrontright}
-            Dim left As Point() = {topfrontleft, beak, bottomfrontleft}
-            generator.gfxxy.FillPolygon(myBrush, top)
-            generator.gfxxy.FillPolygon(myBrush, right)
-            generator.gfxxy.FillPolygon(myBrush, bottom)
-            generator.gfxxy.FillPolygon(myBrush, left)
-
-            generator.gfxxy.DrawLine(graypen, topfrontleft, beak)
-            generator.gfxxy.DrawLine(graypen, bottomfrontleft, beak)
-            generator.gfxxy.DrawLine(graypen, bottomfrontright, beak)
-            generator.gfxxy.DrawLine(graypen, topfrontright, beak)
-
-            generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfxxy.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-        ElseIf direction = 5 Then
-            Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topfrontrightx) / 2)
-            Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - bottomfrontlefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-
-            Dim top As Point() = {topbackleft, beak, topbackright}
-            Dim right As Point() = {topbackright, beak, bottombackright}
-            Dim bottom As Point() = {bottombackleft, beak, bottombackright}
-            Dim left As Point() = {topbackleft, beak, bottombackleft}
-            generator.gfxxy.FillPolygon(myBrush, top)
-            generator.gfxxy.FillPolygon(myBrush, right)
-            generator.gfxxy.FillPolygon(myBrush, bottom)
-            generator.gfxxy.FillPolygon(myBrush, left)
-
-            generator.gfxxy.DrawLine(Pens.Gray, topbackleft, beak)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, beak)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackright, beak)
-            generator.gfxxy.DrawLine(Pens.Gray, topbackright, beak)
-
-            generator.gfxxy.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfxxy.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-        ElseIf direction = 2 Then
-            If ylocation <= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, bottombackright, bottomfrontright}
-                generator.gfxxy.FillPolygon(myBrush, front)
-                generator.gfxxy.FillPolygon(myBrush, right)
-                generator.gfxxy.FillPolygon(myBrush, left)
-                generator.gfxxy.FillPolygon(myBrush, bottom)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, bottombackright)
-                generator.gfxxy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottombackrighty) / Math.Abs(beakx - bottombackrightx))
-                Dim pointx As Single = bottombackrightx - (Math.Abs(bottomfrontrighty - bottombackrighty) / Math.Tan(ang))
-
-                If pointx > bottomfrontrightx Then
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfxxy.DrawLine(graypen, bottombackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottombacklefty) / Math.Abs(beakx - bottombackleftx))
-                pointx = (Math.Abs(bottomfrontlefty - bottombacklefty) / Math.Tan(ang)) + bottombackleftx
-
-
-                If pointx < bottomfrontleftx Then
-                    generator.gfxxy.DrawLine(Pens.Gray, beak, bottombackleft)
-                Else
-                    generator.gfxxy.DrawLine(graypen, beak, bottombackleft)
-                End If
-
-            ElseIf ylocation >= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topbacklefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                generator.gfxxy.FillPolygon(myBrush, front)
-                generator.gfxxy.FillPolygon(myBrush, right)
-                generator.gfxxy.FillPolygon(myBrush, left)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottomfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                Dim pointx As Single = (Math.Abs(bottombacklefty - bottomfrontlefty) / Math.Tan(ang)) + bottomfrontleftx
-
-                If pointx < bottombackleftx Then
-                    generator.gfxxy.DrawLine(graypen, bottombackleft, beak)
-                    generator.gfxxy.DrawLine(graypen, bottombackleft, bottomfrontleft)
-                    generator.gfxxy.DrawLine(graypen, bottombackleft, bottombackright)
-                Else
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, beak)
-                    generator.gfxxy.DrawLine(graypen, bottombackleft, bottombackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottomfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                pointx = bottomfrontrightx - (Math.Abs(bottombackrighty - bottomfrontrighty) / Math.Tan(ang))
-
-
-                If pointx < bottombackrightx Then
-                    generator.gfxxy.DrawLine(Pens.Gray, beak, bottombackright)
-                    generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, bottombackright)
-                Else
-                    generator.gfxxy.DrawLine(graypen, beak, bottombackright)
-                    generator.gfxxy.DrawLine(graypen, bottomfrontright, bottombackright)
-                End If
-
-            End If
-
-        ElseIf direction = 1 Then
-            If ylocation <= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottomfrontlefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                generator.gfxxy.FillPolygon(myBrush, front)
-                generator.gfxxy.FillPolygon(myBrush, right)
-                generator.gfxxy.FillPolygon(myBrush, left)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-                generator.gfxxy.DrawLine(graypen, topbackright, topbackleft)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                Dim pointx As Single = topfrontrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-                If pointx < topbackrightx Then
-                    generator.gfxxy.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfxxy.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfxxy.DrawLine(graypen, topbackright, beak)
-                    generator.gfxxy.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                pointx = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topfrontleftx
-
-
-                If pointx > topbackleftx Then
-                    generator.gfxxy.DrawLine(Pens.Gray, beak, topbackleft)
-                    generator.gfxxy.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                Else
-                    generator.gfxxy.DrawLine(graypen, beak, topbackleft)
-                    generator.gfxxy.DrawLine(graypen, topbackleft, topfrontleft)
-                End If
-
-            ElseIf ylocation >= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottombacklefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                Dim top As Point() = {topfrontleft, topbackleft, topbackright, topfrontright}
-                generator.gfxxy.FillPolygon(myBrush, front)
-                generator.gfxxy.FillPolygon(myBrush, right)
-                generator.gfxxy.FillPolygon(myBrush, left)
-                generator.gfxxy.FillPolygon(myBrush, top)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                generator.gfxxy.DrawLine(Pens.Gray, topbackleft, topbackright)
-                generator.gfxxy.DrawLine(Pens.Gray, topbackright, topfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topbacklefty) / Math.Abs(beakx - bottombackleftx))
-                Dim pointx As Single = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topbackleftx
-
-                If pointx > topfrontleftx Then
-                    generator.gfxxy.DrawLine(graypen, topbackleft, beak)
-                Else
-                    generator.gfxxy.DrawLine(Pens.Gray, topbackleft, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topbackrighty) / Math.Abs(beakx - bottombackrightx))
-                pointx = topbackrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-
-                If pointx > topfrontrightx Then
-                    generator.gfxxy.DrawLine(Pens.Gray, beak, topbackright)
-                Else
-                    generator.gfxxy.DrawLine(graypen, beak, topbackright)
-                End If
-            End If
-
-
-        ElseIf direction = 4 Then
-            If xlocation <= xn / 2 Then
-
-                Dim beakx As Integer = (Math.Abs(topfrontrightx - topbackrightx) / 2) + topfrontrightx
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-
-                generator.gfxxy.FillPolygon(myBrush, top)
-                generator.gfxxy.FillPolygon(myBrush, middle)
-                generator.gfxxy.FillPolygon(myBrush, bottom)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, beak)
-
-                Dim ang As Single = Math.Atan((Math.Abs(topfrontrighty - bottombackrighty) / 2) / ((Math.Abs(topfrontrightx - topbackrightx) / 2) + (topfrontrightx - topfrontleftx)))
-                Dim pointy As Single = (Math.Tan(ang) * (a - topfrontleftx)) + topfrontlefty
-
-                If topbacklefty < pointy Then
-                    generator.gfxxy.DrawLine(Pens.Gray, topbackleft, beak)
-                    generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                Else
-                    generator.gfxxy.DrawLine(graypen, topfrontleft, topbackleft)
-                    generator.gfxxy.DrawLine(graypen, topbackleft, beak)
-                End If
-
-                pointy = bottomfrontlefty - (Math.Tan(ang) * (a - topfrontleftx))
-
-                If bottombacklefty < pointy Then
-                    generator.gfxxy.DrawLine(graypen, bottomfrontleft, bottombackleft)
-                    generator.gfxxy.DrawLine(graypen, bottombackleft, beak)
-                Else
-                    generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, beak)
-                End If
-
-                generator.gfxxy.DrawLine(graypen, topbackleft, bottombackleft)
-
-
-            ElseIf xlocation >= xn / 2 Then
-
-                Dim beakx As Integer = topfrontrightx - (Math.Abs(topfrontrightx - topbackrightx) / 2)
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim back As Point() = {topfrontleft, bottomfrontleft, bottombackleft, topbackleft}
-
-                generator.gfxxy.FillPolygon(myBrush, top)
-                generator.gfxxy.FillPolygon(myBrush, middle)
-                generator.gfxxy.FillPolygon(myBrush, bottom)
-                generator.gfxxy.FillPolygon(myBrush, back)
-
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, bottomfrontleft)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-                generator.gfxxy.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontleft, beak)
-
-
-                Dim ang As Single
-                ang = Math.Atan((Math.Abs(beaky - bottombacklefty)) / (Math.Abs(beakx - bottombackleftx)))
-                Dim pointy As Single
-                pointy = bottombacklefty - (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-                If pointy > bottomfrontlefty Then
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackleft, beak)
-                Else
-                    generator.gfxxy.DrawLine(graypen, bottombackleft, beak)
-                End If
-
-                ang = Math.Atan((Math.Abs(beaky - topbacklefty)) / (Math.Abs(beakx - topbackleftx)))
-                pointy = topbacklefty + (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-
-                If pointy < topfrontlefty Then
-                    generator.gfxxy.DrawLine(Pens.Gray, topbackleft, beak)
-                Else
-                    generator.gfxxy.DrawLine(graypen, topbackleft, beak)
-                End If
-            End If
-
-
-        ElseIf direction = 3 Then
-            If xlocation <= xn / 2 Then
-                Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                Dim back As Point() = {bottomfrontright, bottombackright, topbackright, topfrontright}
-
-                generator.gfxxy.FillPolygon(myBrush, top)
-                generator.gfxxy.FillPolygon(myBrush, middle)
-                generator.gfxxy.FillPolygon(myBrush, bottom)
-                generator.gfxxy.FillPolygon(myBrush, back)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontright, topbackright)
-                generator.gfxxy.DrawLine(Pens.Gray, topbackright, bottombackright)
-                generator.gfxxy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topbackrightx) / Math.Abs(beaky - topbackrighty))
-                Dim pointy As Single = topbackrighty + ((topbackrightx - topfrontrightx) / Math.Tan(ang))
-
-                If topfrontrighty > pointy Then
-                    generator.gfxxy.DrawLine(Pens.Gray, topbackright, beak)
-                Else
-                    generator.gfxxy.DrawLine(graypen, topbackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottombackrightx) / Math.Abs(beaky - bottombackrighty))
-                pointy = bottombackrighty - ((bottombackrightx - bottomfrontrightx) / Math.Tan(ang))
-
-                If bottomfrontrighty < pointy Then
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfxxy.DrawLine(graypen, bottombackright, beak)
-                End If
-
-            ElseIf xlocation > xn / 2 Then
-                Dim beakx As Integer = topfrontleftx - (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                generator.gfxxy.FillPolygon(myBrush, top)
-                generator.gfxxy.FillPolygon(myBrush, middle)
-                generator.gfxxy.FillPolygon(myBrush, bottom)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxy.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfxxy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxy.DrawLine(graypen, topbackright, bottombackright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topfrontrightx) / Math.Abs(beaky - topfrontrighty))
-                Dim pointy As Single = topfrontrighty + ((topfrontrightx - topbackrightx) / Math.Tan(ang))
-
-                If topbackrighty < pointy Then
-                    generator.gfxxy.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfxxy.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfxxy.DrawLine(graypen, topbackright, beak)
-                    generator.gfxxy.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottomfrontrightx) / Math.Abs(beaky - bottomfrontrighty))
-                pointy = bottomfrontrighty - ((bottomfrontrightx - bottombackrightx) / Math.Tan(ang))
-
-                If bottombackrighty > pointy Then
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackright, beak)
-                    generator.gfxxy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-                Else
-                    generator.gfxxy.DrawLine(graypen, bottombackright, beak)
-                    generator.gfxxy.DrawLine(graypen, bottombackright, bottomfrontright)
-                End If
-
-            End If
-
-        End If
+    Private Sub updateSimulation()
+        updateLogic()
+        draw(True)
+
+        tick += 1
+        tslblCurentTick.Text = tick
+        logDataToGraphs()
     End Sub
 
-    'x,y view
-    Sub creatorc(ByVal xlocation As String, ByVal ylocation As Integer, ByVal zlocation As Integer, ByVal direction As Integer, ByVal colour As System.Drawing.Color, ByVal s As Integer)
-        Dim diag As Single
-        Dim jump As Double = cellxyx
-        For i = 1 To zlocation - 1
-            jump = jump * (sizeratio)
-            diag = diag + jump
-        Next
-        Dim angle As Single = Math.Atan(xn / yn)
-        Dim a As Integer = Math.Sin(angle) * diag
-        Dim b As Integer = Math.Cos(angle) * diag
-
-        Dim topfrontrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim topfrontrighty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-        Dim topfrontleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim topfrontlefty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-
-        Dim bottomfrontrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim bottomfrontrighty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-        Dim bottomfrontleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim bottomfrontlefty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-
-        jump = jump * (sizeratio)
-        diag = diag + jump
-
-        angle = Math.Atan(xn / yn)
-        a = Math.Sin(angle) * diag
-        b = Math.Cos(angle) * diag
-
-        Dim topbackrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim topbackrighty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-        Dim topbackleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim topbacklefty As Integer = b + ((ylocation - 1) * ((sizexyy - (2 * b)) / yn))
-
-        Dim bottombackrightx As Integer = a + (xlocation * ((sizexyx - (2 * a)) / xn))
-        Dim bottombackrighty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-        Dim bottombackleftx As Integer = a + ((xlocation - 1) * ((sizexyx - (2 * a)) / xn))
-        Dim bottombacklefty As Integer = b + (ylocation * ((sizexyy - (2 * b)) / yn))
-
-
-        'generator.gfxxy.DrawLine(Pens.Red, topfrontleftx, topfrontlefty, topfrontrightx, topfrontrighty)
-        'generator.gfxxy.DrawLine(Pens.Red, bottomfrontleftx, bottomfrontlefty, bottomfrontrightx, bottomfrontrighty)
-        'generator.gfxxy.DrawLine(Pens.Red, topbackleftx, topbacklefty, topbackrightx, topbackrighty)
-        'generator.gfxxy.DrawLine(Pens.Red, bottombackleftx, bottombacklefty, bottombackrightx, bottombackrighty)
-
-
-
-        Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
-        Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
-        Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
-        Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
-
-
-        Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
-        Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
-        Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
-        Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
-
-
-        Dim dashValues As Single() = {1, 2}
-        Dim graypen As New Pen(Color.Gray, 1)
-        Dim myBrush As New SolidBrush(colour)
-        graypen.DashPattern = dashValues
-
-        If s < 0 Then
-            Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-            Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-            Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-            Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-            Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-            Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-            Dim brush As New SolidBrush(Color.FromArgb(150, colour.R, colour.G, colour.B))
-
-            generator.gfCrossSection.FillPolygon(brush, backface)
-            generator.gfCrossSection.FillPolygon(brush, rightface)
-            generator.gfCrossSection.FillPolygon(brush, leftface)
-            generator.gfCrossSection.FillPolygon(brush, topface)
-            generator.gfCrossSection.FillPolygon(brush, bottomface)
-
-            generator.gfCrossSection.FillPolygon(brush, frontface)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, topfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-            Exit Sub
-        End If
-
-        'draws cubes for static agents
-        If generator.staticagent(s) = 2 Then
-            Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-            Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-            Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-            Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-            Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-            Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-            Dim brush As New SolidBrush(Color.FromArgb(150, colour.R, colour.G, colour.B))
-
-            generator.gfCrossSection.FillPolygon(brush, backface)
-            generator.gfCrossSection.FillPolygon(brush, rightface)
-            generator.gfCrossSection.FillPolygon(brush, leftface)
-            generator.gfCrossSection.FillPolygon(brush, topface)
-            generator.gfCrossSection.FillPolygon(brush, bottomface)
-
-            If generator.agentreservoir(s, 0) = 0 Then
-                generator.gfCrossSection.FillPolygon(brush, frontface)
-            End If
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, topfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-            If generator.agentreservoir(s, 0) = 2 Then
-                'new code - bars that show the capacity of the static agent
-                Dim scalingfactor As Decimal = (topfrontrightx - topfrontleftx) * 0.25
-                Dim progressbarlength As Decimal = Math.Abs(topfrontrighty - bottomfrontrighty)
-
-                Dim capacity As Decimal = generator.agentreservoir(s, 1)
-                Dim actuallevel As Decimal = generator.agentreservoir(s, 2)
-                If actuallevel >= capacity Then
-                    actuallevel = capacity
-                End If
-
-                Dim progressbarscalingfactor As Decimal = 0
-                If capacity > 0 Then
-                    progressbarscalingfactor = actuallevel / capacity
-                End If
-
-                Dim topfrontrightleftx As Integer = topfrontrightx - scalingfactor
-                Dim topfrontrightrightx As Integer = topfrontrightx
-
-                Dim bottomfrontrightleftx As Integer = bottomfrontrightx - scalingfactor
-                Dim bottomfrontrightrightx As Integer = bottomfrontrightx
-
-                Dim topfrontrightleft As New System.Drawing.Point(topfrontrightleftx, topfrontrighty)
-                Dim topfrontrightright As New System.Drawing.Point(topfrontrightrightx, topfrontrighty)
-
-                Dim bottomfrontrightleft As New System.Drawing.Point(bottomfrontrightleftx, bottomfrontrighty)
-                Dim bottomfrontrightright As New System.Drawing.Point(bottomfrontrightrightx, bottomfrontrighty)
-
-                Dim newy As Decimal = bottomfrontrighty - (progressbarlength * progressbarscalingfactor)
-                Dim progressbarlefttop As New System.Drawing.Point(bottomfrontrightleftx, newy)
-                Dim progressbarrighttop As New System.Drawing.Point(bottomfrontrightx, newy)
-                generator.gfxxy.DrawLine(Pens.Black, progressbarlefttop, progressbarrighttop)
-
-                Dim frontfaceleft As Point() = {topfrontrightleft, topfrontleft, bottomfrontleft, bottomfrontrightleft}
-                Dim frontfaceright As Point() = {topfrontright, bottomfrontright, bottomfrontrightleft, topfrontrightleft}
-                Dim frontfacerightbar As Point() = {bottomfrontright, bottomfrontrightleft, progressbarlefttop, progressbarrighttop}
-                Dim frontfacebarfiller As Point() = {topfrontright, topfrontrightleft, progressbarlefttop, progressbarrighttop}
-
-                Dim col As New SolidBrush(Color.FromArgb(150, Color.White.R, Color.White.G, Color.White.B))
-                Dim bar As New SolidBrush(Color.FromArgb(150, Color.GreenYellow.R, Color.GreenYellow.G, Color.GreenYellow.B))
-
-                'generator.gfxxy.FillPolygon(col, frontfaceright)
-                generator.gfCrossSection.FillPolygon(brush, frontfaceleft)
-                generator.gfCrossSection.FillPolygon(col, frontfacebarfiller)
-                generator.gfCrossSection.FillPolygon(bar, frontfacerightbar)
-                'new code
-            End If
-
-            Exit Sub
-        End If
-
-        If direction = 6 Then
-
-            Dim beakx As Integer = topbackleftx + (Math.Abs(topbackleftx - topbackrightx) / 2)
-            Dim beaky As Integer = topbacklefty + (Math.Abs(topbacklefty - bottombacklefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-            Dim top As Point() = {topfrontleft, beak, topfrontright}
-            Dim right As Point() = {topfrontright, beak, bottomfrontright}
-            Dim bottom As Point() = {bottomfrontleft, beak, bottomfrontright}
-            Dim left As Point() = {topfrontleft, beak, bottomfrontleft}
-            generator.gfCrossSection.FillPolygon(myBrush, top)
-            generator.gfCrossSection.FillPolygon(myBrush, right)
-            generator.gfCrossSection.FillPolygon(myBrush, bottom)
-            generator.gfCrossSection.FillPolygon(myBrush, left)
-
-            generator.gfCrossSection.DrawLine(graypen, topfrontleft, beak)
-            generator.gfCrossSection.DrawLine(graypen, bottomfrontleft, beak)
-            generator.gfCrossSection.DrawLine(graypen, bottomfrontright, beak)
-            generator.gfCrossSection.DrawLine(graypen, topfrontright, beak)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-        ElseIf direction = 5 Then
-            Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topfrontrightx) / 2)
-            Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - bottomfrontlefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-
-            Dim top As Point() = {topbackleft, beak, topbackright}
-            Dim right As Point() = {topbackright, beak, bottombackright}
-            Dim bottom As Point() = {bottombackleft, beak, bottombackright}
-            Dim left As Point() = {topbackleft, beak, bottombackleft}
-            generator.gfCrossSection.FillPolygon(myBrush, top)
-            generator.gfCrossSection.FillPolygon(myBrush, right)
-            generator.gfCrossSection.FillPolygon(myBrush, bottom)
-            generator.gfCrossSection.FillPolygon(myBrush, left)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
-
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-        ElseIf direction = 2 Then
-            If ylocation <= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, bottombackright, bottomfrontright}
-                generator.gfCrossSection.FillPolygon(myBrush, front)
-                generator.gfCrossSection.FillPolygon(myBrush, right)
-                generator.gfCrossSection.FillPolygon(myBrush, left)
-                generator.gfCrossSection.FillPolygon(myBrush, bottom)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottombackright)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottombackrighty) / Math.Abs(beakx - bottombackrightx))
-                Dim pointx As Single = bottombackrightx - (Math.Abs(bottomfrontrighty - bottombackrighty) / Math.Tan(ang))
-
-                If pointx > bottomfrontrightx Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, bottombackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottombacklefty) / Math.Abs(beakx - bottombackleftx))
-                pointx = (Math.Abs(bottomfrontlefty - bottombacklefty) / Math.Tan(ang)) + bottombackleftx
-
-
-                If pointx < bottomfrontleftx Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, bottombackleft)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, beak, bottombackleft)
-                End If
-
-            ElseIf ylocation >= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topbacklefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                generator.gfCrossSection.FillPolygon(myBrush, front)
-                generator.gfCrossSection.FillPolygon(myBrush, right)
-                generator.gfCrossSection.FillPolygon(myBrush, left)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottomfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                Dim pointx As Single = (Math.Abs(bottombacklefty - bottomfrontlefty) / Math.Tan(ang)) + bottomfrontleftx
-
-                If pointx < bottombackleftx Then
-                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, beak)
-                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, bottomfrontleft)
-                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, bottombackright)
-                Else
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
-                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, bottombackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottomfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                pointx = bottomfrontrightx - (Math.Abs(bottombackrighty - bottomfrontrighty) / Math.Tan(ang))
-
-
-                If pointx < bottombackrightx Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, bottombackright)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, bottombackright)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, beak, bottombackright)
-                    generator.gfCrossSection.DrawLine(graypen, bottomfrontright, bottombackright)
-                End If
-
-            End If
-
-        ElseIf direction = 1 Then
-            If ylocation <= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottomfrontlefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                generator.gfCrossSection.FillPolygon(myBrush, front)
-                generator.gfCrossSection.FillPolygon(myBrush, right)
-                generator.gfCrossSection.FillPolygon(myBrush, left)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-                generator.gfCrossSection.DrawLine(graypen, topbackright, topbackleft)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                Dim pointx As Single = topfrontrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-                If pointx < topbackrightx Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, topbackright, beak)
-                    generator.gfCrossSection.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                pointx = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topfrontleftx
-
-
-                If pointx > topbackleftx Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, topbackleft)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, beak, topbackleft)
-                    generator.gfCrossSection.DrawLine(graypen, topbackleft, topfrontleft)
-                End If
-
-            ElseIf ylocation >= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottombacklefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                Dim top As Point() = {topfrontleft, topbackleft, topbackright, topfrontright}
-                generator.gfCrossSection.FillPolygon(myBrush, front)
-                generator.gfCrossSection.FillPolygon(myBrush, right)
-                generator.gfCrossSection.FillPolygon(myBrush, left)
-                generator.gfCrossSection.FillPolygon(myBrush, top)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topbackright)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, topfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topbacklefty) / Math.Abs(beakx - bottombackleftx))
-                Dim pointx As Single = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topbackleftx
-
-                If pointx > topfrontleftx Then
-                    generator.gfCrossSection.DrawLine(graypen, topbackleft, beak)
-                Else
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topbackrighty) / Math.Abs(beakx - bottombackrightx))
-                pointx = topbackrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-
-                If pointx > topfrontrightx Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, beak, topbackright)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, beak, topbackright)
-                End If
-            End If
-
-
-        ElseIf direction = 4 Then
-            If xlocation <= xn / 2 Then
-
-                Dim beakx As Integer = (Math.Abs(topfrontrightx - topbackrightx) / 2) + topfrontrightx
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-
-                generator.gfCrossSection.FillPolygon(myBrush, top)
-                generator.gfCrossSection.FillPolygon(myBrush, middle)
-                generator.gfCrossSection.FillPolygon(myBrush, bottom)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
-
-                Dim ang As Single = Math.Atan((Math.Abs(topfrontrighty - bottombackrighty) / 2) / ((Math.Abs(topfrontrightx - topbackrightx) / 2) + (topfrontrightx - topfrontleftx)))
-                Dim pointy As Single = (Math.Tan(ang) * (a - topfrontleftx)) + topfrontlefty
-
-                If topbacklefty < pointy Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, topfrontleft, topbackleft)
-                    generator.gfCrossSection.DrawLine(graypen, topbackleft, beak)
-                End If
-
-                pointy = bottomfrontlefty - (Math.Tan(ang) * (a - topfrontleftx))
-
-                If bottombacklefty < pointy Then
-                    generator.gfCrossSection.DrawLine(graypen, bottomfrontleft, bottombackleft)
-                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, beak)
-                Else
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
-                End If
-
-                generator.gfCrossSection.DrawLine(graypen, topbackleft, bottombackleft)
-
-
-            ElseIf xlocation >= xn / 2 Then
-
-                Dim beakx As Integer = topfrontrightx - (Math.Abs(topfrontrightx - topbackrightx) / 2)
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim back As Point() = {topfrontleft, bottomfrontleft, bottombackleft, topbackleft}
-
-                generator.gfCrossSection.FillPolygon(myBrush, top)
-                generator.gfCrossSection.FillPolygon(myBrush, middle)
-                generator.gfCrossSection.FillPolygon(myBrush, bottom)
-                generator.gfCrossSection.FillPolygon(myBrush, back)
-
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, bottomfrontleft)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontleft, beak)
-
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontleft, beak)
-
-
-                Dim ang As Single
-                ang = Math.Atan((Math.Abs(beaky - bottombacklefty)) / (Math.Abs(beakx - bottombackleftx)))
-                Dim pointy As Single
-                pointy = bottombacklefty - (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-                If pointy > bottomfrontlefty Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackleft, beak)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, bottombackleft, beak)
-                End If
-
-                ang = Math.Atan((Math.Abs(beaky - topbacklefty)) / (Math.Abs(beakx - topbackleftx)))
-                pointy = topbacklefty + (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-
-                If pointy < topfrontlefty Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackleft, beak)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, topbackleft, beak)
-                End If
-            End If
-
-
-        ElseIf direction = 3 Then
-            If xlocation <= xn / 2 Then
-                Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                Dim back As Point() = {bottomfrontright, bottombackright, topbackright, topfrontright}
-
-                generator.gfCrossSection.FillPolygon(myBrush, top)
-                generator.gfCrossSection.FillPolygon(myBrush, middle)
-                generator.gfCrossSection.FillPolygon(myBrush, bottom)
-                generator.gfCrossSection.FillPolygon(myBrush, back)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, topbackright)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, bottombackright)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topbackrightx) / Math.Abs(beaky - topbackrighty))
-                Dim pointy As Single = topbackrighty + ((topbackrightx - topfrontrightx) / Math.Tan(ang))
-
-                If topfrontrighty > pointy Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, topbackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottombackrightx) / Math.Abs(beaky - bottombackrighty))
-                pointy = bottombackrighty - ((bottombackrightx - bottomfrontrightx) / Math.Tan(ang))
-
-                If bottomfrontrighty < pointy Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, bottombackright, beak)
-                End If
-
-            ElseIf xlocation > xn / 2 Then
-                Dim beakx As Integer = topfrontleftx - (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                generator.gfCrossSection.FillPolygon(myBrush, top)
-                generator.gfCrossSection.FillPolygon(myBrush, middle)
-                generator.gfCrossSection.FillPolygon(myBrush, bottom)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfCrossSection.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfCrossSection.DrawLine(graypen, topbackright, bottombackright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topfrontrightx) / Math.Abs(beaky - topfrontrighty))
-                Dim pointy As Single = topfrontrighty + ((topfrontrightx - topbackrightx) / Math.Tan(ang))
-
-                If topbackrighty < pointy Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, topbackright, beak)
-                    generator.gfCrossSection.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottomfrontrightx) / Math.Abs(beaky - bottomfrontrighty))
-                pointy = bottomfrontrighty - ((bottomfrontrightx - bottombackrightx) / Math.Tan(ang))
-
-                If bottombackrighty > pointy Then
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, beak)
-                    generator.gfCrossSection.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-                Else
-                    generator.gfCrossSection.DrawLine(graypen, bottombackright, beak)
-                    generator.gfCrossSection.DrawLine(graypen, bottombackright, bottomfrontright)
-                End If
-
-            End If
-
-        End If
-    End Sub
-
-    Public Sub rangecreatorxy(ByVal s As Integer)
-        'test code - produces a semi transparent cube (made up of smaller cubes) to show the target range of an agent
-        Dim xstart As Integer = 0
-        Dim xend As Integer = 0
-        Dim ystart As Integer = 0
-        Dim yend As Integer = 0
-        Dim zstart As Integer = 0
-        Dim zend As Integer = 0
-        Dim rr As Integer = 0
-        Dim gg As Integer = 0
-        Dim bb As Integer = 0
-        If generator.excludeagent(s, 0) = 2 Then
-            xstart = generator.excludeagent(s, 2)
-            xend = generator.excludeagent(s, 1)
-            ystart = generator.excludeagent(s, 4)
-            yend = generator.excludeagent(s, 3)
-            zstart = generator.excludeagent(s, 6)
-            zend = generator.excludeagent(s, 5)
-            rr = 255
-            gg = 153
-            bb = 153
-        Else
-            xstart = generator.agentrange(s, 0, 0)
-            xend = generator.agentrange(s, 0, 1)
-            ystart = generator.agentrange(s, 1, 0)
-            yend = generator.agentrange(s, 1, 1)
-            zstart = generator.agentrange(s, 2, 0)
-            zend = generator.agentrange(s, 2, 1)
-            rr = 153
-            gg = 204
-            bb = 255
-        End If
-
-        For z = zstart To zend
-            For y = ystart To yend
-                For x = xstart To xend
-
-                    Dim diag As Single = 0
-                    Dim jump As Double = cellxyx
-
-                    For i = 1 To z - 1
-                        jump = jump * (sizeratio)
-                        diag = diag + jump
-                    Next
-                    'MessageBox.Show(diag)
-                    Dim angle As Single = Math.Atan(xn / yn)
-                    Dim a As Integer = Math.Sin(angle) * diag
-                    Dim b As Integer = Math.Cos(angle) * diag
-                    'MessageBox.Show(a & " " & b)
-                    Dim topfrontrightx As Integer = a + (x * ((sizexyx - (2 * a)) / xn))
-                    Dim topfrontrighty As Integer = b + ((y - 1) * ((sizexyy - (2 * b)) / yn))
-                    Dim topfrontleftx As Integer = a + ((x - 1) * ((sizexyx - (2 * a)) / xn))
-                    Dim topfrontlefty As Integer = b + ((y - 1) * ((sizexyy - (2 * b)) / yn))
-
-                    Dim bottomfrontrightx As Integer = a + (x * ((sizexyx - (2 * a)) / xn))
-                    Dim bottomfrontrighty As Integer = b + (y * ((sizexyy - (2 * b)) / yn))
-                    Dim bottomfrontleftx As Integer = a + ((x - 1) * ((sizexyx - (2 * a)) / xn))
-                    Dim bottomfrontlefty As Integer = b + (y * ((sizexyy - (2 * b)) / yn))
-
-                    jump = jump * (sizeratio)
-                    diag = diag + jump
-
-                    angle = Math.Atan(xn / yn)
-                    a = Math.Sin(angle) * diag
-                    b = Math.Cos(angle) * diag
-
-                    Dim topbackrightx As Integer = a + (x * ((sizexyx - (2 * a)) / xn))
-                    Dim topbackrighty As Integer = b + ((y - 1) * ((sizexyy - (2 * b)) / yn))
-                    Dim topbackleftx As Integer = a + ((x - 1) * ((sizexyx - (2 * a)) / xn))
-                    Dim topbacklefty As Integer = b + ((y - 1) * ((sizexyy - (2 * b)) / yn))
-
-                    Dim bottombackrightx As Integer = a + (x * ((sizexyx - (2 * a)) / xn))
-                    Dim bottombackrighty As Integer = b + (y * ((sizexyy - (2 * b)) / yn))
-                    Dim bottombackleftx As Integer = a + ((x - 1) * ((sizexyx - (2 * a)) / xn))
-                    Dim bottombacklefty As Integer = b + (y * ((sizexyy - (2 * b)) / yn))
-
-
-                    Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
-                    Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
-                    Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
-                    Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
-
-                    Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
-                    Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
-                    Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
-                    Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
-
-                    Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-                    Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-                    Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-                    Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-                    Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-                    Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-
-                    Dim transparent As New SolidBrush(Color.FromArgb(25, rr, gg, bb))
-
-                    generator.gfxxy.FillPolygon(transparent, backface)
-                    generator.gfxxy.FillPolygon(transparent, rightface)
-                    generator.gfxxy.FillPolygon(transparent, leftface)
-                    generator.gfxxy.FillPolygon(transparent, topface)
-                    generator.gfxxy.FillPolygon(transparent, bottomface)
-                    generator.gfxxy.FillPolygon(transparent, frontface)
-                Next
-
-            Next
-        Next
-    End Sub
-
-    'test code
-    Public Sub rangecreatorxz(ByVal s As Integer)
-        'test code - produces a semi transparent cube (made up of smaller cubes) to show the target range of an agent
-        Dim xstart As Integer = 0
-        Dim xend As Integer = 0
-        Dim ystart As Integer = 0
-        Dim yend As Integer = 0
-        Dim zstart As Integer = 0
-        Dim zend As Integer = 0
-        Dim rr As Integer = 0
-        Dim gg As Integer = 0
-        Dim bb As Integer = 0
-        If generator.excludeagent(s, 0) = 2 Then
-            xstart = generator.excludeagent(s, 2)
-            xend = generator.excludeagent(s, 1)
-            ystart = generator.excludeagent(s, 4)
-            yend = generator.excludeagent(s, 3)
-            zstart = generator.excludeagent(s, 6)
-            zend = generator.excludeagent(s, 5)
-            rr = 255
-            gg = 153
-            bb = 153
-        Else
-            xstart = generator.agentrange(s, 0, 0)
-            xend = generator.agentrange(s, 0, 1)
-            ystart = generator.agentrange(s, 1, 0)
-            yend = generator.agentrange(s, 1, 1)
-            zstart = generator.agentrange(s, 2, 0)
-            zend = generator.agentrange(s, 2, 1)
-            rr = 153
-            gg = 204
-            bb = 255
-        End If
-
-        For z = zstart To zend
-            For y = ystart To yend
-                For x = xstart To xend
-
-                    Dim diag As Single = 0
-                    Dim jump As Double = cellxzx
-
-                    For i = 1 To y - 1
-                        jump = jump * (sizeratio)
-                        diag = diag + jump
-                    Next
-                    'MessageBox.Show(diag)
-                    Dim angle As Single = Math.Atan(xn / zn)
-                    Dim a As Integer = Math.Sin(angle) * diag
-                    Dim b As Integer = Math.Cos(angle) * diag
-                    'MessageBox.Show(a & " " & b)
-                    Dim topfrontrightx As Integer = a + (x * ((sizexzx - (2 * a)) / xn))
-                    Dim topfrontrighty As Integer = b + ((z - 1) * ((sizexzz - (2 * b)) / zn))
-                    Dim topfrontleftx As Integer = a + ((x - 1) * ((sizexzx - (2 * a)) / xn))
-                    Dim topfrontlefty As Integer = b + ((z - 1) * ((sizexzz - (2 * b)) / zn))
-
-                    Dim bottomfrontrightx As Integer = a + (x * ((sizexzx - (2 * a)) / xn))
-                    Dim bottomfrontrighty As Integer = b + (z * ((sizexzz - (2 * b)) / zn))
-                    Dim bottomfrontleftx As Integer = a + ((x - 1) * ((sizexzx - (2 * a)) / xn))
-                    Dim bottomfrontlefty As Integer = b + (z * ((sizexzz - (2 * b)) / zn))
-
-                    jump = jump * (sizeratio)
-                    diag = diag + jump
-
-                    angle = Math.Atan(xn / zn)
-                    a = Math.Sin(angle) * diag
-                    b = Math.Cos(angle) * diag
-
-                    Dim topbackrightx As Integer = a + (x * ((sizexzx - (2 * a)) / xn))
-                    Dim topbackrighty As Integer = b + ((z - 1) * ((sizexzz - (2 * b)) / zn))
-                    Dim topbackleftx As Integer = a + ((x - 1) * ((sizexzx - (2 * a)) / xn))
-                    Dim topbacklefty As Integer = b + ((z - 1) * ((sizexzz - (2 * b)) / zn))
-
-                    Dim bottombackrightx As Integer = a + (x * ((sizexzx - (2 * a)) / xn))
-                    Dim bottombackrighty As Integer = b + (z * ((sizexzz - (2 * b)) / zn))
-                    Dim bottombackleftx As Integer = a + ((x - 1) * ((sizexzx - (2 * a)) / xn))
-                    Dim bottombacklefty As Integer = b + (z * ((sizexzz - (2 * b)) / zn))
-
-                    Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
-                    Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
-                    Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
-                    Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
-
-                    Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
-                    Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
-                    Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
-                    Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
-
-                    Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-                    Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-                    Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-                    Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-                    Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-                    Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-
-                    Dim transparent As New SolidBrush(Color.FromArgb(25, rr, gg, bb))
-
-                    generator.gfxxz.FillPolygon(transparent, backface)
-                    generator.gfxxz.FillPolygon(transparent, rightface)
-                    generator.gfxxz.FillPolygon(transparent, leftface)
-                    generator.gfxxz.FillPolygon(transparent, topface)
-                    generator.gfxxz.FillPolygon(transparent, bottomface)
-                    generator.gfxxz.FillPolygon(transparent, frontface)
-                Next
-
-            Next
-        Next
-    End Sub
-
-    Public Sub rangecreatorzy(ByVal s As Integer)
-        Dim xstart As Integer = 0
-        Dim xend As Integer = 0
-        Dim ystart As Integer = 0
-        Dim yend As Integer = 0
-        Dim zstart As Integer = 0
-        Dim zend As Integer = 0
-        Dim rr As Integer = 0
-        Dim gg As Integer = 0
-        Dim bb As Integer = 0
-        If generator.excludeagent(s, 0) = 2 Then
-            xstart = generator.excludeagent(s, 2)
-            xend = generator.excludeagent(s, 1)
-            ystart = generator.excludeagent(s, 4)
-            yend = generator.excludeagent(s, 3)
-            zstart = generator.excludeagent(s, 6)
-            zend = generator.excludeagent(s, 5)
-            rr = 255
-            gg = 153
-            bb = 153
-        Else
-            xstart = generator.agentrange(s, 0, 0)
-            xend = generator.agentrange(s, 0, 1)
-            ystart = generator.agentrange(s, 1, 0)
-            yend = generator.agentrange(s, 1, 1)
-            zstart = generator.agentrange(s, 2, 0)
-            zend = generator.agentrange(s, 2, 1)
-            rr = 153
-            gg = 204
-            bb = 255
-        End If
-
-        For z = zstart To zend
-            For y = ystart To yend
-                For x = xstart To xend
-
-                    Dim diag As Single = 0
-                    Dim jump As Double = cellzyz
-
-                    For i = 1 To x - 1
-                        jump = jump * (sizeratio)
-                        diag = diag + jump
-                    Next
-
-                    Dim angle As Single = Math.Atan(zn / yn)
-                    Dim a As Integer = Math.Sin(angle) * diag
-                    Dim b As Integer = Math.Cos(angle) * diag
-
-                    Dim topfrontrightx As Integer = a + (z * ((sizezyz - (2 * a)) / zn))
-                    Dim topfrontrighty As Integer = b + ((y - 1) * ((sizezyy - (2 * b)) / yn))
-                    Dim topfrontleftx As Integer = a + ((z - 1) * ((sizezyz - (2 * a)) / zn))
-                    Dim topfrontlefty As Integer = b + ((y - 1) * ((sizezyy - (2 * b)) / yn))
-
-                    Dim bottomfrontrightx As Integer = a + (z * ((sizezyz - (2 * a)) / zn))
-                    Dim bottomfrontrighty As Integer = b + (y * ((sizezyy - (2 * b)) / yn))
-                    Dim bottomfrontleftx As Integer = a + ((z - 1) * ((sizezyz - (2 * a)) / zn))
-                    Dim bottomfrontlefty As Integer = b + (y * ((sizezyy - (2 * b)) / yn))
-
-                    jump = jump * (sizeratio)
-                    diag = diag + jump
-
-                    angle = Math.Atan(zn / yn)
-                    a = Math.Sin(angle) * diag
-                    b = Math.Cos(angle) * diag
-
-                    Dim topbackrightx As Integer = a + (z * ((sizezyz - (2 * a)) / zn))
-                    Dim topbackrighty As Integer = b + ((y - 1) * ((sizezyy - (2 * b)) / yn))
-                    Dim topbackleftx As Integer = a + ((z - 1) * ((sizezyz - (2 * a)) / zn))
-                    Dim topbacklefty As Integer = b + ((y - 1) * ((sizezyy - (2 * b)) / yn))
-
-                    Dim bottombackrightx As Integer = a + (z * ((sizezyz - (2 * a)) / zn))
-                    Dim bottombackrighty As Integer = b + (y * ((sizezyy - (2 * b)) / yn))
-                    Dim bottombackleftx As Integer = a + ((z - 1) * ((sizezyz - (2 * a)) / zn))
-                    Dim bottombacklefty As Integer = b + (y * ((sizezyy - (2 * b)) / yn))
-
-                    Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
-                    Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
-                    Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
-                    Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
-
-                    Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
-                    Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
-                    Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
-                    Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
-
-                    Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-                    Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-                    Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-                    Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-                    Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-                    Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-
-                    Dim transparent As New SolidBrush(Color.FromArgb(25, rr, gg, bb))
-
-                    generator.gfxzy.FillPolygon(transparent, backface)
-                    generator.gfxzy.FillPolygon(transparent, rightface)
-                    generator.gfxzy.FillPolygon(transparent, leftface)
-                    generator.gfxzy.FillPolygon(transparent, topface)
-                    generator.gfxzy.FillPolygon(transparent, bottomface)
-                    generator.gfxzy.FillPolygon(transparent, frontface)
-                Next
-            Next
-        Next
-    End Sub
-
-    Public Sub range()
-        If viewlabel.Text = "Top View (x,z)" Then
-            generator.gfxxz.Clear(Color.White)
-            Call generator.gridxz()
-            Call sortxz()
-
-            Call placingagentsxz()
-            If visualizerange <> 0 Then
-                Call rangecreatorxz(visualizerange)
-            End If
-            Call generator.topgridxz()
-            PictureBox1.Image = generator.picxz
-
-        ElseIf viewlabel.Text = "Side View (x,y)" Then
-            generator.gfxxy.Clear(Color.White)
-            Call generator.gridxy()
-            Call sortxy()
-
-            Call placingagentsxy()
-            If visualizerange <> 0 Then
-                Call rangecreatorxy(visualizerange)
-            End If
-            Call generator.topgridxy()
-            PictureBox1.Image = generator.picxy
-
-        ElseIf viewlabel.Text = "Side View (z,y)" Then
-            generator.gfxzy.Clear(Color.White)
-            Call generator.gridzy()
-            Call sortzy()
-
-            Call placingagentszy()
-            If visualizerange <> 0 Then
-                Call rangecreatorzy(visualizerange)
-            End If
-            Call generator.topgridzy()
-            PictureBox1.Image = generator.piczy
-        End If
-    End Sub
-
-    Sub creatorxz(ByVal xlocation As String, ByVal ylocation As Integer, ByVal zlocation As Integer, ByVal direction As Integer, ByVal colour As System.Drawing.Color, ByVal s As Integer)
-        zlocation = (zn - zlocation) + 1
-        Dim diag As Single
-        Dim jump As Double = cellxzx
-        For i = 1 To ylocation - 1
-            jump = jump * (sizeratio)
-            diag = diag + jump
-        Next
-        Dim angle As Single = Math.Atan(xn / zn)
-        Dim a As Integer = Math.Sin(angle) * diag
-        Dim b As Integer = Math.Cos(angle) * diag
-
-        Dim topfrontrightx As Integer = a + (xlocation * ((sizexzx - (2 * a)) / xn))
-        Dim topfrontrighty As Integer = b + ((zlocation - 1) * ((sizexzz - (2 * b)) / zn))
-        Dim topfrontleftx As Integer = a + ((xlocation - 1) * ((sizexzx - (2 * a)) / xn))
-        Dim topfrontlefty As Integer = b + ((zlocation - 1) * ((sizexzz - (2 * b)) / zn))
-
-        Dim bottomfrontrightx As Integer = a + (xlocation * ((sizexzx - (2 * a)) / xn))
-        Dim bottomfrontrighty As Integer = b + (zlocation * ((sizexzz - (2 * b)) / zn))
-        Dim bottomfrontleftx As Integer = a + ((xlocation - 1) * ((sizexzx - (2 * a)) / xn))
-        Dim bottomfrontlefty As Integer = b + (zlocation * ((sizexzz - (2 * b)) / zn))
-
-
-        jump = jump * (sizeratio)
-        diag = diag + jump
-
-        angle = Math.Atan(xn / zn)
-        a = Math.Sin(angle) * diag
-        b = Math.Cos(angle) * diag
-
-        Dim topbackrightx As Integer = a + (xlocation * ((sizexzx - (2 * a)) / xn))
-        Dim topbackrighty As Integer = b + ((zlocation - 1) * ((sizexzz - (2 * b)) / zn))
-        Dim topbackleftx As Integer = a + ((xlocation - 1) * ((sizexzx - (2 * a)) / xn))
-        Dim topbacklefty As Integer = b + ((zlocation - 1) * ((sizexzz - (2 * b)) / zn))
-
-        Dim bottombackrightx As Integer = a + (xlocation * ((sizexzx - (2 * a)) / xn))
-        Dim bottombackrighty As Integer = b + (zlocation * ((sizexzz - (2 * b)) / zn))
-        Dim bottombackleftx As Integer = a + ((xlocation - 1) * ((sizexzx - (2 * a)) / xn))
-        Dim bottombacklefty As Integer = b + (zlocation * ((sizexzz - (2 * b)) / zn))
-
-        Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
-        Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
-        Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
-        Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
-
-        Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
-        Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
-        Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
-        Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
-
-        Dim dashValues As Single() = {1, 2}
-        Dim graypen As New Pen(Color.Gray, 1)
-        Dim myBrush As New SolidBrush(colour)
-        graypen.DashPattern = dashValues
-
-        'generator.gfxxz.DrawLine(Pens.Red, topfrontleftx, topfrontlefty, topfrontrightx, topfrontrighty)
-        'generator.gfxxz.DrawLine(Pens.Red, bottomfrontleftx, bottomfrontlefty, bottomfrontrightx, bottomfrontrighty)
-        'generator.gfxxz.DrawLine(Pens.Red, topbackleftx, topbacklefty, topbackrightx, topbackrighty)
-        'generator.gfxxz.DrawLine(Pens.Red, bottombackleftx, bottombacklefty, bottombackrightx, bottombackrighty)
-
-        'draws cubes for static agents
-        If generator.staticagent(s) = 2 Then
-            Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-            Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-            Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-            Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-            Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-            Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-            Dim brush As New SolidBrush(Color.FromArgb(150, colour.R, colour.G, colour.B))
-            'fills in the six faces
-            generator.gfxxz.FillPolygon(brush, backface)
-            generator.gfxxz.FillPolygon(brush, rightface)
-            generator.gfxxz.FillPolygon(brush, leftface)
-            generator.gfxxz.FillPolygon(brush, topface)
-            generator.gfxxz.FillPolygon(brush, bottomface)
-            If generator.agentreservoir(s, 0) = 0 Then
-                generator.gfxxz.FillPolygon(brush, frontface)
-            End If
-            'draws the 12 edges of the cube (in the same colour)
-            generator.gfxxz.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfxxz.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-            generator.gfxxz.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-            generator.gfxxz.DrawLine(Pens.Gray, topbackright, topfrontright)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-
-            generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfxxz.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-            If generator.agentreservoir(s, 0) = 2 Then
-                'new code - bars that show the capacity of the static agent
-                Dim scalingfactor As Decimal = (topfrontrightx - topfrontleftx) * 0.25
-                Dim progressbarlength As Decimal = Math.Abs(topfrontrighty - bottomfrontrighty)
-
-                Dim capacity As Decimal = generator.agentreservoir(s, 1)
-                Dim actuallevel As Decimal = generator.agentreservoir(s, 2)
-                If actuallevel >= capacity Then
-                    actuallevel = capacity
-                End If
-
-                Dim progressbarscalingfactor As Decimal = 0
-                If capacity > 0 Then
-                    progressbarscalingfactor = actuallevel / capacity
-                End If
-
-                Dim topfrontrightleftx As Integer = topfrontrightx - scalingfactor
-                Dim topfrontrightrightx As Integer = topfrontrightx
-
-                Dim bottomfrontrightleftx As Integer = bottomfrontrightx - scalingfactor
-                Dim bottomfrontrightrightx As Integer = bottomfrontrightx
-
-                Dim topfrontrightleft As New System.Drawing.Point(topfrontrightleftx, topfrontrighty)
-                Dim topfrontrightright As New System.Drawing.Point(topfrontrightrightx, topfrontrighty)
-
-                Dim bottomfrontrightleft As New System.Drawing.Point(bottomfrontrightleftx, bottomfrontrighty)
-                Dim bottomfrontrightright As New System.Drawing.Point(bottomfrontrightrightx, bottomfrontrighty)
-
-                Dim newy As Decimal = bottomfrontrighty - (progressbarlength * progressbarscalingfactor)
-                Dim progressbarlefttop As New System.Drawing.Point(bottomfrontrightleftx, newy)
-                Dim progressbarrighttop As New System.Drawing.Point(bottomfrontrightx, newy)
-                generator.gfxxz.DrawLine(Pens.Black, progressbarlefttop, progressbarrighttop)
-
-                Dim frontfaceleft As Point() = {topfrontrightleft, topfrontleft, bottomfrontleft, bottomfrontrightleft}
-                Dim frontfaceright As Point() = {topfrontright, bottomfrontright, bottomfrontrightleft, topfrontrightleft}
-                Dim frontfacerightbar As Point() = {bottomfrontright, bottomfrontrightleft, progressbarlefttop, progressbarrighttop}
-                Dim frontfacebarfiller As Point() = {topfrontright, topfrontrightleft, progressbarlefttop, progressbarrighttop}
-
-                Dim col As New SolidBrush(Color.FromArgb(150, Color.White.R, Color.White.G, Color.White.B))
-                Dim bar As New SolidBrush(Color.FromArgb(150, Color.GreenYellow.R, Color.GreenYellow.G, Color.GreenYellow.B))
-
-                'generator.gfxxy.FillPolygon(col, frontfaceright)
-                generator.gfxxz.FillPolygon(brush, frontfaceleft)
-                generator.gfxxz.FillPolygon(col, frontfacebarfiller)
-                generator.gfxxz.FillPolygon(bar, frontfacerightbar)
-                'new code
-            End If
-
-            Exit Sub
-        End If
-
-        If direction = 1 Then
-
-            Dim beakx As Integer = topbackleftx + (Math.Abs(topbackleftx - topbackrightx) / 2)
-            Dim beaky As Integer = topbacklefty + (Math.Abs(topbacklefty - bottombacklefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-            Dim top As Point() = {topfrontleft, beak, topfrontright}
-            Dim right As Point() = {topfrontright, beak, bottomfrontright}
-            Dim bottom As Point() = {bottomfrontleft, beak, bottomfrontright}
-            Dim left As Point() = {topfrontleft, beak, bottomfrontleft}
-            generator.gfxxz.FillPolygon(myBrush, top)
-            generator.gfxxz.FillPolygon(myBrush, right)
-            generator.gfxxz.FillPolygon(myBrush, bottom)
-            generator.gfxxz.FillPolygon(myBrush, left)
-
-            generator.gfxxz.DrawLine(graypen, topfrontleft, beak)
-            generator.gfxxz.DrawLine(graypen, bottomfrontleft, beak)
-            generator.gfxxz.DrawLine(graypen, bottomfrontright, beak)
-            generator.gfxxz.DrawLine(graypen, topfrontright, beak)
-
-            generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfxxz.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-        ElseIf direction = 2 Then
-            Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topfrontrightx) / 2)
-            Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - bottomfrontlefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-
-            Dim top As Point() = {topbackleft, beak, topbackright}
-            Dim right As Point() = {topbackright, beak, bottombackright}
-            Dim bottom As Point() = {bottombackleft, beak, bottombackright}
-            Dim left As Point() = {topbackleft, beak, bottombackleft}
-            generator.gfxxz.FillPolygon(myBrush, top)
-            generator.gfxxz.FillPolygon(myBrush, right)
-            generator.gfxxz.FillPolygon(myBrush, bottom)
-            generator.gfxxz.FillPolygon(myBrush, left)
-
-            generator.gfxxz.DrawLine(Pens.Gray, topbackleft, beak)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, beak)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackright, beak)
-            generator.gfxxz.DrawLine(Pens.Gray, topbackright, beak)
-
-            generator.gfxxz.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfxxz.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-        ElseIf direction = 6 Then
-            If zlocation <= zn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, bottombackright, bottomfrontright}
-                generator.gfxxz.FillPolygon(myBrush, front)
-                generator.gfxxz.FillPolygon(myBrush, right)
-                generator.gfxxz.FillPolygon(myBrush, left)
-                generator.gfxxz.FillPolygon(myBrush, bottom)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, bottombackright)
-                generator.gfxxz.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottombackrighty) / Math.Abs(beakx - bottombackrightx))
-                Dim pointx As Single = bottombackrightx - (Math.Abs(bottomfrontrighty - bottombackrighty) / Math.Tan(ang))
-
-                If pointx > bottomfrontrightx Then
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfxxz.DrawLine(graypen, bottombackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottombacklefty) / Math.Abs(beakx - bottombackleftx))
-                pointx = (Math.Abs(bottomfrontlefty - bottombacklefty) / Math.Tan(ang)) + bottombackleftx
-
-
-                If pointx < bottomfrontleftx Then
-                    generator.gfxxz.DrawLine(Pens.Gray, beak, bottombackleft)
-                Else
-                    generator.gfxxz.DrawLine(graypen, beak, bottombackleft)
-                End If
-
-            ElseIf zlocation >= zn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topbacklefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                generator.gfxxz.FillPolygon(myBrush, front)
-                generator.gfxxz.FillPolygon(myBrush, right)
-                generator.gfxxz.FillPolygon(myBrush, left)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottomfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                Dim pointx As Single = (Math.Abs(bottombacklefty - bottomfrontlefty) / Math.Tan(ang)) + bottomfrontleftx
-
-                If pointx < bottombackleftx Then
-                    generator.gfxxz.DrawLine(graypen, bottombackleft, beak)
-                    generator.gfxxz.DrawLine(graypen, bottombackleft, bottomfrontleft)
-                    generator.gfxxz.DrawLine(graypen, bottombackleft, bottombackright)
-                Else
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, beak)
-                    generator.gfxxz.DrawLine(graypen, bottombackleft, bottombackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottomfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                pointx = bottomfrontrightx - (Math.Abs(bottombackrighty - bottomfrontrighty) / Math.Tan(ang))
-
-
-                If pointx < bottombackrightx Then
-                    generator.gfxxz.DrawLine(Pens.Gray, beak, bottombackright)
-                    generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, bottombackright)
-                Else
-                    generator.gfxxz.DrawLine(graypen, beak, bottombackright)
-                    generator.gfxxz.DrawLine(graypen, bottomfrontright, bottombackright)
-                End If
-
-            End If
-
-        ElseIf direction = 5 Then
-            If zlocation <= zn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottomfrontlefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                generator.gfxxz.FillPolygon(myBrush, front)
-                generator.gfxxz.FillPolygon(myBrush, right)
-                generator.gfxxz.FillPolygon(myBrush, left)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-                generator.gfxxz.DrawLine(graypen, topbackright, topbackleft)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                Dim pointx As Single = topfrontrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-                If pointx < topbackrightx Then
-                    generator.gfxxz.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfxxz.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfxxz.DrawLine(graypen, topbackright, beak)
-                    generator.gfxxz.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                pointx = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topfrontleftx
-
-
-                If pointx > topbackleftx Then
-                    generator.gfxxz.DrawLine(Pens.Gray, beak, topbackleft)
-                    generator.gfxxz.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                Else
-                    generator.gfxxz.DrawLine(graypen, beak, topbackleft)
-                    generator.gfxxz.DrawLine(graypen, topbackleft, topfrontleft)
-                End If
-
-            ElseIf zlocation >= zn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottombacklefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                Dim top As Point() = {topfrontleft, topbackleft, topbackright, topfrontright}
-                generator.gfxxz.FillPolygon(myBrush, front)
-                generator.gfxxz.FillPolygon(myBrush, right)
-                generator.gfxxz.FillPolygon(myBrush, left)
-                generator.gfxxz.FillPolygon(myBrush, top)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                generator.gfxxz.DrawLine(Pens.Gray, topbackleft, topbackright)
-                generator.gfxxz.DrawLine(Pens.Gray, topbackright, topfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topbacklefty) / Math.Abs(beakx - bottombackleftx))
-                Dim pointx As Single = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topbackleftx
-
-                If pointx > topfrontleftx Then
-                    generator.gfxxz.DrawLine(graypen, topbackleft, beak)
-                Else
-                    generator.gfxxz.DrawLine(Pens.Gray, topbackleft, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topbackrighty) / Math.Abs(beakx - bottombackrightx))
-                pointx = topbackrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-
-                If pointx > topfrontrightx Then
-                    generator.gfxxz.DrawLine(Pens.Gray, beak, topbackright)
-                Else
-                    generator.gfxxz.DrawLine(graypen, beak, topbackright)
-                End If
-            End If
-
-
-        ElseIf direction = 4 Then
-            If xlocation <= xn / 2 Then
-
-                Dim beakx As Integer = (Math.Abs(topfrontrightx - topbackrightx) / 2) + topfrontrightx
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-
-                generator.gfxxz.FillPolygon(myBrush, top)
-                generator.gfxxz.FillPolygon(myBrush, middle)
-                generator.gfxxz.FillPolygon(myBrush, bottom)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, beak)
-
-                Dim ang As Single = Math.Atan((Math.Abs(topfrontrighty - bottombackrighty) / 2) / ((Math.Abs(topfrontrightx - topbackrightx) / 2) + (topfrontrightx - topfrontleftx)))
-                Dim pointy As Single = (Math.Tan(ang) * (a - topfrontleftx)) + topfrontlefty
-
-                If topbacklefty < pointy Then
-                    generator.gfxxz.DrawLine(Pens.Gray, topbackleft, beak)
-                    generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                Else
-                    generator.gfxxz.DrawLine(graypen, topfrontleft, topbackleft)
-                    generator.gfxxz.DrawLine(graypen, topbackleft, beak)
-                End If
-
-                pointy = bottomfrontlefty - (Math.Tan(ang) * (a - topfrontleftx))
-
-                If bottombacklefty < pointy Then
-                    generator.gfxxz.DrawLine(graypen, bottomfrontleft, bottombackleft)
-                    generator.gfxxz.DrawLine(graypen, bottombackleft, beak)
-                Else
-                    generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, beak)
-                End If
-
-                generator.gfxxz.DrawLine(graypen, topbackleft, bottombackleft)
-
-
-            ElseIf xlocation >= xn / 2 Then
-
-                Dim beakx As Integer = topfrontrightx - (Math.Abs(topfrontrightx - topbackrightx) / 2)
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim back As Point() = {topfrontleft, bottomfrontleft, bottombackleft, topbackleft}
-
-                generator.gfxxz.FillPolygon(myBrush, top)
-                generator.gfxxz.FillPolygon(myBrush, middle)
-                generator.gfxxz.FillPolygon(myBrush, bottom)
-                generator.gfxxz.FillPolygon(myBrush, back)
-
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, bottomfrontleft)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-                generator.gfxxz.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontleft, beak)
-
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontleft, beak)
-
-
-                Dim ang As Single
-                ang = Math.Atan((Math.Abs(beaky - bottombacklefty)) / (Math.Abs(beakx - bottombackleftx)))
-                Dim pointy As Single
-                pointy = bottombacklefty - (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-                If pointy > bottomfrontlefty Then
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackleft, beak)
-                Else
-                    generator.gfxxz.DrawLine(graypen, bottombackleft, beak)
-                End If
-
-                ang = Math.Atan((Math.Abs(beaky - topbacklefty)) / (Math.Abs(beakx - topbackleftx)))
-                pointy = topbacklefty + (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-
-                If pointy < topfrontlefty Then
-                    generator.gfxxz.DrawLine(Pens.Gray, topbackleft, beak)
-                Else
-                    generator.gfxxz.DrawLine(graypen, topbackleft, beak)
-                End If
-            End If
-
-
-        ElseIf direction = 3 Then
-            If xlocation <= xn / 2 Then
-                Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                Dim back As Point() = {bottomfrontright, bottombackright, topbackright, topfrontright}
-
-                generator.gfxxz.FillPolygon(myBrush, top)
-                generator.gfxxz.FillPolygon(myBrush, middle)
-                generator.gfxxz.FillPolygon(myBrush, bottom)
-                generator.gfxxz.FillPolygon(myBrush, back)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontright, topbackright)
-                generator.gfxxz.DrawLine(Pens.Gray, topbackright, bottombackright)
-                generator.gfxxz.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topbackrightx) / Math.Abs(beaky - topbackrighty))
-                Dim pointy As Single = topbackrighty + ((topbackrightx - topfrontrightx) / Math.Tan(ang))
-
-                If topfrontrighty > pointy Then
-                    generator.gfxxz.DrawLine(Pens.Gray, topbackright, beak)
-                Else
-                    generator.gfxxz.DrawLine(graypen, topbackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottombackrightx) / Math.Abs(beaky - bottombackrighty))
-                pointy = bottombackrighty - ((bottombackrightx - bottomfrontrightx) / Math.Tan(ang))
-
-                If bottomfrontrighty < pointy Then
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfxxz.DrawLine(graypen, bottombackright, beak)
-                End If
-
-            ElseIf xlocation > xn / 2 Then
-                Dim beakx As Integer = topfrontleftx - (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                generator.gfxxz.FillPolygon(myBrush, top)
-                generator.gfxxz.FillPolygon(myBrush, middle)
-                generator.gfxxz.FillPolygon(myBrush, bottom)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxxz.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfxxz.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxxz.DrawLine(graypen, topbackright, bottombackright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topfrontrightx) / Math.Abs(beaky - topfrontrighty))
-                Dim pointy As Single = topfrontrighty + ((topfrontrightx - topbackrightx) / Math.Tan(ang))
-
-                If topbackrighty < pointy Then
-                    generator.gfxxz.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfxxz.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfxxz.DrawLine(graypen, topbackright, beak)
-                    generator.gfxxz.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottomfrontrightx) / Math.Abs(beaky - bottomfrontrighty))
-                pointy = bottomfrontrighty - ((bottomfrontrightx - bottombackrightx) / Math.Tan(ang))
-
-                If bottombackrighty > pointy Then
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackright, beak)
-                    generator.gfxxz.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-                Else
-                    generator.gfxxz.DrawLine(graypen, bottombackright, beak)
-                    generator.gfxxz.DrawLine(graypen, bottombackright, bottomfrontright)
-                End If
-
-            End If
-        End If
-    End Sub
-
-    Sub creatorzy(ByVal xlocation As String, ByVal ylocation As Integer, ByVal zlocation As Integer, ByVal direction As Integer, ByVal colour As System.Drawing.Color, ByVal s As Integer)
-        zlocation = (zn - zlocation) + 1
-        Dim diag As Single
-        Dim jump As Double = cellzyz
-        For i = 1 To xlocation - 1
-            jump = jump * (sizeratio)
-            diag = diag + jump
-        Next
-        Dim angle As Single = Math.Atan(zn / yn)
-        Dim a As Integer = Math.Sin(angle) * diag
-        Dim b As Integer = Math.Cos(angle) * diag
-
-        Dim topfrontrightx As Integer = a + (zlocation * ((sizezyz - (2 * a)) / zn))
-        Dim topfrontrighty As Integer = b + ((ylocation - 1) * ((sizezyy - (2 * b)) / yn))
-        Dim topfrontleftx As Integer = a + ((zlocation - 1) * ((sizezyz - (2 * a)) / zn))
-        Dim topfrontlefty As Integer = b + ((ylocation - 1) * ((sizezyy - (2 * b)) / yn))
-
-        Dim bottomfrontrightx As Integer = a + (zlocation * ((sizezyz - (2 * a)) / zn))
-        Dim bottomfrontrighty As Integer = b + (ylocation * ((sizezyy - (2 * b)) / yn))
-        Dim bottomfrontleftx As Integer = a + ((zlocation - 1) * ((sizezyz - (2 * a)) / zn))
-        Dim bottomfrontlefty As Integer = b + (ylocation * ((sizezyy - (2 * b)) / yn))
-
-        jump = jump * (sizeratio)
-        diag = diag + jump
-
-        angle = Math.Atan(zn / yn)
-        a = Math.Sin(angle) * diag
-        b = Math.Cos(angle) * diag
-
-        Dim topbackrightx As Integer = a + (zlocation * ((sizezyz - (2 * a)) / zn))
-        Dim topbackrighty As Integer = b + ((ylocation - 1) * ((sizezyy - (2 * b)) / yn))
-        Dim topbackleftx As Integer = a + ((zlocation - 1) * ((sizezyz - (2 * a)) / zn))
-        Dim topbacklefty As Integer = b + ((ylocation - 1) * ((sizezyy - (2 * b)) / yn))
-
-        Dim bottombackrightx As Integer = a + (zlocation * ((sizezyz - (2 * a)) / zn))
-        Dim bottombackrighty As Integer = b + (ylocation * ((sizezyy - (2 * b)) / yn))
-        Dim bottombackleftx As Integer = a + ((zlocation - 1) * ((sizezyz - (2 * a)) / zn))
-        Dim bottombacklefty As Integer = b + (ylocation * ((sizezyy - (2 * b)) / yn))
-
-        Dim topfrontright As New System.Drawing.Point(topfrontrightx, topfrontrighty)
-        Dim topfrontleft As New System.Drawing.Point(topfrontleftx, topfrontlefty)
-        Dim bottomfrontright As New System.Drawing.Point(bottomfrontrightx, bottomfrontrighty)
-        Dim bottomfrontleft As New System.Drawing.Point(bottomfrontleftx, bottomfrontlefty)
-
-        Dim topbackright As New System.Drawing.Point(topbackrightx, topbackrighty)
-        Dim topbackleft As New System.Drawing.Point(topbackleftx, topbacklefty)
-        Dim bottombackright As New System.Drawing.Point(bottombackrightx, bottombackrighty)
-        Dim bottombackleft As New System.Drawing.Point(bottombackleftx, bottombacklefty)
-
-        Dim dashValues As Single() = {1, 2}
-        Dim graypen As New Pen(Color.Gray, 1)
-        Dim myBrush As New SolidBrush(colour)
-        graypen.DashPattern = dashValues
-
-        'draws cubes for static agents
-        If generator.staticagent(s) = 2 Then
-            Dim backface As Point() = {topbackleft, topbackright, bottombackright, bottombackleft}
-            Dim rightface As Point() = {topbackright, bottombackright, bottomfrontright, topfrontright}
-            Dim leftface As Point() = {topbackleft, bottombackleft, bottomfrontleft, topfrontleft}
-            Dim topface As Point() = {topbackleft, topbackright, topfrontright, topfrontleft}
-            Dim bottomface As Point() = {bottombackleft, bottombackright, bottomfrontright, bottomfrontleft}
-            Dim frontface As Point() = {topfrontright, topfrontleft, bottomfrontleft, bottomfrontright}
-            Dim brush As New SolidBrush(Color.FromArgb(150, colour.R, colour.G, colour.B))
-
-            generator.gfxzy.FillPolygon(brush, backface)
-            generator.gfxzy.FillPolygon(brush, rightface)
-            generator.gfxzy.FillPolygon(brush, leftface)
-            generator.gfxzy.FillPolygon(brush, topface)
-            generator.gfxzy.FillPolygon(brush, bottomface)
-            If generator.agentreservoir(s, 0) = 0 Then
-                generator.gfxzy.FillPolygon(brush, frontface)
-            End If
-
-            generator.gfxzy.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfxzy.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-            generator.gfxzy.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-            generator.gfxzy.DrawLine(Pens.Gray, topbackright, topfrontright)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-
-            generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfxzy.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-            If generator.agentreservoir(s, 0) = 2 Then
-                'new code - bars that show the capacity of the static agent
-                Dim scalingfactor As Decimal = (topfrontrightx - topfrontleftx) * 0.25
-                Dim progressbarlength As Decimal = Math.Abs(topfrontrighty - bottomfrontrighty)
-
-                Dim capacity As Decimal = generator.agentreservoir(s, 1)
-                Dim actuallevel As Decimal = generator.agentreservoir(s, 2)
-                If actuallevel >= capacity Then
-                    actuallevel = capacity
-                End If
-
-                Dim progressbarscalingfactor As Decimal = 0
-                If capacity > 0 Then
-                    progressbarscalingfactor = actuallevel / capacity
-                End If
-
-                Dim topfrontrightleftx As Integer = topfrontrightx - scalingfactor
-                Dim topfrontrightrightx As Integer = topfrontrightx
-
-                Dim bottomfrontrightleftx As Integer = bottomfrontrightx - scalingfactor
-                Dim bottomfrontrightrightx As Integer = bottomfrontrightx
-
-                Dim topfrontrightleft As New System.Drawing.Point(topfrontrightleftx, topfrontrighty)
-                Dim topfrontrightright As New System.Drawing.Point(topfrontrightrightx, topfrontrighty)
-
-                Dim bottomfrontrightleft As New System.Drawing.Point(bottomfrontrightleftx, bottomfrontrighty)
-                Dim bottomfrontrightright As New System.Drawing.Point(bottomfrontrightrightx, bottomfrontrighty)
-
-                Dim newy As Decimal = bottomfrontrighty - (progressbarlength * progressbarscalingfactor)
-                Dim progressbarlefttop As New System.Drawing.Point(bottomfrontrightleftx, newy)
-                Dim progressbarrighttop As New System.Drawing.Point(bottomfrontrightx, newy)
-                generator.gfxzy.DrawLine(Pens.Black, progressbarlefttop, progressbarrighttop)
-
-                Dim frontfaceleft As Point() = {topfrontrightleft, topfrontleft, bottomfrontleft, bottomfrontrightleft}
-                Dim frontfaceright As Point() = {topfrontright, bottomfrontright, bottomfrontrightleft, topfrontrightleft}
-                Dim frontfacerightbar As Point() = {bottomfrontright, bottomfrontrightleft, progressbarlefttop, progressbarrighttop}
-                Dim frontfacebarfiller As Point() = {topfrontright, topfrontrightleft, progressbarlefttop, progressbarrighttop}
-
-                Dim col As New SolidBrush(Color.FromArgb(150, Color.White.R, Color.White.G, Color.White.B))
-                Dim bar As New SolidBrush(Color.FromArgb(150, Color.GreenYellow.R, Color.GreenYellow.G, Color.GreenYellow.B))
-
-                'generator.gfxxy.FillPolygon(col, frontfaceright)
-                generator.gfxzy.FillPolygon(brush, frontfaceleft)
-                generator.gfxzy.FillPolygon(col, frontfacebarfiller)
-                generator.gfxzy.FillPolygon(bar, frontfacerightbar)
-                'new code
-            End If
-
-            Exit Sub
-        End If
-
-        If direction = 4 Then
-
-            Dim beakx As Integer = topbackleftx + (Math.Abs(topbackleftx - topbackrightx) / 2)
-            Dim beaky As Integer = topbacklefty + (Math.Abs(topbacklefty - bottombacklefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-            Dim top As Point() = {topfrontleft, beak, topfrontright}
-            Dim right As Point() = {topfrontright, beak, bottomfrontright}
-            Dim bottom As Point() = {bottomfrontleft, beak, bottomfrontright}
-            Dim left As Point() = {topfrontleft, beak, bottomfrontleft}
-            generator.gfxzy.FillPolygon(myBrush, top)
-            generator.gfxzy.FillPolygon(myBrush, right)
-            generator.gfxzy.FillPolygon(myBrush, bottom)
-            generator.gfxzy.FillPolygon(myBrush, left)
-
-            generator.gfxzy.DrawLine(graypen, topfrontleft, beak)
-            generator.gfxzy.DrawLine(graypen, bottomfrontleft, beak)
-            generator.gfxzy.DrawLine(graypen, bottomfrontright, beak)
-            generator.gfxzy.DrawLine(graypen, topfrontright, beak)
-
-            generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-            generator.gfxzy.DrawLine(Pens.Gray, topfrontright, bottomfrontright)
-            generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, bottomfrontleft)
-            generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-
-        ElseIf direction = 3 Then
-            Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topfrontrightx) / 2)
-            Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - bottomfrontlefty) / 2)
-            Dim beak As New System.Drawing.Point(beakx, beaky)
-
-
-            Dim top As Point() = {topbackleft, beak, topbackright}
-            Dim right As Point() = {topbackright, beak, bottombackright}
-            Dim bottom As Point() = {bottombackleft, beak, bottombackright}
-            Dim left As Point() = {topbackleft, beak, bottombackleft}
-            generator.gfxzy.FillPolygon(myBrush, top)
-            generator.gfxzy.FillPolygon(myBrush, right)
-            generator.gfxzy.FillPolygon(myBrush, bottom)
-            generator.gfxzy.FillPolygon(myBrush, left)
-
-            generator.gfxzy.DrawLine(Pens.Gray, topbackleft, beak)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, beak)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackright, beak)
-            generator.gfxzy.DrawLine(Pens.Gray, topbackright, beak)
-
-            generator.gfxzy.DrawLine(Pens.Gray, topbackleft, topbackright)
-            generator.gfxzy.DrawLine(Pens.Gray, topbackright, bottombackright)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackright, bottombackleft)
-            generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-
-        ElseIf direction = 2 Then
-            If ylocation <= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topfrontlefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, bottombackright, bottomfrontright}
-                generator.gfxzy.FillPolygon(myBrush, front)
-                generator.gfxzy.FillPolygon(myBrush, right)
-                generator.gfxzy.FillPolygon(myBrush, left)
-                generator.gfxzy.FillPolygon(myBrush, bottom)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, bottombackright)
-                generator.gfxzy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottombackrighty) / Math.Abs(beakx - bottombackrightx))
-                Dim pointx As Single = bottombackrightx - (Math.Abs(bottomfrontrighty - bottombackrighty) / Math.Tan(ang))
-
-                If pointx > bottomfrontrightx Then
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfxzy.DrawLine(graypen, bottombackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottombacklefty) / Math.Abs(beakx - bottombackleftx))
-                pointx = (Math.Abs(bottomfrontlefty - bottombacklefty) / Math.Tan(ang)) + bottombackleftx
-
-
-                If pointx < bottomfrontleftx Then
-                    generator.gfxzy.DrawLine(Pens.Gray, beak, bottombackleft)
-                Else
-                    generator.gfxzy.DrawLine(graypen, beak, bottombackleft)
-                End If
-
-            ElseIf ylocation >= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(topbackleftx - topbackrightx) / 2) + (Math.Abs(topfrontleftx - topfrontrightx) / 2)) / 2) + ((topfrontleftx + topbackleftx) / 2)
-                Dim beaky As Integer = topbacklefty + (Math.Abs(topfrontlefty - topbacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {bottomfrontleft, beak, bottomfrontright}
-                Dim right As Point() = {bottomfrontright, beak, bottombackright}
-                Dim left As Point() = {bottomfrontleft, bottombackleft, beak}
-                generator.gfxzy.FillPolygon(myBrush, front)
-                generator.gfxzy.FillPolygon(myBrush, right)
-                generator.gfxzy.FillPolygon(myBrush, left)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - bottomfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                Dim pointx As Single = (Math.Abs(bottombacklefty - bottomfrontlefty) / Math.Tan(ang)) + bottomfrontleftx
-
-                If pointx < bottombackleftx Then
-                    generator.gfxzy.DrawLine(graypen, bottombackleft, beak)
-                    generator.gfxzy.DrawLine(graypen, bottombackleft, bottomfrontleft)
-                    generator.gfxzy.DrawLine(graypen, bottombackleft, bottombackright)
-                Else
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, bottomfrontleft)
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, beak)
-                    generator.gfxzy.DrawLine(graypen, bottombackleft, bottombackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - bottomfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                pointx = bottomfrontrightx - (Math.Abs(bottombackrighty - bottomfrontrighty) / Math.Tan(ang))
-
-
-                If pointx < bottombackrightx Then
-                    generator.gfxzy.DrawLine(Pens.Gray, beak, bottombackright)
-                    generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, bottombackright)
-                Else
-                    generator.gfxzy.DrawLine(graypen, beak, bottombackright)
-                    generator.gfxzy.DrawLine(graypen, bottomfrontright, bottombackright)
-                End If
-
-            End If
-
-        ElseIf direction = 1 Then
-            If ylocation <= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottomfrontlefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                generator.gfxzy.FillPolygon(myBrush, front)
-                generator.gfxzy.FillPolygon(myBrush, right)
-                generator.gfxzy.FillPolygon(myBrush, left)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-                generator.gfxzy.DrawLine(graypen, topbackright, topbackleft)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topfrontrighty) / Math.Abs(beakx - topfrontrightx))
-                Dim pointx As Single = topfrontrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-                If pointx < topbackrightx Then
-                    generator.gfxzy.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfxzy.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfxzy.DrawLine(graypen, topbackright, beak)
-                    generator.gfxzy.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topfrontlefty) / Math.Abs(beakx - topfrontleftx))
-                pointx = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topfrontleftx
-
-
-                If pointx > topbackleftx Then
-                    generator.gfxzy.DrawLine(Pens.Gray, beak, topbackleft)
-                    generator.gfxzy.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                Else
-                    generator.gfxzy.DrawLine(graypen, beak, topbackleft)
-                    generator.gfxzy.DrawLine(graypen, topbackleft, topfrontleft)
-                End If
-
-            ElseIf ylocation >= yn / 2 Then
-                Dim beakx As Integer = (((Math.Abs(bottombackleftx - bottombackrightx) / 2) + (Math.Abs(bottomfrontleftx - bottomfrontrightx) / 2)) / 2) + ((bottomfrontleftx + bottombackleftx) / 2)
-                Dim beaky As Integer = bottombacklefty + (Math.Abs(bottomfrontlefty - bottombacklefty) / 2)
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim front As Point() = {topfrontleft, beak, topfrontright}
-                Dim right As Point() = {topfrontright, beak, topbackright}
-                Dim left As Point() = {topfrontleft, topbackleft, beak}
-                Dim top As Point() = {topfrontleft, topbackleft, topbackright, topfrontright}
-                generator.gfxzy.FillPolygon(myBrush, front)
-                generator.gfxzy.FillPolygon(myBrush, right)
-                generator.gfxzy.FillPolygon(myBrush, left)
-                generator.gfxzy.FillPolygon(myBrush, top)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, topfrontright)
-
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                generator.gfxzy.DrawLine(Pens.Gray, topbackleft, topbackright)
-                generator.gfxzy.DrawLine(Pens.Gray, topbackright, topfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beaky - topbacklefty) / Math.Abs(beakx - bottombackleftx))
-                Dim pointx As Single = (Math.Abs(topfrontlefty - topbacklefty) / Math.Tan(ang)) + topbackleftx
-
-                If pointx > topfrontleftx Then
-                    generator.gfxzy.DrawLine(graypen, topbackleft, beak)
-                Else
-                    generator.gfxzy.DrawLine(Pens.Gray, topbackleft, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beaky - topbackrighty) / Math.Abs(beakx - bottombackrightx))
-                pointx = topbackrightx - (Math.Abs(topfrontrighty - topbackrighty) / Math.Tan(ang))
-
-
-                If pointx > topfrontrightx Then
-                    generator.gfxzy.DrawLine(Pens.Gray, beak, topbackright)
-                Else
-                    generator.gfxzy.DrawLine(graypen, beak, topbackright)
-                End If
-            End If
-
-
-        ElseIf direction = 5 Then
-            If zlocation <= zn / 2 Then
-
-                Dim beakx As Integer = (Math.Abs(topfrontrightx - topbackrightx) / 2) + topfrontrightx
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-
-                generator.gfxzy.FillPolygon(myBrush, top)
-                generator.gfxzy.FillPolygon(myBrush, middle)
-                generator.gfxzy.FillPolygon(myBrush, bottom)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, topfrontleft)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, beak)
-
-                Dim ang As Single = Math.Atan((Math.Abs(topfrontrighty - bottombackrighty) / 2) / ((Math.Abs(topfrontrightx - topbackrightx) / 2) + (topfrontrightx - topfrontleftx)))
-                Dim pointy As Single = (Math.Tan(ang) * (a - topfrontleftx)) + topfrontlefty
-
-                If topbacklefty < pointy Then
-                    generator.gfxzy.DrawLine(Pens.Gray, topbackleft, beak)
-                    generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, topbackleft)
-                Else
-                    generator.gfxzy.DrawLine(graypen, topfrontleft, topbackleft)
-                    generator.gfxzy.DrawLine(graypen, topbackleft, beak)
-                End If
-
-                pointy = bottomfrontlefty - (Math.Tan(ang) * (a - topfrontleftx))
-
-                If bottombacklefty < pointy Then
-                    generator.gfxzy.DrawLine(graypen, bottomfrontleft, bottombackleft)
-                    generator.gfxzy.DrawLine(graypen, bottombackleft, beak)
-                Else
-                    generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, beak)
-                End If
-
-                generator.gfxzy.DrawLine(graypen, topbackleft, bottombackleft)
-
-
-            ElseIf zlocation >= zn / 2 Then
-
-                Dim beakx As Integer = topfrontrightx - (Math.Abs(topfrontrightx - topbackrightx) / 2)
-                Dim beaky As Integer = Math.Abs(topfrontrighty - bottombackrighty) / 2 + topfrontlefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontleft, topbackleft, beak}
-                Dim middle As Point() = {topfrontleft, beak, bottomfrontleft}
-                Dim bottom As Point() = {bottomfrontleft, bottombackleft, beak}
-                Dim back As Point() = {topfrontleft, bottomfrontleft, bottombackleft, topbackleft}
-
-                generator.gfxzy.FillPolygon(myBrush, top)
-                generator.gfxzy.FillPolygon(myBrush, middle)
-                generator.gfxzy.FillPolygon(myBrush, bottom)
-                generator.gfxzy.FillPolygon(myBrush, back)
-
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, bottomfrontleft)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, bottombackleft)
-                generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, topbackleft)
-                generator.gfxzy.DrawLine(Pens.Gray, topbackleft, topfrontleft)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontleft, beak)
-
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontleft, beak)
-
-
-                Dim ang As Single
-                ang = Math.Atan((Math.Abs(beaky - bottombacklefty)) / (Math.Abs(beakx - bottombackleftx)))
-                Dim pointy As Single
-                pointy = bottombacklefty - (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-                If pointy > bottomfrontlefty Then
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackleft, beak)
-                Else
-                    generator.gfxzy.DrawLine(graypen, bottombackleft, beak)
-                End If
-
-                ang = Math.Atan((Math.Abs(beaky - topbacklefty)) / (Math.Abs(beakx - topbackleftx)))
-                pointy = topbacklefty + (Math.Tan(ang) * (Math.Abs(topfrontleftx - topbackleftx)))
-
-                If pointy < topfrontlefty Then
-                    generator.gfxzy.DrawLine(Pens.Gray, topbackleft, beak)
-                Else
-                    generator.gfxzy.DrawLine(graypen, topbackleft, beak)
-                End If
-            End If
-
-
-        ElseIf direction = 6 Then
-            If zlocation <= zn / 2 Then
-                Dim beakx As Integer = topfrontleftx + (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                Dim back As Point() = {bottomfrontright, bottombackright, topbackright, topfrontright}
-
-                generator.gfxzy.FillPolygon(myBrush, top)
-                generator.gfxzy.FillPolygon(myBrush, middle)
-                generator.gfxzy.FillPolygon(myBrush, bottom)
-                generator.gfxzy.FillPolygon(myBrush, back)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontright, topbackright)
-                generator.gfxzy.DrawLine(Pens.Gray, topbackright, bottombackright)
-                generator.gfxzy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topbackrightx) / Math.Abs(beaky - topbackrighty))
-                Dim pointy As Single = topbackrighty + ((topbackrightx - topfrontrightx) / Math.Tan(ang))
-
-                If topfrontrighty > pointy Then
-                    generator.gfxzy.DrawLine(Pens.Gray, topbackright, beak)
-                Else
-                    generator.gfxzy.DrawLine(graypen, topbackright, beak)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottombackrightx) / Math.Abs(beaky - bottombackrighty))
-                pointy = bottombackrighty - ((bottombackrightx - bottomfrontrightx) / Math.Tan(ang))
-
-                If bottomfrontrighty < pointy Then
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackright, beak)
-                Else
-                    generator.gfxzy.DrawLine(graypen, bottombackright, beak)
-                End If
-
-            ElseIf zlocation > zn / 2 Then
-                Dim beakx As Integer = topfrontleftx - (Math.Abs(topfrontleftx - topbackleftx) / 2)
-                Dim beaky As Integer = (Math.Abs(bottomfrontlefty - topbacklefty) / 2) + topbacklefty
-                Dim beak As New System.Drawing.Point(beakx, beaky)
-                Dim top As Point() = {topfrontright, topbackright, beak}
-                Dim middle As Point() = {topfrontright, beak, bottomfrontright}
-                Dim bottom As Point() = {bottomfrontright, bottombackright, beak}
-                generator.gfxzy.FillPolygon(myBrush, top)
-                generator.gfxzy.FillPolygon(myBrush, middle)
-                generator.gfxzy.FillPolygon(myBrush, bottom)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, beak)
-                generator.gfxzy.DrawLine(Pens.Gray, bottomfrontright, topfrontright)
-                generator.gfxzy.DrawLine(Pens.Gray, topfrontright, beak)
-                generator.gfxzy.DrawLine(graypen, topbackright, bottombackright)
-
-                Dim ang As Single = Math.Atan(Math.Abs(beakx - topfrontrightx) / Math.Abs(beaky - topfrontrighty))
-                Dim pointy As Single = topfrontrighty + ((topfrontrightx - topbackrightx) / Math.Tan(ang))
-
-                If topbackrighty < pointy Then
-                    generator.gfxzy.DrawLine(Pens.Gray, topbackright, beak)
-                    generator.gfxzy.DrawLine(Pens.Gray, topfrontright, topbackright)
-                Else
-                    generator.gfxzy.DrawLine(graypen, topbackright, beak)
-                    generator.gfxzy.DrawLine(graypen, topfrontright, topbackright)
-                End If
-
-                ang = Math.Atan(Math.Abs(beakx - bottomfrontrightx) / Math.Abs(beaky - bottomfrontrighty))
-                pointy = bottomfrontrighty - ((bottomfrontrightx - bottombackrightx) / Math.Tan(ang))
-
-                If bottombackrighty > pointy Then
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackright, beak)
-                    generator.gfxzy.DrawLine(Pens.Gray, bottombackright, bottomfrontright)
-                Else
-                    generator.gfxzy.DrawLine(graypen, bottombackright, beak)
-                    generator.gfxzy.DrawLine(graypen, bottombackright, bottomfrontright)
-                End If
-
-            End If
-
-        End If
-
-    End Sub
-
-
-
-
-
-
-    Private Sub TopViewToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TopViewToolStripMenuItem.Click
-        viewlabel.Text = "Top View (x,z)"
-
-        TopViewToolStripMenuItem.Enabled = False
-        SideViewToolStripMenuItem.Enabled = True
-        SideViewToolStripMenuItem1.Enabled = True
-
-
-
-        generator.gfxxz.Clear(Color.White)
-        Call generator.gridxz()
-        Call sortxz()
-        Call placingagentsxz()
-        Call generator.topgridxz()
-        PictureBox1.Image = generator.picxz
-
-
-
-
-    End Sub
-
-    Private Sub QuitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles QuitToolStripMenuItem.Click
-        Me.Close()
-    End Sub
-
-    Private Sub Panel1_Paint(ByVal sender As System.Object, ByVal e As System.Windows.Forms.PaintEventArgs)
-
-    End Sub
-
-    Private Sub SideViewToolStripMenuzItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SideViewToolStripMenuItem1.Click
-        viewlabel.Text = "Side View (z,y)"
-        TopViewToolStripMenuItem.Enabled = True
-        SideViewToolStripMenuItem.Enabled = True
-        SideViewToolStripMenuItem1.Enabled = False
-
-        generator.gfxzy.Clear(Color.White)
-        Call generator.gridzy()
-        Call sortzy()
-        Call placingagentszy()
-        Call generator.topgridzy()
-        PictureBox1.Image = generator.piczy
-    End Sub
-
-    Private Sub SideViewToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SideViewToolStripMenuItem.Click
-        TopViewToolStripMenuItem.Enabled = True
-        SideViewToolStripMenuItem1.Enabled = True
-        SideViewToolStripMenuItem.Enabled = False
-
-        viewlabel.Text = "Side View (x,y)"
-
-        generator.gfxxy.Clear(Color.White)
-        Call generator.gridxy()
-        Call sortxy()
-        Call placingagentsxy()
-        Call generator.topgridxy()
-        PictureBox1.Image = generator.picxy
-
-    End Sub
-
-    Private Sub Timerxy_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timerxy.Tick
-
-        'Dim dddx As Integer = CInt(Math.Floor((xn - 1 + 1) * Rnd())) + 1
-        'Dim dddy As Integer = CInt(Math.Floor((yn - 1 + 1) * Rnd())) + 1
-        'Dim dddz As Integer = CInt(Math.Floor((zn - 1 + 1) * Rnd())) + 1
-        'Do While generator.occupied(dddx, dddy, dddz) = True
-        '    dddx = CInt(Math.Floor((xn - 1 + 1) * Rnd())) + 1
-        '    dddy = CInt(Math.Floor((yn - 1 + 1) * Rnd())) + 1
-        '    dddz = CInt(Math.Floor((zn - 1 + 1) * Rnd())) + 1
-        'Loop
-        If tick = 0 Then
-            If generator.multipleiterations(0) > 0 Then
-                ToolStripStatusLabel3.Visible = True
-                ToolStripStatusLabel3.Text = "Iterations Left: " & generator.multipleiterations(0)
-            End If
-        End If
-
+    Private Sub updateLogic()
         For i = 1 To total
-
             If generator.agentchange = True Then
                 Call staticagentcheck()
             End If
@@ -2856,119 +266,49 @@
             End If
             'new code
             'Call swarming(i, x, y, z, 1, 1, 1)
-
         Next
-
-        Call reservoirrelase(0)
-        If viewlabel.Text = "Top View (x,z)" Then
-            generator.gfxxz.Clear(Color.White)
-            Call generator.gridxz()
-            Call sortxz()
-
-            Call placingagentsxz()
-            Call generator.topgridxz()
-            PictureBox1.Image = generator.picxz
-
-        ElseIf viewlabel.Text = "Side View (x,y)" Then
-            generator.gfxxy.Clear(Color.White)
-            Call generator.gridxy()
-            Call sortxy()
-
-            Call placingagentsxy()
-            If visualizerange <> 0 Then
-                Call range()
-            End If
-            Call generator.topgridxy()
-            PictureBox1.Image = generator.picxy
-
-        ElseIf viewlabel.Text = "Side View (z,y)" Then
-            generator.gfxzy.Clear(Color.White)
-            Call generator.gridzy()
-            Call sortzy()
-
-            Call placingagentszy()
-            Call generator.topgridzy()
-            PictureBox1.Image = generator.piczy
-
-        End If
-
-
-        tick = tick + 1
-        timelabel.Text = tick
-
-
-
-        'excel
-        If logged = True And generator.multipleiterations(0) = 0 Then
-            Dim agentpop(agent) As Integer
-            For p = 1 To agent
-                For pop = 1 To total
-                    If generator.agentlocation(pop, 4) = p Then
-                        agentpop(p) = agentpop(p) + 1
-                    End If
-                Next
-            Next
-
-            oSheet.Cells(tick + 1, 1) = tick
-            oSheet2.Cells(tick + 1, 1) = tick
-            oSheet3.cells(tick + 1, 1) = tick
-            For i = 1 To agent
-                oSheet.Cells(tick + 1, i + 1) = agentpop(i)
-                oSheet2.Cells(tick + 1, i + 1) = generator.agentlocation(i, 8)
-                oSheet3.cells(tick + 1, i + 1) = generator.interactioncount(i)
-            Next
-        ElseIf logged = True And generator.multipleiterations(1) = 2 Then 'if multiple iterations are enabled 
-            Dim agentpop(agent) As Integer
-            For p = 1 To agent
-                For pop = 1 To total
-                    If generator.agentlocation(pop, 4) = p Then
-                        agentpop(p) = agentpop(p) + 1
-                    End If
-                Next
-            Next
-
-            oSheet.Cells(tick + 1, 1 + generator.multipleiterations(0) * agent) = tick
-            oSheet2.Cells(tick + 1, 1 + generator.multipleiterations(0) * agent) = tick
-            oSheet3.cells(tick + 1, 1 + generator.multipleiterations(0) * agent) = tick
-            For i = 1 To agent
-                oSheet.cells(1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentname(i) + " (" + generator.multipleiterations(0) + ")"
-                oSheet2.cells(1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentname(i) + " (" + generator.multipleiterations(0) + ")"
-                oSheet3.cells(1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentname(i) + " (" + generator.multipleiterations(0) + ")"
-                oSheet.Cells(tick + 1, i + 1 + generator.multipleiterations(0) * agent) = agentpop(i)
-                oSheet2.Cells(tick + 1, i + 1 + generator.multipleiterations(0) * agent) = generator.agentlocation(i, 8)
-                oSheet3.cells(tick + 1, i + 1 + generator.multipleiterations(0) * agent) = generator.interactioncount(i)
-            Next
-        End If
-
-
-        'only onetick control
-        If timerexit = True Then
-            timerexit = False
-            Timerxy.Stop()
-        End If
-
-
-        'stops simulation 
-        If tick = stoplabel.Text Then
-            If generator.multipleiterations(0) = 0 Then
-
-                ToolStripStatusLabel3.Visible = False
-                Timerxy.Stop()
-            Else
-                generator.multipleiterations(0) -= 1
-                tick = 0
-                ToolStripStatusLabel3.Visible = True
-                ToolStripStatusLabel3.Text = "Iterations Left: " & generator.multipleiterations(0)
-
-                Call reset()
-
-            End If
-        End If
+        reservoirrelase(0)
     End Sub
 
+    Public Sub draw(Optional ByVal ignoreSimulationLoop As Boolean = False)
+        If (ignoreSimulationLoop = False) And isSimulationRunning() Then Return ' Optimization, its unnecessary to manually render when the simulation is running!
+        Me.RenderingEngine.mGraphicsContext.Clear(Color.White)
+        drawScene(Me.RenderingEngine.mGraphicsContext)
+        picRenderFrame.Image = Me.RenderingEngine.mRenderTarget
+    End Sub
+
+    Private Sub drawScene(ByRef graphicsContext As Graphics)
+        Me.RenderingEngine.renderGrid(graphicsContext)
+        drawAgents(graphicsContext)
+        drawRange(graphicsContext, visualizerange)
+        Me.RenderingEngine.renderGridFrontFace(graphicsContext)
+    End Sub
+
+    ''' <summary>
+    ''' Logs data for each agent type to the excel graph sheets.
+    ''' </summary>
+    Private Sub logDataToGraphs()
+        If mExcelLogger IsNot Nothing Then mExcelLogger.logDataToExcel(tick, agent, total)
+    End Sub
+
+    Function isSimulationRunning() As Boolean
+        Return tick <= tslblStopTicks.Text And Timerxy.Enabled
+    End Function
+
+#Region "Agent Interactions"
     Private goal(2) As Integer
-    'enables swarming behaviour (if the neighbouring agents are facing a certain way then the current agent also faces and moves in the same direction)
-    'each swarm has a common destination (if agents in a swarm had different destinations, they would scatter)
+
+    ''' <summary>
+    ''' Enables swarming behaviour (if the neighbouring agents are facing a certain way then the current agent also faces and moves in the same direction), each swarm has a common destination 
+    ''' (if agents in a swarm had different destinations, they would scatter).
+    ''' </summary>
+    ''' <param name="i"></param>
+    ''' <param name="x"></param>
+    ''' <param name="y"></param>
+    ''' <param name="z"></param>
+    ''' <param name="dx"></param>
+    ''' <param name="dy"></param>
+    ''' <param name="dz"></param>
     Sub swarming(ByVal i, ByVal x, ByVal y, ByVal z, ByVal dx, ByVal dy, ByVal dz)
 
         Dim direction(6) As Integer
@@ -3154,6 +494,13 @@
         Next
     End Sub
 
+    ''' <summary>
+    ''' Agents go to the zone with the highest value (ie. global maximum); essentially test code (not used by the program).
+    ''' </summary>
+    ''' <param name="k"></param>
+    ''' <param name="x"></param>
+    ''' <param name="y"></param>
+    ''' <param name="z"></param>
     Sub tradezonemovement(ByVal k, ByVal x, ByVal y, ByVal z) 'agents go to the zone with the highest value (ie. global maximum); essentially test code (not used by the program)
         Dim conditions As Decimal = 0
         Dim targetrange(6) As Decimal
@@ -3186,6 +533,13 @@
         generator.agentlocation(k, 7) = dz
     End Sub
 
+    ''' <summary>
+    ''' Agents look at the central zone and the closest zone and determine the utility (based on distance) for both. Agents go to the zone resulting in the highest utility.
+    ''' </summary>
+    ''' <param name="j"></param>
+    ''' <param name="x"></param>
+    ''' <param name="y"></param>
+    ''' <param name="z"></param>
     Sub locationutility(ByVal j, ByVal x, ByVal y, ByVal z) 'agents look at the central zone and the closest zone and determine the utility (based on distance) for both. agents go to the zone resulting in the highest utility
         Dim locationcentral(3) As Integer
         Dim locationnearest(3) As Integer
@@ -3320,6 +674,14 @@
         End If
     End Sub
 
+    ''' <summary>
+    ''' In the case of zones, agents scan their surroundings and go to the highest value zone they find (ie. could be local maximum or potentially the global maximum).
+    ''' This prevents agents from scanning their surrounding area to avoid slowing down the program.
+    ''' </summary>
+    ''' <param name="j"></param>
+    ''' <param name="x"></param>
+    ''' <param name="y"></param>
+    ''' <param name="z"></param>
     Sub abiotic(ByVal j, ByVal x, ByVal y, ByVal z) 'in the case of zones, agents scan their surroundings and go to the highest value zone they find. (ie. could be local maximum or potentially the global maximum)
         If generator.abioticenable = False Then 'prevents agents from scanning their surrounding area to avoid slowing down the program
             'Call tradezonemovement(j, x, y, z) 'for testing only
@@ -3428,7 +790,11 @@
         End If
     End Sub
 
-    'allows turn energy to depend on the local region of the agent
+    ''' <summary>
+    ''' Allows turn energy to depend on the local region of the agent.
+    ''' </summary>
+    ''' <param name="i"></param>
+    ''' <returns></returns>
     Function localturnenergy(ByVal i As Integer) As Boolean
         For count = 1 To 1000
             If generator.localenergychange(generator.agentlocation(i, 4), count, 0) = 2 Then
@@ -3446,7 +812,9 @@
         localturnenergy = False
     End Function
 
-    'makes sure that any new agents being placed (after changing the initial count) are static if the agent type was previously made static by the user
+    ''' <summary>
+    ''' Makes sure that any new agents being placed (after changing the initial count) are static if the agent type was previously made static by the user
+    ''' </summary>
     Public Sub staticagentcheck()
 
         'Dim staticagenttypes(total) As Integer
@@ -3557,7 +925,7 @@
 
             'dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
             'dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-            ' dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
+            'dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
 
         End If
 
@@ -3732,7 +1100,12 @@
         Next
     End Sub
 
-    'indicates whether or not a catalyst is present in close proximity to the potential interaction
+    ''' <summary>
+    ''' Indicates whether or not a catalyst is present in close proximity to the potential interaction.
+    ''' </summary>
+    ''' <param name="i"></param>
+    ''' <param name="opp"></param>
+    ''' <returns></returns>
     Function catalysispresence(ByVal i As Integer, ByVal opp As Integer) As Boolean
         For a = 1 To total
             Dim xdiff As Integer
@@ -3751,7 +1124,11 @@
         catalysispresence = False
     End Function
 
-    'allows for exchanges (currently for currency and product only. a more general exchange should be made possible later
+    ''' <summary>
+    ''' Allows for exchanges (TODO: currently for currency and product only. a more general exchange should be made possible later).
+    ''' </summary>
+    ''' <param name="i"></param>
+    ''' <param name="opp"></param>
     Sub exchange(ByVal i, ByVal opp)
         'new trading mechanism (for two items that can be traded)
         Dim tempagenta As Decimal = 0
@@ -3913,7 +1290,6 @@
     End Sub
 
     Sub deminish(ByVal i, ByVal ix, ByVal iy, ByVal iz, ByVal opp)
-
         If generator.agentreservoir(opp, 2) > generator.agentreservoir(opp, 1) - generator.reservoirchange(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 1) Then
             Exit Sub
         End If
@@ -3935,21 +1311,8 @@
         generator.agentlocation(i, 10) = 0
         generator.occupied(ix, iy, iz) = False
 
-        'not sure about this part
-        If viewlabel.Text = "Top View (x,z)" Then
-            Call sortxz()
-
-        ElseIf viewlabel.Text = "Side View (x,y)" Then
-            Call sortxy()
-
-        ElseIf viewlabel.Text = "Side View (z,y)" Then
-            Call sortzy()
-
-        End If
-
         total = total - 1
     End Sub
-
 
     Sub consume(ByVal opp, ByVal opponentx, ByVal opponenty, ByVal opponentz, ByVal i)
         If generator.action(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 6, 0, 0) = 1 Then
@@ -3971,20 +1334,7 @@
         generator.agentlocation(opp, 10) = 0
         generator.occupied(opponentx, opponenty, opponentz) = False
 
-        'not sure about this part
-        If viewlabel.Text = "Top View (x,z)" Then
-            Call sortxz()
-
-        ElseIf viewlabel.Text = "Side View (x,y)" Then
-            Call sortxy()
-
-        ElseIf viewlabel.Text = "Side View (z,y)" Then
-            Call sortzy()
-
-        End If
-
         total = total - 1
-
     End Sub
 
     Sub produce(ByVal ag1, ByVal ag2, ByVal i, ByVal opp)
@@ -3999,7 +1349,6 @@
 
 
         If total + totalagentstobeproduced <= generator.maxcell Then
-
 
             'energy cost in reproduction
             generator.agentlocation(i, 8) = generator.agentlocation(i, 8) - generator.action(ag1, ag2, 5, 0, 0)
@@ -4127,170 +1476,381 @@
         generator.agentlocation(opp, 10) = 0
         generator.occupied(opponentx, opponenty, opponentz) = False
 
-        'not sure about this part
-        If viewlabel.Text = "Top View (x,z)" Then
-            Call sortxz()
-
-        ElseIf viewlabel.Text = "Side View (x,y)" Then
-            Call sortxy()
-
-        ElseIf viewlabel.Text = "Side View (z,y)" Then
-            Call sortzy()
-
-        End If
-
         total = total - 2
-
     End Sub
 
-    Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        Timerxy.Start()
-        Timerxy.Stop()
+    Private Sub reservoirrelase(ByVal i As Integer)
+        For i = 1 To total
+            For j = 1 To agent
+
+                If generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) <> 0 Then
+
+                    If generator.agentreservoir(i, 2) < generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 2) Then
+                        Exit For
+                    End If
+
+                    If total + generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) <= generator.maxcell Then
+
+                        Dim newagents As Integer
+                        Dim placeholder As Integer = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) \ 1
+                        Dim diff As Decimal = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) - placeholder
+
+                        If diff > 0 Then
+                            Dim dif As Decimal = diff * 100
+                            Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
+                            If randomvalue > 0 And randomvalue <= dif Then
+                                placeholder += 1
+                            End If
+                        End If
+
+                        newagents = placeholder
+
+                        Dim agenttobeproduced(newagents) As Integer
+                        Dim rangexupper As Integer
+                        Dim rangexlower As Integer
+                        Dim rangeyupper As Integer
+                        Dim rangeylower As Integer
+                        Dim rangezupper As Integer
+                        Dim rangezlower As Integer
+
+                        For k = 1 To newagents
+                            agenttobeproduced(k) = j
+                        Next
+
+                        For k = 1 To newagents
+                            total = total + 1
+
+
+                            rangexupper = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 3) + generator.agentlocation(i, 0)
+                            rangexlower = generator.agentlocation(i, 0) - generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 3)
+                            rangeyupper = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 4) + generator.agentlocation(i, 1)
+                            rangeylower = generator.agentlocation(i, 1) - generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 4)
+                            rangezupper = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 5) + generator.agentlocation(i, 2)
+                            rangezlower = generator.agentlocation(i, 2) - generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 5)
+
+                            If rangexlower < 1 Then
+                                rangexlower = 1
+                            End If
+                            If rangeylower < 1 Then
+                                rangeylower = 1
+                            End If
+                            If rangezlower < 1 Then
+                                rangezlower = 1
+                            End If
+                            If rangexupper > xn Then
+                                rangexupper = xn
+                            End If
+                            If rangeyupper > yn Then
+                                rangeyupper = yn
+                            End If
+                            If rangezupper > zn Then
+                                rangezupper = zn
+                            End If
+
+                            Dim x As Integer = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                            Dim y As Integer = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                            Dim z As Integer = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
+                            Dim dx As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
+                            Dim dy As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
+                            Dim dz As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
+
+                            Dim number As Integer = 0
+                            Do While generator.occupied(x, y, z) = True And number < generator.maxcell
+                                number = number + 1
+                                x = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                                y = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                                z = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
+                            Loop
+
+
+                            generator.occupied(x, y, z) = True
+
+                            Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+                            generator.agentlocation(total, 0) = x
+                            generator.agentlocation(total, 1) = y
+                            generator.agentlocation(total, 2) = z
+                            generator.agentlocation(total, 3) = d
+                            generator.agentlocation(total, 4) = agenttobeproduced(k)
+                            generator.agentlocation(total, 5) = dx
+                            generator.agentlocation(total, 6) = dy
+                            generator.agentlocation(total, 7) = dz
+                            generator.agentlocation(total, 8) = generator.initialenergy(agenttobeproduced(k))
+                            generator.agentlocation(total, 9) = 0
+                            generator.agentlocation(total, 10) = 0
+
+                            generator.agentreservoir(i, 2) -= generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 2)
+
+                            If generator.agentreservoir(i, 2) < generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 2) Then
+                                Exit Sub
+                            End If
+                        Next
+                        Console.WriteLine("Weird thing called")
+                        draw() 'TODO: What is this? Why doesnt this code ever get executed in my own tests?
+                    End If
+                    generator.agentchange = True
+                End If
+            Next
+        Next
     End Sub
+#End Region
 
-    Private Sub ToolStripStatusLabel2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripStatusLabel2.Click
-        Dim input As String
-        input = InputBox("Enter the time limit:")
-        If IsNumeric(input) = False Then
-            MessageBox.Show("Please enter a numerical value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End If
+    Sub resetSimulation()
+        VBMath.Randomize()
+        total = 0
+        tick = 0
 
-        stoplabel.Text = CInt(input)
-    End Sub
+        Dim number As Integer
 
-    Private Sub ToolStripStatusLabel4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToolStripStatusLabel4.Click
-        Dim input As String = InputBox("Enter speed in percentage:")
-        Dim speed As Integer
-        If input = "" Then
-            Exit Sub
-        End If
+        Dim agents(agent) As Integer
 
-        Try
-            speed = CInt(input)
-        Catch ex As Exception
-            MessageBox.Show("Please enter a numerical value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Exit Sub
-        End Try
+        For a = 1 To agent
+            Dim agentsadded As Integer = 0
+            For i = 1 To generator.agentcount(a)
+                number = number + 1
+                Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
+                Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
+                Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
 
-        If speed > 100 Then
-            speed = 100
-            MsgBox("Max speed: 100")
-        End If
-        Timerxy.Interval = (300 - ((speed * 3) - 1))
-        speedbar.Value = speed
-    End Sub
+                Dim dx As Integer
+                Dim dy As Integer
+                Dim dz As Integer
 
-    Private Sub StopToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StopToolStripMenuItem.Click
-        Timerxy.Stop()
-        If logged = True Then
-            If MessageBox.Show("Would you like to stop the excel file encryption?", "Excel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) _
-                = Windows.Forms.DialogResult.Yes Then
-                oBook.SaveAs(exceldir)
-
-                oBook.close()
+                Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
+                Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
+                Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
+                Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
+                Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
+                Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
 
 
-                'Dim obj As New System.IO.StreamWriter(exceldir)
-                'obj.Write(oBook)
-                'obj.Close()
 
-                oBook = Nothing
-                oExcel.Quit()
-                oExcel = Nothing
-                logged = False
-            End If
-        End If
-    End Sub
-
-    Private Sub HelpToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HelpToolStripMenuItem.Click
-        Timerxy.Start()
-    End Sub
-
-    Private Sub SizeToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SizeToolStripMenuItem.Click
-        Form3.Show()
-    End Sub
-
-    Private Sub NewToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NewToolStripMenuItem.Click
-        Form2.Show()
-    End Sub
-
-    Private Sub AIToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AIToolStripMenuItem.Click
-        AI.Show()
-    End Sub
-
-    Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        sizeratio = 9 / 10
-    End Sub
-
-    Private Sub FullScreenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FullScreenToolStripMenuItem.Click
-        If Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None Then
-            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.Sizable
-            FullScreenToolStripMenuItem.Text = "Full Screen"
-        Else
-            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
-            Me.WindowState = FormWindowState.Normal
-            Me.WindowState = FormWindowState.Maximized
-            FullScreenToolStripMenuItem.Text = "Exit Full Screen"
-        End If
+                dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
 
 
-    End Sub
+                Do While generator.occupied(x, y, z) = True
+                    x = CInt(Math.Floor((xn) * Rnd())) + 1
+                    y = CInt(Math.Floor((yn) * Rnd())) + 1
+                    z = CInt(Math.Floor((zn) * Rnd())) + 1
+                Loop
 
-    Private Sub AdjustFocalPointToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AdjustFocalPointToolStripMenuItem.Click
-        Ratio.Show()
-    End Sub
+                'this allows agents to start in a specific range. if all or almost all spaces in a region are occupied, the program moves onto the next agent type
+                If generator.agentstart(a, 0) = 2 Then
+                    Dim maxiterations As Double
+                    x = CInt(Math.Floor(((generator.agentstart(a, 1) - generator.agentstart(a, 2)) + 1) * Rnd()) + generator.agentstart(a, 2))
+                    y = CInt(Math.Floor(((generator.agentstart(a, 3) - generator.agentstart(a, 4)) + 1) * Rnd()) + generator.agentstart(a, 4))
+                    z = CInt(Math.Floor(((generator.agentstart(a, 5) - generator.agentstart(a, 6)) + 1) * Rnd()) + generator.agentstart(a, 6))
+                    Try
+                        Do While generator.occupied(x, y, z) = True And maxiterations < 100000
+                            x = CInt(Math.Floor((generator.agentstart(a, 1) - generator.agentstart(a, 2) + 1) * Rnd()) + generator.agentstart(a, 2))
+                            y = CInt(Math.Floor((generator.agentstart(a, 3) - generator.agentstart(a, 4) + 1) * Rnd()) + generator.agentstart(a, 4))
+                            z = CInt(Math.Floor((generator.agentstart(a, 5) - generator.agentstart(a, 6) + 1) * Rnd()) + generator.agentstart(a, 6))
+                            maxiterations += 1
+                        Loop
+                    Catch ex As Exception
+                        MessageBox.Show(x & " " & y & " " & z)
+                    End Try
 
-    'outputs population and energy values to a spreadsheet
-    Private Sub LogDataToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LogDataToolStripMenuItem.Click
-        Try
-            SaveFileDialog1.ShowDialog()
-            oExcel = CreateObject("Excel.Application")
-            oExcel.sheetsinnewworkbook = 3
-            oBook = oExcel.Workbooks.Add
-            oSheet = oBook.Worksheets(1)
-            oSheet2 = oBook.Worksheets(2)
-            oSheet3 = oBook.worksheets(3)
-            oSheet.name = "Population"
-            oSheet2.name = "Energy"
-            oSheet3.name = "Interactions"
+                    If maxiterations = 100000 Then
+                        i = generator.agentcount(a) + 1
+                        agents(a) = agentsadded
+                    End If
+                End If
 
-            oSheet.Cells(1, 1) = "Tick"
-            oSheet2.Cells(1, 1) = "Tick"
-            oSheet3.cells(1, 1) = "Tick"
-            For i = 1 To agent
-                oSheet.Cells(1, i + 1) = generator.agentname(i)
-                oSheet2.Cells(1, i + 1) = generator.agentname(i)
-                oSheet3.Cells(1, i + 1) = generator.agentname(i)
+                generator.occupied(x, y, z) = True
+
+                If i <> generator.agentcount(a) + 1 Then
+                    Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+                    generator.agentlocation(number, 0) = x
+                    generator.agentlocation(number, 1) = y
+                    generator.agentlocation(number, 2) = z
+                    generator.agentlocation(number, 3) = d
+                    generator.agentlocation(number, 4) = a
+                    generator.agentlocation(number, 5) = dx
+                    generator.agentlocation(number, 6) = dy
+                    generator.agentlocation(number, 7) = dz
+                    generator.agentlocation(number, 8) = generator.initialenergy(a)
+                    generator.agentlocation(number, 9) = 0
+                    generator.agentlocation(number, 10) = 0
+                    agentsadded += 1
+                End If
+
+                If i = generator.agentcount(a) Then
+                    agents(a) = agentsadded
+                End If
             Next
 
-            logged = True
-        Catch ex As Exception
-            MessageBox.Show("Please ensure that Excel creates 2 or more worksheets when a new spreadsheet is created." & vbCrLf & vbCrLf & ex.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End Try
+        Next
+
+        For i = 1 To agent
+            total = total + agents(i)
+            'Form1.total = Form1.total + generator.agentcount(i)
+        Next
+
+        For index = 2 To total
+            Dim tempz As Integer = generator.agentlocation(index, 2)
+            Dim tempx As Integer = generator.agentlocation(index, 0)
+            Dim tempy As Integer = generator.agentlocation(index, 1)
+            Dim tempd As Integer = generator.agentlocation(index, 3)
+            Dim tempa As Integer = generator.agentlocation(index, 4)
+            Dim tempstatic As Integer = generator.staticagent(index)
+
+            Dim tempdx As Integer = generator.agentlocation(index, 5)
+            Dim tempdy As Integer = generator.agentlocation(index, 6)
+            Dim tempdz As Integer = generator.agentlocation(index, 7)
+
+            Dim tempenergy As Integer = generator.agentlocation(index, 8)
+            Dim tempage As Integer = generator.agentlocation(index, 9)
+            Dim tempasr As Integer = generator.agentlocation(index, 10)
+
+            Dim previousposition As Integer = index - 1
+            Do While tempz > generator.agentlocation(previousposition, 2) And previousposition >= 1
+                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
+                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
+                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
+                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
+                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
+
+                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
+                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
+                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
+
+                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
+                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
+                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
+
+                If generator.staticagent(previousposition) = 2 Then
+                    generator.staticagent(previousposition + 1) = 2
+                ElseIf generator.staticagent(previousposition) = 0 Then
+                    generator.staticagent(previousposition + 1) = 0
+                End If
+
+                previousposition = previousposition - 1
+            Loop
+
+            If tempstatic = 2 Then
+                generator.staticagent(previousposition + 1) = 2
+            ElseIf tempstatic = 0 Then
+                generator.staticagent(previousposition + 1) = 0
+            End If
+
+            generator.agentlocation(previousposition + 1, 2) = tempz
+            generator.agentlocation(previousposition + 1, 0) = tempx
+            generator.agentlocation(previousposition + 1, 1) = tempy
+            generator.agentlocation(previousposition + 1, 3) = tempd
+            generator.agentlocation(previousposition + 1, 4) = tempa
+
+            generator.agentlocation(previousposition + 1, 5) = tempdx
+            generator.agentlocation(previousposition + 1, 6) = tempdy
+            generator.agentlocation(previousposition + 1, 7) = tempdz
+
+            generator.agentlocation(previousposition + 1, 8) = tempenergy
+            generator.agentlocation(previousposition + 1, 9) = tempage
+            generator.agentlocation(previousposition + 1, 10) = tempasr
+
+        Next
+
+        'changes the direction of new agents according to user input
+        For i = 1 To agent
+            If generator.agentdirection(i) <> 0 Then
+                For a = 1 To total
+                    If generator.agentlocation(a, 4) = i Then
+                        generator.agentlocation(a, 3) = generator.agentdirection(i)
+                    End If
+                Next
+            End If
+        Next
+
+        generator.agentchange = True
+        Array.Clear(generator.occupied, 0, generator.occupied.Length)
+        For i = 1 To total
+            generator.occupied(generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2)) = True
+        Next
+        draw()
     End Sub
 
-    Private Sub FoodWebToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles collisionToolStripMenuItem.Click
-        Form5.Show()
+    Sub drawAgents(ByRef graphicsContext As Graphics)
+        sortAgentsZBuffer(Me.RenderingEngine.Prespective)
+        For i = 1 To total
+            Dim x As Integer = generator.agentlocation(i, 0)
+            Dim y As Integer = generator.agentlocation(i, 1)
+            Dim z As Integer = generator.agentlocation(i, 2)
+            Dim d As Integer = generator.agentlocation(i, 3)
+            Dim ag As Integer = generator.agentlocation(i, 4)
+            Dim color As Color = generator.agentcolour(ag)
+            RenderingEngine.renderAgent(x, y, z, d, color, graphicsContext,
+                                                generator.staticagent(i) = 2, generator.agentreservoir(i, 0) = 2, generator.agentreservoir(i, 1), generator.agentreservoir(i, 2))
+        Next
     End Sub
 
-    Private Sub DataSheetToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DataSheetToolStripMenuItem.Click
-        Form4.Show()
+    ''' <summary>
+    ''' Test code - produces a semi-transparent cube (made up of smaller cubes) to show the target range of an agent on the ZY view
+    ''' </summary>
+    ''' <param name="agentIndex">The agent to show the target range of.</param>
+    Sub drawRange(ByRef graphicsContext As Graphics, ByVal agentIndex As Integer)
+        If agentIndex <= 0 Then Return
+
+        Dim xstart As Integer = 0
+        Dim xend As Integer = 0
+        Dim ystart As Integer = 0
+        Dim yend As Integer = 0
+        Dim zstart As Integer = 0
+        Dim zend As Integer = 0
+        Dim color As Color = Color.FromArgb(25, 153, 204, 255)
+
+        If generator.excludeagent(agentIndex, 0) = 2 Then
+            xstart = generator.excludeagent(agentIndex, 2)
+            xend = generator.excludeagent(agentIndex, 1)
+            ystart = generator.excludeagent(agentIndex, 4)
+            yend = generator.excludeagent(agentIndex, 3)
+            zstart = generator.excludeagent(agentIndex, 6)
+            zend = generator.excludeagent(agentIndex, 5)
+            color = Color.FromArgb(25, 255, 153, 153)
+        Else
+            xstart = generator.agentrange(agentIndex, 0, 0)
+            xend = generator.agentrange(agentIndex, 0, 1)
+            ystart = generator.agentrange(agentIndex, 1, 0)
+            yend = generator.agentrange(agentIndex, 1, 1)
+            zstart = generator.agentrange(agentIndex, 2, 0)
+            zend = generator.agentrange(agentIndex, 2, 1)
+        End If
+        Me.RenderingEngine.renderRange(color, graphicsContext,
+                           xstart, xend, ystart, yend, zstart, zend)
     End Sub
 
-    Private Sub SaveFileDialog1_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles SaveFileDialog1.FileOk
-        Dim Filetosaveas As String = SaveFileDialog1.FileName
-        'Dim obj As New System.IO.StreamWriter(Filetosaveas)
-        ' obj.Write(oBook)
-        'obj.Close()
-        'exceldir = SaveFileDialog1.InitialDirectory
+    Sub changePrespective(ByVal newPrespective As Prespective)
+        Me.RenderingEngine.Prespective = newPrespective
 
-        exceldir = SaveFileDialog1.FileName
+        XZTopViewToolStripMenuItem.Enabled = True
+        ZYSideViewToolStripMenuItem.Enabled = True
+        XYSideViewToolStripMenuItem.Enabled = True
+        Select Case newPrespective
+            Case Prespective.XY
+                viewlabel.Text = "Side View (x,y)"
+                XYSideViewToolStripMenuItem.Enabled = False
+            Case Prespective.XZ
+                viewlabel.Text = "Top View (x,z)"
+                XZTopViewToolStripMenuItem.Enabled = False
+            Case Prespective.ZY
+                viewlabel.Text = "Side View (z,y)"
+                ZYSideViewToolStripMenuItem.Enabled = False
+        End Select
 
+        draw()
     End Sub
 
-    'agents with a smaller number (ie. 1, 2 etc) have a larger z-value
-    Sub sortxy()
+    Sub changeDepthOfField(ByVal newDoF As Double)
+        Me.RenderingEngine.SizeRatio = newDoF
+        draw()
+    End Sub
+
+    ''' <summary>
+    ''' Sorting is done as a "Z-buffer" for rendering - inefficient but we have no other choice.
+    ''' Agents with a smaller index (ie. 1, 2 etc) have a larger z-value
+    ''' </summary>
+    ''' <param name="prespective">The prespective to determine the axis to be buffered as the projected Z-axis</param>
+    Sub sortAgentsZBuffer(ByVal prespective As Prespective)
         For index = 2 To total + 1
             Dim tempz As Integer = generator.agentlocation(index, 2)
             Dim tempx As Integer = generator.agentlocation(index, 0)
@@ -4323,7 +1883,18 @@
 
             Dim previousposition As Integer = index - 1
 
-            Do While tempz > generator.agentlocation(previousposition, 2) And previousposition >= 1
+            Dim tempProjectedZ = tempz
+            Dim tempProjectedComparisonZ = generator.agentlocation(previousposition, 2)
+            Select Case prespective
+                Case Prespective.XZ
+                    tempProjectedZ = tempy
+                    tempProjectedComparisonZ = generator.agentlocation(previousposition, 1)
+                Case Prespective.ZY
+                    tempProjectedZ = tempx
+                    tempProjectedComparisonZ = generator.agentlocation(previousposition, 0)
+            End Select
+
+            Do While tempProjectedZ > tempProjectedComparisonZ And previousposition >= 1
 
                 generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
                 generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
@@ -4413,354 +1984,89 @@
         Next
     End Sub
 
-    Sub sortxz()
-        For index = 2 To total + 1
-            Dim tempz As Integer = generator.agentlocation(index, 2)
-            Dim tempx As Integer = generator.agentlocation(index, 0)
-            Dim tempy As Integer = generator.agentlocation(index, 1)
-            Dim tempd As Integer = generator.agentlocation(index, 3)
-            Dim tempa As Integer = generator.agentlocation(index, 4)
-            Dim tempstatic As Integer = generator.staticagent(index)
-            Dim tempreservoir(2) As Integer
-            tempreservoir(0) = generator.agentreservoir(index, 0)
-            tempreservoir(1) = generator.agentreservoir(index, 1)
-            tempreservoir(2) = generator.agentreservoir(index, 2)
+    Function saveProjectToString() As String
+        ' The Text Outputted to the Save File
+        Dim save = ""
 
-            Dim tempsellerbuyer As Integer = generator.agentlocation(index, 13)
-            Dim temputility As Decimal = generator.agentlocation(index, 14)
-            Dim tempcurrency As Decimal = generator.agentlocation(index, 11)
-            Dim tempproduct As Decimal = generator.agentlocation(index, 12)
-            Dim tempprice As Decimal = generator.agentlocation(index, 15)
-            Dim temp16 As Decimal = generator.agentlocation(index, 16)
-            Dim temp17 As Decimal = generator.agentlocation(index, 17)
-            Dim temp18 As Decimal = generator.agentlocation(index, 18)
-            Dim temp19 As Decimal = generator.agentlocation(index, 19)
+        Dim stringBuilder = New System.Text.StringBuilder()
+        Dim writer = System.Xml.XmlWriter.Create(stringBuilder)
+        writer.WriteStartElement("Cobweb3DConfig", "http://cobweb.ca/schema/cobweb2/config")
+        writer.WriteAttributeString("cobweb-version", "1")
+        writer.WriteStartElement("Environment")
+        writer.WriteStartElement("Width")
+        writer.WriteValue(xn)
+        writer.WriteEndElement()
+        writer.WriteStartElement("Height")
+        writer.WriteValue(yn)
+        writer.WriteEndElement()
+        writer.WriteStartElement("Depth")
+        writer.WriteValue(zn)
+        writer.WriteEndElement()
+        ' TODO: This
 
-            Dim tempdx As Integer = generator.agentlocation(index, 5)
-            Dim tempdy As Integer = generator.agentlocation(index, 6)
-            Dim tempdz As Integer = generator.agentlocation(index, 7)
-
-            Dim tempenergy As Integer = generator.agentlocation(index, 8)
-            Dim tempage As Integer = generator.agentlocation(index, 9)
-            Dim tempasr As Integer = generator.agentlocation(index, 10)
-
-            Dim previousposition As Integer = index - 1
-            Do While tempy > generator.agentlocation(previousposition, 1) And previousposition >= 1
-
-                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
-                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
-                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
-                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
-                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
-
-                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
-                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
-                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
-
-                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
-                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
-                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
-
-                generator.agentlocation(previousposition + 1, 11) = generator.agentlocation(previousposition, 11)
-                generator.agentlocation(previousposition + 1, 12) = generator.agentlocation(previousposition, 12)
-                generator.agentlocation(previousposition + 1, 13) = generator.agentlocation(previousposition, 13)
-                generator.agentlocation(previousposition + 1, 14) = generator.agentlocation(previousposition, 14)
-                generator.agentlocation(previousposition + 1, 15) = generator.agentlocation(previousposition, 15)
-                generator.agentlocation(previousposition + 1, 16) = generator.agentlocation(previousposition, 16)
-                generator.agentlocation(previousposition + 1, 17) = generator.agentlocation(previousposition, 17)
-                generator.agentlocation(previousposition + 1, 18) = generator.agentlocation(previousposition, 18)
-                generator.agentlocation(previousposition + 1, 19) = generator.agentlocation(previousposition, 19)
-
-                If generator.staticagent(previousposition) = 2 Then
-                    generator.staticagent(previousposition + 1) = 2
-                ElseIf generator.staticagent(previousposition) = 0 Then
-                    generator.staticagent(previousposition + 1) = 0
-                End If
-
-                If generator.agentreservoir(previousposition, 0) = 2 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 2
-                    generator.agentreservoir(previousposition + 1, 1) = generator.agentreservoir(previousposition, 1)
-                    generator.agentreservoir(previousposition + 1, 2) = generator.agentreservoir(previousposition, 2)
-                ElseIf generator.agentreservoir(previousposition, 0) = 0 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 0
-                    generator.agentreservoir(previousposition + 1, 1) = 0
-                    generator.agentreservoir(previousposition + 1, 2) = 0
-                End If
-
-                previousposition = previousposition - 1
-
-
-            Loop
-
-            If tempstatic = 2 Then
-                generator.staticagent(previousposition + 1) = 2
-            ElseIf tempstatic = 0 Then
-                generator.staticagent(previousposition + 1) = 0
-            End If
-
-            If tempreservoir(0) = 2 Then
-                generator.agentreservoir(previousposition + 1, 0) = 2
-                generator.agentreservoir(previousposition + 1, 1) = tempreservoir(1)
-                generator.agentreservoir(previousposition + 1, 2) = tempreservoir(2)
-            ElseIf tempreservoir(0) = 0 Then
-                generator.agentreservoir(previousposition + 1, 0) = 0
-                generator.agentreservoir(previousposition + 1, 1) = 0
-                generator.agentreservoir(previousposition + 1, 2) = 0
-            End If
-
-            generator.agentlocation(previousposition + 1, 2) = tempz
-            generator.agentlocation(previousposition + 1, 0) = tempx
-            generator.agentlocation(previousposition + 1, 1) = tempy
-            generator.agentlocation(previousposition + 1, 3) = tempd
-            generator.agentlocation(previousposition + 1, 4) = tempa
-
-            generator.agentlocation(previousposition + 1, 5) = tempdx
-            generator.agentlocation(previousposition + 1, 6) = tempdy
-            generator.agentlocation(previousposition + 1, 7) = tempdz
-
-            generator.agentlocation(previousposition + 1, 8) = tempenergy
-            generator.agentlocation(previousposition + 1, 9) = tempage
-            generator.agentlocation(previousposition + 1, 10) = tempasr
-
-            generator.agentlocation(previousposition + 1, 11) = tempcurrency
-            generator.agentlocation(previousposition + 1, 12) = tempproduct
-            generator.agentlocation(previousposition + 1, 13) = tempsellerbuyer
-            generator.agentlocation(previousposition + 1, 14) = temputility
-            generator.agentlocation(previousposition + 1, 15) = tempprice
-            generator.agentlocation(previousposition + 1, 16) = temp16
-            generator.agentlocation(previousposition + 1, 17) = temp17
-            generator.agentlocation(previousposition + 1, 18) = temp18
-            generator.agentlocation(previousposition + 1, 19) = temp19
-        Next
-    End Sub
-
-    Sub sortzy()
-        For index = 2 To total + 1
-            Dim tempz As Integer = generator.agentlocation(index, 2)
-            Dim tempx As Integer = generator.agentlocation(index, 0)
-            Dim tempy As Integer = generator.agentlocation(index, 1)
-            Dim tempd As Integer = generator.agentlocation(index, 3)
-            Dim tempa As Integer = generator.agentlocation(index, 4)
-            Dim tempstatic As Integer = generator.staticagent(index)
-            Dim tempreservoir(2) As Integer
-            tempreservoir(0) = generator.agentreservoir(index, 0)
-            tempreservoir(1) = generator.agentreservoir(index, 1)
-            tempreservoir(2) = generator.agentreservoir(index, 2)
-
-            Dim tempsellerbuyer As Integer = generator.agentlocation(index, 13)
-            Dim temputility As Decimal = generator.agentlocation(index, 14)
-            Dim tempcurrency As Decimal = generator.agentlocation(index, 11)
-            Dim tempproduct As Decimal = generator.agentlocation(index, 12)
-            Dim tempprice As Decimal = generator.agentlocation(index, 15)
-            Dim temp16 As Decimal = generator.agentlocation(index, 16)
-            Dim temp17 As Decimal = generator.agentlocation(index, 17)
-            Dim temp18 As Decimal = generator.agentlocation(index, 18)
-            Dim temp19 As Decimal = generator.agentlocation(index, 19)
-
-            Dim tempdx As Integer = generator.agentlocation(index, 5)
-            Dim tempdy As Integer = generator.agentlocation(index, 6)
-            Dim tempdz As Integer = generator.agentlocation(index, 7)
-
-            Dim tempenergy As Integer = generator.agentlocation(index, 8)
-            Dim tempage As Integer = generator.agentlocation(index, 9)
-            Dim tempasr As Integer = generator.agentlocation(index, 10)
-
-            Dim previousposition As Integer = index - 1
-            Do While tempx > generator.agentlocation(previousposition, 0) And previousposition >= 1
-
-                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
-                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
-                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
-                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
-                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
-
-                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
-                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
-                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
-
-                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
-                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
-                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
-
-                generator.agentlocation(previousposition + 1, 11) = generator.agentlocation(previousposition, 11)
-                generator.agentlocation(previousposition + 1, 12) = generator.agentlocation(previousposition, 12)
-                generator.agentlocation(previousposition + 1, 13) = generator.agentlocation(previousposition, 13)
-                generator.agentlocation(previousposition + 1, 14) = generator.agentlocation(previousposition, 14)
-                generator.agentlocation(previousposition + 1, 15) = generator.agentlocation(previousposition, 15)
-                generator.agentlocation(previousposition + 1, 16) = generator.agentlocation(previousposition, 16)
-                generator.agentlocation(previousposition + 1, 17) = generator.agentlocation(previousposition, 17)
-                generator.agentlocation(previousposition + 1, 18) = generator.agentlocation(previousposition, 18)
-                generator.agentlocation(previousposition + 1, 19) = generator.agentlocation(previousposition, 19)
-
-                If generator.staticagent(previousposition) = 2 Then
-                    generator.staticagent(previousposition + 1) = 2
-                ElseIf generator.staticagent(previousposition) = 0 Then
-                    generator.staticagent(previousposition + 1) = 0
-                End If
-
-                If generator.agentreservoir(previousposition, 0) = 2 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 2
-                    generator.agentreservoir(previousposition + 1, 1) = generator.agentreservoir(previousposition, 1)
-                    generator.agentreservoir(previousposition + 1, 2) = generator.agentreservoir(previousposition, 2)
-                ElseIf generator.agentreservoir(previousposition, 0) = 0 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 0
-                    generator.agentreservoir(previousposition + 1, 1) = 0
-                    generator.agentreservoir(previousposition + 1, 2) = 0
-                End If
-
-                previousposition = previousposition - 1
-
-
-            Loop
-
-            If tempstatic = 2 Then
-                generator.staticagent(previousposition + 1) = 2
-            ElseIf tempstatic = 0 Then
-                generator.staticagent(previousposition + 1) = 0
-            End If
-
-            If tempreservoir(0) = 2 Then
-                generator.agentreservoir(previousposition + 1, 0) = 2
-                generator.agentreservoir(previousposition + 1, 1) = tempreservoir(1)
-                generator.agentreservoir(previousposition + 1, 2) = tempreservoir(2)
-            ElseIf tempreservoir(0) = 0 Then
-                generator.agentreservoir(previousposition + 1, 0) = 0
-                generator.agentreservoir(previousposition + 1, 1) = 0
-                generator.agentreservoir(previousposition + 1, 2) = 0
-            End If
-
-            generator.agentlocation(previousposition + 1, 2) = tempz
-            generator.agentlocation(previousposition + 1, 0) = tempx
-            generator.agentlocation(previousposition + 1, 1) = tempy
-            generator.agentlocation(previousposition + 1, 3) = tempd
-            generator.agentlocation(previousposition + 1, 4) = tempa
-
-            generator.agentlocation(previousposition + 1, 5) = tempdx
-            generator.agentlocation(previousposition + 1, 6) = tempdy
-            generator.agentlocation(previousposition + 1, 7) = tempdz
-
-            generator.agentlocation(previousposition + 1, 8) = tempenergy
-            generator.agentlocation(previousposition + 1, 9) = tempage
-            generator.agentlocation(previousposition + 1, 10) = tempasr
-
-            generator.agentlocation(previousposition + 1, 11) = tempcurrency
-            generator.agentlocation(previousposition + 1, 12) = tempproduct
-            generator.agentlocation(previousposition + 1, 13) = tempsellerbuyer
-            generator.agentlocation(previousposition + 1, 14) = temputility
-            generator.agentlocation(previousposition + 1, 15) = tempprice
-            generator.agentlocation(previousposition + 1, 16) = temp16
-            generator.agentlocation(previousposition + 1, 17) = temp17
-            generator.agentlocation(previousposition + 1, 18) = temp18
-            generator.agentlocation(previousposition + 1, 19) = temp19
-        Next
-    End Sub
-
-    Sub placingagentsxy()
-        For i = 1 To total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Dim s As Integer = i
-            Call creator(x, y, z, d, generator.agentcolour(ag), s)
-        Next
-    End Sub
-
-    Sub placingagentsxz()
-        For i = 1 To total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Dim s As Integer = i
-            Call creatorxz(x, y, z, d, generator.agentcolour(ag), s)
-        Next
-    End Sub
-
-    Sub placingagentszy()
-        For i = 1 To total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Dim s As Integer = i
-            Call creatorzy(x, y, z, d, generator.agentcolour(ag), s)
-        Next
-    End Sub
-
-    'saves agent location
-    Private Sub SaveProjectToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveProjectToolStripMenuItem.Click
-        save = ""
+        ' World Sizes: <xn>_<yn>_<zn>_<number of agent types>_
         save = xn & "_" & yn & "_" & zn & "_" & agent & "_"
-
-        For i = 1 To agent
+        ' Type Names
+        For i = 1 To agent ' For all agent types
+            ' <save>_<type name for type (i)>_  Ex: <save>_<agent name for (i)>_<agent name for (i+1)>_<agent name for (i+2)>_
             save = save & generator.agentname(i) & "_"
         Next
-
-        For i = 1 To agent
+        ' Type Counts
+        For i = 1 To agent ' For all agent types
+            ' <save>_<agent count for type (i)>_
             save = save & generator.agentcount(i) & "_"
         Next
-
-        For i = 1 To agent
+        ' Type Initial Energy
+        For i = 1 To agent ' For all agent types
+            ' <save>_<initial energy for type (i)>_
             save = save & generator.initialenergy(i) & "_"
         Next
-
-        For i = 1 To agent
+        ' Type Step Energy Cost/Gain
+        For i = 1 To agent ' For all agent types
             save = save & generator.stepenergy(i) & "_"
         Next
-
-        For i = 1 To agent
+        ' Type Bump Energy Cost/Gain
+        For i = 1 To agent ' For all agent types
             save = save & generator.bumpenergy(i) & "_"
         Next
-
-
-        For i = 1 To agent
+        ' Type Aging
+        For i = 1 To agent ' For all agent types
             save = save & generator.aging(i) & "_"
         Next
-
-
-        For i = 1 To agent
+        ' Type Age Limit
+        For i = 1 To agent ' For all agent types
             save = save & generator.agelimit(i) & "_"
         Next
-
-
-        For i = 1 To agent
+        ' Type Asexual Reproduction? Bool
+        For i = 1 To agent ' For all agent types
             save = save & generator.asr(i) & "_"
         Next
-
-
-        For i = 1 To agent
+        ' Type Asexual Reproduction Time
+        For i = 1 To agent ' For all agent types
             save = save & generator.asrtime(i) & "_"
         Next
-
-        For i = 1 To agent
+        ' Type Asexual Reproduction Energy Cost
+        For i = 1 To agent ' For all agent types
             save = save & generator.asrenergy(i) & "_"
         Next
-
-
-        For i = 1 To agent
+        ' Type Color
+        For i = 1 To agent ' For all agent types
             Dim colourconverter As New System.Drawing.ColorConverter
             save = save & colourconverter.ConvertToString(generator.agentcolour(i)) & "_"
         Next
-
-
-        For i = 1 To agent
+        ' Type Range (absolute)
+        For i = 1 To agent ' For all agent types
             save = save & generator.agentrangeabsolute(i) & "_"
         Next
-
-
+        ' Type Agent Range (coords)
         For a = 1 To agent
-            For b = 0 To 2
-                For c = 0 To 1
+            For b = 0 To 2 '0 = x, 1 = y, 2 = z
+                For c = 0 To 1 '0 = min, 1 = max
                     save = save & generator.agentrange(a, b, c) & "_"
                 Next
             Next
         Next
-
-
+        ' Type Action Combinations
         For a = 1 To agent
             For b = 1 To agent
                 For c = 1 To 6
@@ -4772,136 +2078,80 @@
                 Next
             Next
         Next
-
-        'saves x location
+        '------------------- INDIVIDUALS ---------------------
+        ' Individual X Locations
         For i = 1 To total
             save = save & generator.agentlocation(i, 0) & "_"
         Next
-
-        'saves y location
+        ' Individual Y Locations
         For i = 1 To total
             save = save & generator.agentlocation(i, 1) & "_"
         Next
-
-        'saves z location
+        ' Individual Z Locations
         For i = 1 To total
             save = save & generator.agentlocation(i, 2) & "_"
         Next
-
+        ' Individual 
         For i = 1 To total
             save = save & generator.agentlocation(i, 4) & "_"
         Next
-
+        ' Individual 
         For i = 1 To total
             save = save & generator.agentlocation(i, 3) & "_"
         Next
-
+        '------------------- TYPES ---------------------
         For i = 1 To agent
             save = save & generator.staticagentid(i) & "_"
         Next
-
+        '------------------- INDIVIDUALS --------------------
         'saves reservoirs (issue saving reservoirs that are partially or completely filled)
         For i = 1 To total
             save = save & generator.agentreservoir(i, 0) & "_"
         Next
-
         'saves the capacity of reservoirs
         For i = 1 To total
             save = save & generator.agentreservoir(i, 1) & "_"
         Next
-
         'saves the current level in a reservoir
         For i = 1 To total
             save = save & generator.agentreservoir(i, 2) & "_"
         Next
-
         For i = 1 To agent
             save = save & generator.reservoiragentid(i, 0) & "_"
         Next
-
         For i = 1 To agent
             save = save & generator.reservoiragentid(i, 1) & "_"
         Next
-
         For i = 1 To agent
             save = save & generator.reservoiragentid(i, 2) & "_"
         Next
 
         save = save & "|"
-        SaveFilepro.ShowDialog()
-    End Sub
+        Return save
+    End Function
 
-    Private Sub SaveFilepro_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles SaveFilepro.FileOk
-        Dim objwriter As New System.IO.StreamWriter(SaveFilepro.FileName)
-        objwriter.Write(save)
-        objwriter.Close()
-    End Sub
-
-    Private Sub TickToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TickToolStripMenuItem.Click
-        Timerxy.Start()
-        timerexit = True
-    End Sub
-
-    Private Sub CreditToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreditToolStripMenuItem.Click
-        MsgBox("Instructor: Dr. Brad Bass" & vbCrLf & "Programmer: Mohammad Zavvarian" & vbCrLf & "Additional programming by: Neilket Patel")
-    End Sub
-
-    Private Sub OpenProjectToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpenProjectToolStripMenuItem.Click
-        OpenFilepro.ShowDialog()
-    End Sub
-
-    Private Sub OpenFilepro_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles OpenFilepro.FileOk
-        Dim objreader As New System.IO.StreamReader(OpenFilepro.FileName)
-        save = objreader.ReadToEnd
-        objreader.Close()
-
+    Sub loadProjectFromString(ByRef saveText As String)
         Dim import(400000) As String
         Dim n As Integer
 
         For i = 1 To 400000
             n = 0
-            Do Until save.Substring(n, 1) = "_"
+            Do Until saveText.Substring(n, 1) = "_"
                 n = n + 1
-                import(i) = save.Substring(0, n)
+                import(i) = saveText.Substring(0, n)
             Loop
-            If save.Substring(n + 1, 1) = "|" Then
+            If saveText.Substring(n + 1, 1) = "|" Then
                 Exit For
             End If
-            save = save.Substring(1 + n)
+            saveText = saveText.Substring(1 + n)
         Next
-
-
-        '....
 
         xn = import(1)
         yn = import(2)
         zn = import(3)
         agent = import(4)
 
-        Dim ratio1 As Single = yn / xn
-        Dim ratio2 As Single = zn / xn
-        Dim ratio3 As Single = yn / zn
-        Dim res As Integer = 2073600
-
-        sizexyx = (res / ratio1) ^ 0.5
-        sizexyy = ratio1 * sizexyx
-
-        sizexzx = (res / ratio2) ^ 0.5
-        sizexzz = ratio2 * sizexzx
-
-        sizezyz = (res / ratio3) ^ 0.5
-        sizezyy = ratio3 * sizezyz
-
-
-        cellxyx = sizexyx / xn
-        cellxyy = sizexyy / yn
-
-        cellxzx = sizexzx / xn
-        cellxzz = sizexzz / zn
-
-        cellzyz = sizezyz / zn
-        cellzyy = sizezyy / yn
-
+        mRenderingEngine.onWorldSizeChanged(xn, yn, zn)
 
         generator.Close()
         generator.Show()
@@ -5077,7 +2327,7 @@
             generator.reservoiragentid(i, 2) = import(lastimport)
         Next
 
-        '........applying the setting..............
+        ''........applying the setting..............
         Randomize()
         total = 0
 
@@ -5144,7 +2394,7 @@
             Next
         Next
 
-        '...........................................................................................................
+        ''...........................................................................................................
 
         For i = 1 To agent
             total = total + generator.agentcount(i)
@@ -5210,25 +2460,191 @@
 
 
 
-        generator.gfxxy.Clear(Color.White)
-        Call generator.gridxy()
-
-        ' placing the agents
-        For i = 1 To total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Call creator(x, y, z, d, generator.agentcolour(ag), i)
-        Next
-
-
-        Call generator.topgridxy()
-        Call picshow()
+        draw()
 
         tick = 0
-        Call staticagentcheck()
+        staticagentcheck()
+    End Sub
+
+#Region "User Interface Event Handlers"
+    ' Adam: Update loop
+    Private Sub Timerxy_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timerxy.Tick
+        If tick = 0 Then
+            If generator.multipleiterations(0) > 0 Then
+                tslblStatus.Visible = True
+                tslblStatus.Text = "Iterations Left: " & generator.multipleiterations(0)
+            End If
+        End If
+
+        updateSimulation()
+
+        If tick = tslblStopTicks.Text Then
+            If generator.multipleiterations(0) = 0 Then
+
+                tslblStatus.Visible = False
+                Timerxy.Stop()
+            Else
+                generator.multipleiterations(0) -= 1
+                tick = 0
+                tslblStatus.Visible = True
+                tslblStatus.Text = "Iterations Left: " & generator.multipleiterations(0)
+
+                resetSimulation()
+            End If
+        End If
+    End Sub
+
+#Region "Change View"
+    Private Sub TopViewToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles XZTopViewToolStripMenuItem.Click
+        changePrespective(Prespective.XZ)
+    End Sub
+
+    Private Sub SideViewToolStripMenuzItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ZYSideViewToolStripMenuItem.Click
+        changePrespective(Prespective.ZY)
+    End Sub
+
+    Private Sub SideViewToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles XYSideViewToolStripMenuItem.Click
+        changePrespective(Prespective.XY)
+    End Sub
+#End Region
+
+    Private Sub QuitToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles QuitToolStripMenuItem.Click
+        Me.Close()
+    End Sub
+
+    Private Sub ToolStripStatusLabel2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tslblStopLabel.Click
+        Dim input As String
+        input = InputBox("Enter the time limit:")
+        If IsNumeric(input) = False Then
+            MessageBox.Show("Please enter a numerical value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+
+        tslblStopTicks.Text = CInt(input)
+    End Sub
+
+    Private Sub ToolStripStatusLabel4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tslblSpeedLabel.Click
+        Dim input As String = InputBox("Enter speed in percentage:")
+        Dim speed As Integer
+        If input = "" Then
+            Exit Sub
+        End If
+
+        Try
+            speed = CInt(input)
+        Catch ex As Exception
+            MessageBox.Show("Please enter a numerical value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End Try
+
+        If speed > 100 Then
+            speed = 100
+            MsgBox("Max speed: 100")
+        End If
+        Timerxy.Interval = (300 - ((speed * 3) - 1))
+        tsprgSpeed.Value = speed
+    End Sub
+
+    Private Sub StopToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StopToolStripMenuItem.Click
+        Timerxy.Stop()
+        If MessageBox.Show("Would you like to stop the excel file encryption?", "Excel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) _
+                = Windows.Forms.DialogResult.Yes Then
+            mExcelLogger.closeExcelWorkbook()
+        End If
+    End Sub
+
+    Private Sub StartToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StartToolStripMenuItem.Click
+        Timerxy.Start()
+    End Sub
+
+    Private Sub SizeToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SizeToolStripMenuItem.Click
+        Form3.Show()
+    End Sub
+
+    Private Sub NewToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NewToolStripMenuItem.Click
+        Form2.Show()
+    End Sub
+
+    Private Sub AIToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AIToolStripMenuItem.Click
+        AI.Show()
+    End Sub
+
+    Private Sub FullScreenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FullScreenToolStripMenuItem.Click
+        If Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None Then
+            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.Sizable
+            FullScreenToolStripMenuItem.Text = "Full Screen"
+        Else
+            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
+            Me.WindowState = FormWindowState.Normal
+            Me.WindowState = FormWindowState.Maximized
+            FullScreenToolStripMenuItem.Text = "Exit Full Screen"
+        End If
+    End Sub
+
+    Private Sub AdjustFocalPointToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AdjustFocalPointToolStripMenuItem.Click
+        Ratio.Show()
+    End Sub
+
+    'outputs population and energy values to a spreadsheet
+    Private Sub LogDataToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LogDataToolStripMenuItem.Click
+        Try
+            SaveFileDialogLogData.ShowDialog()
+        Catch ex As Exception
+            MessageBox.Show("Please ensure that Excel creates 2 or more worksheets when a new spreadsheet is created." & vbCrLf & vbCrLf & ex.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+    Private Sub FoodWebToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles collisionToolStripMenuItem.Click
+        Form5.Show()
+    End Sub
+
+    Private Sub DataSheetToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DataSheetToolStripMenuItem.Click
+        Form4.Show()
+    End Sub
+
+    Private Sub SaveFileDialogLogData_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles SaveFileDialogLogData.FileOk
+        If mExcelLogger Is Nothing Then mExcelLogger = New ExcelLogger()
+        mExcelLogger.openExcelWorkbook(SaveFileDialogLogData.FileName)
+    End Sub
+#End Region
+
+#Region "Project Saving/Loading"
+    'saves agent location
+    Private Sub SaveProjectToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SaveProjectToolStripMenuItem.Click
+        SaveFilepro.ShowDialog()
+    End Sub
+
+    Private Sub SaveFilepro_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles SaveFilepro.FileOk
+        Using objwriter = New System.IO.StreamWriter(SaveFilepro.FileName)
+            Try
+                objwriter.Write(saveProjectToString())
+            Catch ex As Exception
+                MessageBox.Show("Failed to save the project, please send the developer a screenshot of the error." & vbCrLf & vbCrLf & ex.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+    End Sub
+
+    Private Sub OpenProjectToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpenProjectToolStripMenuItem.Click
+        OpenFilepro.ShowDialog()
+    End Sub
+
+    Private Sub OpenFilepro_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles OpenFilepro.FileOk
+        Using objreader = New System.IO.StreamReader(OpenFilepro.FileName)
+            Try
+                loadProjectFromString(objreader.ReadToEnd)
+            Catch ex As Exception
+                MessageBox.Show("Failed to load the project, it may be corrupt." & vbCrLf & vbCrLf & ex.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        End Using
+    End Sub
+#End Region
+
+    Private Sub TickToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TickToolStripMenuItem.Click, TickButtonToolStripMenuItem.Click
+        updateSimulation()
+    End Sub
+
+    Private Sub CreditToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreditToolStripMenuItem.Click
+        MsgBox("Instructor: Dr. Brad Bass" & vbCrLf & "Programmer: Mohammad Zavvarian" & vbCrLf & "Additional programming by: Neilket Patel")
     End Sub
 
     Private Sub InteractionsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InteractionsToolStripMenuItem.Click
@@ -5245,170 +2661,6 @@
 
     Private Sub AbioticFactorsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AbioticFactorsToolStripMenuItem.Click
         'frmAbiotic.Show()
-    End Sub
-
-    Private Sub reservoirrelase(ByVal i As Integer)
-        For i = 1 To total
-            For j = 1 To agent
-
-                If generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) <> 0 Then
-
-                    If generator.agentreservoir(i, 2) < generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 2) Then
-                        Exit For
-                    End If
-
-                    If total + generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) <= generator.maxcell Then
-
-                        Dim newagents As Integer
-                        Dim placeholder As Integer = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) \ 1
-                        Dim diff As Decimal = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) - placeholder
-
-                        If diff > 0 Then
-                            Dim dif As Decimal = diff * 100
-                            Dim randomvalue As Integer = CInt(Math.Floor(101) * Rnd())
-                            If randomvalue > 0 And randomvalue <= dif Then
-                                placeholder += 1
-                            End If
-                        End If
-
-                        newagents = placeholder
-
-                        Dim agenttobeproduced(newagents) As Integer
-                        Dim rangexupper As Integer
-                        Dim rangexlower As Integer
-                        Dim rangeyupper As Integer
-                        Dim rangeylower As Integer
-                        Dim rangezupper As Integer
-                        Dim rangezlower As Integer
-
-                        For k = 1 To newagents
-                            agenttobeproduced(k) = j
-                        Next
-
-                        For k = 1 To newagents
-                            total = total + 1
-
-
-                            rangexupper = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 3) + generator.agentlocation(i, 0)
-                            rangexlower = generator.agentlocation(i, 0) - generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 3)
-                            rangeyupper = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 4) + generator.agentlocation(i, 1)
-                            rangeylower = generator.agentlocation(i, 1) - generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 4)
-                            rangezupper = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 5) + generator.agentlocation(i, 2)
-                            rangezlower = generator.agentlocation(i, 2) - generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 5)
-
-                            If rangexlower < 1 Then
-                                rangexlower = 1
-                            End If
-                            If rangeylower < 1 Then
-                                rangeylower = 1
-                            End If
-                            If rangezlower < 1 Then
-                                rangezlower = 1
-                            End If
-                            If rangexupper > xn Then
-                                rangexupper = xn
-                            End If
-                            If rangeyupper > yn Then
-                                rangeyupper = yn
-                            End If
-                            If rangezupper > zn Then
-                                rangezupper = zn
-                            End If
-
-                            Dim x As Integer = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
-                            Dim y As Integer = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-                            Dim z As Integer = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
-                            Dim dx As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
-                            Dim dy As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
-                            Dim dz As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
-
-                            Dim number As Integer = 0
-                            Do While generator.occupied(x, y, z) = True And number < generator.maxcell
-                                number = number + 1
-                                x = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
-                                y = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-                                z = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
-                            Loop
-
-
-                            generator.occupied(x, y, z) = True
-
-                            Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                            generator.agentlocation(total, 0) = x
-                            generator.agentlocation(total, 1) = y
-                            generator.agentlocation(total, 2) = z
-                            generator.agentlocation(total, 3) = d
-                            generator.agentlocation(total, 4) = agenttobeproduced(k)
-                            generator.agentlocation(total, 5) = dx
-                            generator.agentlocation(total, 6) = dy
-                            generator.agentlocation(total, 7) = dz
-                            generator.agentlocation(total, 8) = generator.initialenergy(agenttobeproduced(k))
-                            generator.agentlocation(total, 9) = 0
-                            generator.agentlocation(total, 10) = 0
-
-                            generator.agentreservoir(i, 2) -= generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 2)
-
-                            If generator.agentreservoir(i, 2) < generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 2) Then
-                                Exit Sub
-                            End If
-                        Next
-
-                        If viewlabel.Text = "Top View (x,z)" Then
-                            'placing the agents
-                            generator.gfxxz.Clear(Color.White)
-                            Call generator.gridxz()
-                            generator.agentchange = True
-                            For iii = 1 To total
-                                Dim x As Integer = generator.agentlocation(iii, 0)
-                                Dim y As Integer = generator.agentlocation(iii, 1)
-                                Dim z As Integer = generator.agentlocation(iii, 2)
-                                Dim d As Integer = generator.agentlocation(iii, 3)
-                                Dim ag As Integer = generator.agentlocation(iii, 4)
-                                Call creator(x, y, z, d, generator.agentcolour(ag), iii)
-                            Next
-                            Call generator.topgridxz()
-                            Call picshow()
-
-                        ElseIf viewlabel.Text = "Side View (x,y)" Then
-                            'placing the agents
-                            generator.gfxxy.Clear(Color.White)
-                            Call generator.gridxy()
-                            generator.agentchange = True
-                            For iii = 1 To total
-                                Dim x As Integer = generator.agentlocation(iii, 0)
-                                Dim y As Integer = generator.agentlocation(iii, 1)
-                                Dim z As Integer = generator.agentlocation(iii, 2)
-                                Dim d As Integer = generator.agentlocation(iii, 3)
-                                Dim ag As Integer = generator.agentlocation(iii, 4)
-                                Call creator(x, y, z, d, generator.agentcolour(ag), iii)
-                            Next
-                            Call generator.topgridxy()
-                            Call picshow()
-
-                        ElseIf viewlabel.Text = "Side View (z,y)" Then
-                            'placing the agents
-                            generator.gfxzy.Clear(Color.White)
-                            Call generator.gridzy()
-                            generator.agentchange = True
-                            For iii = 1 To total
-                                Dim x As Integer = generator.agentlocation(iii, 0)
-                                Dim y As Integer = generator.agentlocation(iii, 1)
-                                Dim z As Integer = generator.agentlocation(iii, 2)
-                                Dim d As Integer = generator.agentlocation(iii, 3)
-                                Dim ag As Integer = generator.agentlocation(iii, 4)
-                                Call creator(x, y, z, d, generator.agentcolour(ag), iii)
-                            Next
-                            Call generator.topgridzy()
-                            Call picshow()
-
-                        End If
-
-                    End If
-                    generator.agentchange = True
-
-                End If
-            Next
-        Next
     End Sub
 
     Private Sub InSpecificPositionsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InSpecificPositionsToolStripMenuItem.Click
@@ -5436,6 +2688,7 @@
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        initializeSimulation()
         goal(0) = 9
         goal(1) = 9
         goal(2) = 4
@@ -5453,210 +2706,7 @@
         automaticiterations.Show()
     End Sub
 
-    Sub reset()
-        Randomize()
-        total = 0
-        tick = 0
-
-        Dim number As Integer
-
-        Dim agents(agent) As Integer
-
-        For a = 1 To agent
-            Dim agentsadded As Integer = 0
-            For i = 1 To generator.agentcount(a)
-                number = number + 1
-                Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
-                Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
-                Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
-
-                Dim dx As Integer
-                Dim dy As Integer
-                Dim dz As Integer
-
-                Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
-                Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
-                Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
-                Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
-                Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
-                Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
-
-
-
-                dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
-                dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-                dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
-
-
-                Do While generator.occupied(x, y, z) = True
-                    x = CInt(Math.Floor((xn) * Rnd())) + 1
-                    y = CInt(Math.Floor((yn) * Rnd())) + 1
-                    z = CInt(Math.Floor((zn) * Rnd())) + 1
-                Loop
-
-                'this allows agents to start in a specific range. if all or almost all spaces in a region are occupied, the program moves onto the next agent type
-                If generator.agentstart(a, 0) = 2 Then
-                    Dim maxiterations As Double
-                    x = CInt(Math.Floor(((generator.agentstart(a, 1) - generator.agentstart(a, 2)) + 1) * Rnd()) + generator.agentstart(a, 2))
-                    y = CInt(Math.Floor(((generator.agentstart(a, 3) - generator.agentstart(a, 4)) + 1) * Rnd()) + generator.agentstart(a, 4))
-                    z = CInt(Math.Floor(((generator.agentstart(a, 5) - generator.agentstart(a, 6)) + 1) * Rnd()) + generator.agentstart(a, 6))
-                    Try
-                        Do While generator.occupied(x, y, z) = True And maxiterations < 100000
-                            x = CInt(Math.Floor((generator.agentstart(a, 1) - generator.agentstart(a, 2) + 1) * Rnd()) + generator.agentstart(a, 2))
-                            y = CInt(Math.Floor((generator.agentstart(a, 3) - generator.agentstart(a, 4) + 1) * Rnd()) + generator.agentstart(a, 4))
-                            z = CInt(Math.Floor((generator.agentstart(a, 5) - generator.agentstart(a, 6) + 1) * Rnd()) + generator.agentstart(a, 6))
-                            maxiterations += 1
-                        Loop
-                    Catch ex As Exception
-                        MessageBox.Show(x & " " & y & " " & z)
-                    End Try
-
-                    If maxiterations = 100000 Then
-                        i = generator.agentcount(a) + 1
-                        agents(a) = agentsadded
-                    End If
-                End If
-
-                generator.occupied(x, y, z) = True
-
-                If i <> generator.agentcount(a) + 1 Then
-                    Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                    generator.agentlocation(number, 0) = x
-                    generator.agentlocation(number, 1) = y
-                    generator.agentlocation(number, 2) = z
-                    generator.agentlocation(number, 3) = d
-                    generator.agentlocation(number, 4) = a
-                    generator.agentlocation(number, 5) = dx
-                    generator.agentlocation(number, 6) = dy
-                    generator.agentlocation(number, 7) = dz
-                    generator.agentlocation(number, 8) = generator.initialenergy(a)
-                    generator.agentlocation(number, 9) = 0
-                    generator.agentlocation(number, 10) = 0
-                    agentsadded += 1
-                End If
-
-                If i = generator.agentcount(a) Then
-                    agents(a) = agentsadded
-                End If
-            Next
-
-        Next
-
-
-        For i = 1 To agent
-            total = total + agents(i)
-            'Form1.total = Form1.total + generator.agentcount(i)
-        Next
-
-
-
-        For index = 2 To total
-            Dim tempz As Integer = generator.agentlocation(index, 2)
-            Dim tempx As Integer = generator.agentlocation(index, 0)
-            Dim tempy As Integer = generator.agentlocation(index, 1)
-            Dim tempd As Integer = generator.agentlocation(index, 3)
-            Dim tempa As Integer = generator.agentlocation(index, 4)
-            Dim tempstatic As Integer = generator.staticagent(index)
-
-            Dim tempdx As Integer = generator.agentlocation(index, 5)
-            Dim tempdy As Integer = generator.agentlocation(index, 6)
-            Dim tempdz As Integer = generator.agentlocation(index, 7)
-
-            Dim tempenergy As Integer = generator.agentlocation(index, 8)
-            Dim tempage As Integer = generator.agentlocation(index, 9)
-            Dim tempasr As Integer = generator.agentlocation(index, 10)
-
-            Dim previousposition As Integer = index - 1
-            Do While tempz > generator.agentlocation(previousposition, 2) And previousposition >= 1
-                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
-                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
-                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
-                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
-                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
-
-                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
-                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
-                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
-
-                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
-                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
-                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
-
-                If generator.staticagent(previousposition) = 2 Then
-                    generator.staticagent(previousposition + 1) = 2
-                ElseIf generator.staticagent(previousposition) = 0 Then
-                    generator.staticagent(previousposition + 1) = 0
-                End If
-
-                previousposition = previousposition - 1
-            Loop
-
-            If tempstatic = 2 Then
-                generator.staticagent(previousposition + 1) = 2
-            ElseIf tempstatic = 0 Then
-                generator.staticagent(previousposition + 1) = 0
-            End If
-
-            generator.agentlocation(previousposition + 1, 2) = tempz
-            generator.agentlocation(previousposition + 1, 0) = tempx
-            generator.agentlocation(previousposition + 1, 1) = tempy
-            generator.agentlocation(previousposition + 1, 3) = tempd
-            generator.agentlocation(previousposition + 1, 4) = tempa
-
-            generator.agentlocation(previousposition + 1, 5) = tempdx
-            generator.agentlocation(previousposition + 1, 6) = tempdy
-            generator.agentlocation(previousposition + 1, 7) = tempdz
-
-            generator.agentlocation(previousposition + 1, 8) = tempenergy
-            generator.agentlocation(previousposition + 1, 9) = tempage
-            generator.agentlocation(previousposition + 1, 10) = tempasr
-
-        Next
-
-        'changes the direction of new agents according to user input
-        For i = 1 To agent
-            If generator.agentdirection(i) <> 0 Then
-                For a = 1 To total
-                    If generator.agentlocation(a, 4) = i Then
-                        generator.agentlocation(a, 3) = generator.agentdirection(i)
-                    End If
-                Next
-            End If
-        Next
-
-        generator.gfxxy.Clear(Color.White)
-        Call generator.gridxy()
-
-        generator.agentchange = True
-
-        ' placing the agents
-        For i = 1 To total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Dim s As Integer = i
-            Call creator(x, y, z, d, generator.agentcolour(ag), s)
-        Next
-
-        For x = 1 To xn
-            For y = 1 To yn
-                For z = 1 To zn
-                    generator.occupied(x, y, z) = False
-                Next
-            Next
-        Next
-
-        For i = 1 To total
-            generator.occupied(generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2)) = True
-        Next
-
-        Call generator.topgridxy()
-        Call picshow()
-    End Sub
-
     Private Sub ResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetToolStripMenuItem.Click
-        Call reset()
+        resetSimulation()
     End Sub
 End Class

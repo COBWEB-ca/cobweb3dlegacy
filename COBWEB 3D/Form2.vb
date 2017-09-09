@@ -6,30 +6,7 @@
         Form1.zn = TextBox3.Text
         Form1.agent = TextBox4.Text
 
-        Dim ratio1 As Single = Form1.yn / Form1.xn
-        Dim ratio2 As Single = Form1.zn / Form1.xn
-        Dim ratio3 As Single = Form1.yn / Form1.zn
-        Dim res As Integer = 2073600
-
-        Form1.sizexyx = (res / ratio1) ^ 0.5
-        Form1.sizexyy = ratio1 * Form1.sizexyx
-
-        Form1.sizexzx = (res / ratio2) ^ 0.5
-        Form1.sizexzz = ratio2 * Form1.sizexzx
-
-        Form1.sizezyz = (res / ratio3) ^ 0.5
-        Form1.sizezyy = ratio3 * Form1.sizezyz
-
-
-        Form1.cellxyx = Form1.sizexyx / Form1.xn
-        Form1.cellxyy = Form1.sizexyy / Form1.yn
-
-        Form1.cellxzx = Form1.sizexzx / Form1.xn
-        Form1.cellxzz = Form1.sizexzz / Form1.zn
-
-        Form1.cellzyz = Form1.sizezyz / Form1.zn
-        Form1.cellzyy = Form1.sizezyy / Form1.yn
-
+        Form1.RenderingEngine.onWorldSizeChanged(Form1.xn, Form1.yn, Form1.zn)
 
         generator.Close()
         generator.Show()

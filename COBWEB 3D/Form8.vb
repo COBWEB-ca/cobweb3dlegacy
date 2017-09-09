@@ -87,19 +87,8 @@ Public Class frmAdd
                     Next
 
                     'placing the agents
-                    generator.gfxxy.Clear(Color.White)
-                    Call generator.gridxy()
                     generator.agentchange = True
-                    For ii = 1 To Form1.total
-                        Dim xx As Integer = generator.agentlocation(ii, 0)
-                        Dim yy As Integer = generator.agentlocation(ii, 1)
-                        Dim zz As Integer = generator.agentlocation(ii, 2)
-                        Dim dd As Integer = generator.agentlocation(ii, 3)
-                        Dim agag As Integer = generator.agentlocation(ii, 4)
-                        Call Form1.creator(xx, yy, zz, dd, generator.agentcolour(agag), ii)
-                    Next
-                    Call generator.topgridxy()
-                    Call Form1.picshow()
+                    Form1.draw()
                     Exit Sub
                 ElseIf (rangexupper - rangexlower) = 0 And (rangeyupper - rangeylower) = 0 And (rangezupper - rangezlower) = 0 And generator.occupied(rangexupper, rangeyupper, rangezupper) = True Then
                     MessageBox.Show("The location where you want to insert the agent is occupied. Please enter another location.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -147,23 +136,8 @@ Public Class frmAdd
             Next
 
             'placing the agents
-            generator.gfxxy.Clear(Color.White)
-            Call generator.gridxy()
-
             generator.agentchange = True
-
-            For i = 1 To Form1.total
-                Dim x As Integer = generator.agentlocation(i, 0)
-                Dim y As Integer = generator.agentlocation(i, 1)
-                Dim z As Integer = generator.agentlocation(i, 2)
-                Dim d As Integer = generator.agentlocation(i, 3)
-                Dim ag As Integer = generator.agentlocation(i, 4)
-                Call Form1.creator(x, y, z, d, generator.agentcolour(ag), i)
-            Next
-
-
-            Call generator.topgridxy()
-            Call Form1.picshow()
+            Form1.draw()
         Else
             MessageBox.Show("The number of new agents exceeds the number of empty spaces available. Please enter a lower value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub

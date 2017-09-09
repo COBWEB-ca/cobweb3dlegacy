@@ -236,30 +236,9 @@
             End If
         Next
 
-        generator.gfxxy.Clear(Color.White)
-        Call generator.gridxy()
-
         generator.agentchange = True
-
-        ' placing the agents
-        For i = 1 To Form1.total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Dim s As Integer = i
-            Call Form1.creator(x, y, z, d, generator.agentcolour(ag), s)
-        Next
-
-
-        Call generator.topgridxy()
-        Call Form1.picshow()
-        'Form1.PictureBox1.Image = generator.picxy
-
-
+        Form1.draw()
         Me.Close()
-
     End Sub
 
 

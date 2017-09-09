@@ -250,6 +250,7 @@
     <Compile Include="Genetics.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Logging\ExcelLogger.vb" />
     <Compile Include="Module1.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -272,6 +273,7 @@
     <Compile Include="Ratio.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Rendering\RenderingEngine.vb" />
     <Compile Include="utility.Designer.vb">
       <DependentUpon>utility.vb</DependentUpon>
     </Compile>
@@ -367,6 +369,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="COBWEB 3D_TemporaryKey.pfx" />
+    <None Include="CodeMap.dgml" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -418,6 +421,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo_Ef4_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
