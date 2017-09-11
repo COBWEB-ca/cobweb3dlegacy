@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="COBWEB 3D.exe" size="524800">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="COBWEB 3D.exe" size="529920">
       <assemblyIdentity name="COBWEB 3D" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>ByZHBnkpQdpCcQKb9ZRBL286UMc=</dsig:DigestValue>
+        <dsig:DigestValue>1l/gLhZ7H6jbl6WHwzQ73PlH+bI=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
