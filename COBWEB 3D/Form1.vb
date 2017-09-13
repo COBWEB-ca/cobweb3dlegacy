@@ -1,6 +1,5 @@
 ﻿Imports COBWEB_3D
 Imports System.Xml
-Imports System.Text
 
 Public Class Form1
     Public Const COBWEB_VERSION As String = "1.3.0"
@@ -1867,7 +1866,6 @@ Public Class Form1
 
     Sub changePrespective(ByVal newPrespective As Prespective)
         Me.RenderingEngine.Prespective = newPrespective
-
         XZTopViewToolStripMenuItem.Enabled = True
         ZYSideViewToolStripMenuItem.Enabled = True
         XYSideViewToolStripMenuItem.Enabled = True
@@ -1882,7 +1880,6 @@ Public Class Form1
                 viewlabel.Text = "Side View (z,y)"
                 ZYSideViewToolStripMenuItem.Enabled = False
         End Select
-
         draw()
     End Sub
 
@@ -2832,30 +2829,31 @@ Public Class Form1
     End Sub
 
     Private Sub OpenFilepro_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles OpenFilepro.FileOk
-        Using objreader = New System.IO.StreamReader(OpenFilepro.FileName)
-            Try
-                ' Encode the XML string in a UTF-8 byte array
-                ' Dim encodedString = Encoding.UTF8.GetBytes(objreader.ReadToEnd())
-                Dim x = New XmlDocument()
-                x.Load(OpenFilepro.FileName)
-                Dim xmlStream = New System.IO.MemoryStream()
-                x.Save(xmlStream)
+        Try
+            ' Encode the XML string in a UTF-8 byte array
+            ' Dim encodedString = Encoding.UTF8.GetBytes(objreader.ReadToEnd())
+            Dim x = New XmlDocument()
+            x.Load(OpenFilepro.FileName)
+            Dim xmlStream = New System.IO.MemoryStream()
+            x.Save(xmlStream)
 
-                xmlStream.Flush() '//Adjust this If you want read your data 
-                xmlStream.Position = 0
-                loadProjectFromXmlStream(xmlStream)
-                'loadProjectFromStream(OpenFilepro.FileName)
-                'loadProjectFromStream(OpenFilepro.OpenFile())
-                '  loadProjectFromString(objreader.ReadToEnd)
-            Catch ex As Exception
-                Try
+            xmlStream.Flush() '//Adjust this If you want read your data 
+            xmlStream.Position = 0
+            loadProjectFromXmlStream(xmlStream)
+            xmlStream.Dispose()
+            'loadProjectFromStream(OpenFilepro.FileName)
+            'loadProjectFromStream(OpenFilepro.OpenFile())
+            '  loadProjectFromString(objreader.ReadToEnd)
+        Catch ex As Exception
+            Try
+                Using objreader = New System.IO.StreamReader(OpenFilepro.FileName)
                     loadProjectFromString(objreader.ReadToEnd)
                     '  loadProjectFromString(objreader.ReadToEnd)
-                Catch ex2 As Exception
-                    MessageBox.Show("Failed to load the project, it may be corrupt." & vbCrLf & vbCrLf & ex2.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                End Try
+                End Using
+            Catch ex2 As Exception
+                MessageBox.Show("Failed to load the project, it may be corrupt." & vbCrLf & vbCrLf & ex2.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
-        End Using
+        End Try
     End Sub
 #End Region
 

@@ -1,0 +1,132 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+Cobweb3D
+</name>
+</assembly>
+<members>
+<member name="T:COBWEB_3D.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:COBWEB_3D.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:COBWEB_3D.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="P:COBWEB_3D.My.Resources.Resources.Cobweb_3D">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:COBWEB_3D.My.Resources.Resources.Cobweb_3D_2">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:COBWEB_3D.My.Resources.Resources.single_chromosome">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:COBWEB_3D.My.Resources.Resources.single_chromosome1">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="M:COBWEB_3D.Form1.logDataToGraphs">
+ <summary>
+ Logs data for each agent type to the excel graph sheets.
+ </summary>
+</member>
+<member name="M:COBWEB_3D.Form1.swarming(System.Object,System.Object,System.Object,System.Object,System.Object,System.Object,System.Object)">
+ <summary>
+ Enables swarming behaviour (if the neighbouring agents are facing a certain way then the current agent also faces and moves in the same direction), each swarm has a common destination 
+ (if agents in a swarm had different destinations, they would scatter).
+ </summary>
+ <param name="i"></param>
+ <param name="x"></param>
+ <param name="y"></param>
+ <param name="z"></param>
+ <param name="dx"></param>
+ <param name="dy"></param>
+ <param name="dz"></param>
+</member>
+<member name="M:COBWEB_3D.Form1.tradezonemovement(System.Object,System.Object,System.Object,System.Object)">
+ <summary>
+ Agents go to the zone with the highest value (ie. global maximum); essentially test code (not used by the program).
+ </summary>
+ <param name="k"></param>
+ <param name="x"></param>
+ <param name="y"></param>
+ <param name="z"></param>
+</member>
+<member name="M:COBWEB_3D.Form1.locationutility(System.Object,System.Object,System.Object,System.Object)">
+ <summary>
+ Agents look at the central zone and the closest zone and determine the utility (based on distance) for both. Agents go to the zone resulting in the highest utility.
+ </summary>
+ <param name="j"></param>
+ <param name="x"></param>
+ <param name="y"></param>
+ <param name="z"></param>
+</member>
+<member name="M:COBWEB_3D.Form1.abiotic(System.Object,System.Object,System.Object,System.Object)">
+ <summary>
+ In the case of zones, agents scan their surroundings and go to the highest value zone they find (ie. could be local maximum or potentially the global maximum).
+ This prevents agents from scanning their surrounding area to avoid slowing down the program.
+ </summary>
+ <param name="j"></param>
+ <param name="x"></param>
+ <param name="y"></param>
+ <param name="z"></param>
+</member>
+<member name="M:COBWEB_3D.Form1.localturnenergy(System.Int32)">
+ <summary>
+ Allows turn energy to depend on the local region of the agent.
+ </summary>
+ <param name="i"></param>
+ <returns></returns>
+</member>
+<member name="M:COBWEB_3D.Form1.staticagentcheck">
+ <summary>
+ Makes sure that any new agents being placed (after changing the initial count) are static if the agent type was previously made static by the user
+ </summary>
+</member>
+<member name="M:COBWEB_3D.Form1.catalysispresence(System.Int32,System.Int32)">
+ <summary>
+ Indicates whether or not a catalyst is present in close proximity to the potential interaction.
+ </summary>
+ <param name="i"></param>
+ <param name="opp"></param>
+ <returns></returns>
+</member>
+<member name="M:COBWEB_3D.Form1.exchange(System.Object,System.Object)">
+ <summary>
+ Allows for exchanges (TODO: currently for currency and product only. a more general exchange should be made possible later).
+ </summary>
+ <param name="i"></param>
+ <param name="opp"></param>
+</member>
+<member name="M:COBWEB_3D.Form1.drawRange(System.Drawing.Graphics@,System.Int32)">
+ <summary>
+ Test code - produces a semi-transparent cube (made up of smaller cubes) to show the target range of an agent on the ZY view
+ </summary>
+ <param name="agentIndex">The agent to show the target range of.</param>
+</member>
+<member name="M:COBWEB_3D.Form1.sortAgentsZBuffer(COBWEB_3D.Prespective)">
+ <summary>
+ Sorting is done as a "Z-buffer" for rendering - inefficient but we have no other choice.
+ Agents with a smaller index (ie. 1, 2 etc) have a larger z-value
+ </summary>
+ <param name="prespective">The prespective to determine the axis to be buffered as the projected Z-axis</param>
+</member>
+</members>
+</doc>

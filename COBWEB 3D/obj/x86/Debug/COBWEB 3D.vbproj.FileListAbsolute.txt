@@ -449,14 +449,6 @@ C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.util
 C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbproj.GenerateResource.Cache
 C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe.manifest
 C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.application
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.xml
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.pdb
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.exe.manifest
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.application
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.exe
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.pdb
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.xml
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbprojResolveAssemblyReference.cache
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.AI.resources
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.automaticiterations.resources
@@ -486,5 +478,14 @@ E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Resources
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Ratio.resources
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.utility.resources
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbproj.GenerateResource.Cache
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe.manifest
-E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.application
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.exe.config
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.exe.manifest
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.application
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.exe
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.pdb
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.xml
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.exe.manifest
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.application
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.exe
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.xml
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.pdb
