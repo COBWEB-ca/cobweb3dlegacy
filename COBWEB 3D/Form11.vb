@@ -4,9 +4,9 @@
     Sub creatora()
         RenderingEngine = New RenderingEngine(Form1.xn, Form1.yn, Form1.zn)
         RenderingEngine.Prespective = Prespective.XY
-        RenderingEngine.mGraphicsContext.Clear(Color.White)
+        RenderingEngine.GraphicsContext.Clear(Color.White)
         RenderingEngine.SizeRatio = 9 / 10
-        RenderingEngine.renderGrid(RenderingEngine.mGraphicsContext)
+        RenderingEngine.renderGrid(RenderingEngine.GraphicsContext)
 
         Dim rr As Integer = 255
         Dim gg As Integer = 0
@@ -32,12 +32,12 @@
             If generator.zones(ii, 1) = 0 Or generator.zones(ii, 2) = 0 Or generator.zones(ii, 3) = 0 Or generator.zones(ii, 4) = 0 Or generator.zones(ii, 5) = 0 Or generator.zones(ii, 6) = 0 Then
                 Continue For ' Exit if invalid zone field range
             End If
-            RenderingEngine.renderCubeWireframe(generator.zones(ii, 1), generator.zones(ii, 3), generator.zones(ii, 5), Color.Orange, RenderingEngine.mGraphicsContext,
+            RenderingEngine.renderCubeWireframe(generator.zones(ii, 1), generator.zones(ii, 3), generator.zones(ii, 5), Color.Orange, RenderingEngine.GraphicsContext,
                                                 (generator.zones(ii, 2) - generator.zones(ii, 1)),
                                                 (generator.zones(ii, 4) - generator.zones(ii, 3)),
                                                 (generator.zones(ii, 6) - generator.zones(ii, 5)))
         Next
-        PictureBox1.Image = RenderingEngine.mRenderTarget
+        PictureBox1.Image = RenderingEngine.RenderTarget
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click

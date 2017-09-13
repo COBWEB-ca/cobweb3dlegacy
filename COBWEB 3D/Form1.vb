@@ -38,11 +38,12 @@ Public Class Form1
     End Sub
 
     Private Sub updateSimulation()
+        If (xn = 0 Or yn = 0 Or zn = 0) Then Return
         updateLogic()
         draw(True)
 
         tick += 1
-        tslblCurentTick.Text = tick
+        tslblCurrentTick.Text = tick
         logDataToGraphs()
     End Sub
 
@@ -275,12 +276,12 @@ Public Class Form1
     Public Sub draw(Optional ByVal ignoreSimulationLoop As Boolean = False)
         If (ignoreSimulationLoop = False) And isSimulationRunning() Then Return ' Optimization, its unnecessary to manually render when the simulation is running!
         If Me.RenderingEngine IsNot Nothing Then
-            If Me.RenderingEngine.mGraphicsContext IsNot Nothing Then
-                Me.RenderingEngine.mGraphicsContext.Clear(Color.White)
-                drawScene(Me.RenderingEngine.mGraphicsContext)
+            If Me.RenderingEngine.GraphicsContext IsNot Nothing Then
+                Me.RenderingEngine.GraphicsContext.Clear(Color.White)
+                drawScene(Me.RenderingEngine.GraphicsContext)
             End If
-            If Me.RenderingEngine.mRenderTarget IsNot Nothing Then
-                picRenderFrame.Image = Me.RenderingEngine.mRenderTarget
+            If Me.RenderingEngine.RenderTarget IsNot Nothing Then
+                picRenderFrame.Image = Me.RenderingEngine.RenderTarget
             End If
         End If
     End Sub
@@ -1189,90 +1190,6 @@ Public Class Form1
         End If
 
 
-        'If transfer(3) = 2 Then
-        '    Dim max(3) As Decimal
-        '    max(1) = generator.agentlocation(i, 14)
-        '    max(2) = generator.agentlocation(opp, 14)
-        '    Dim directionchange As Boolean = False
-
-        '    For quantityY = transfer(6) To transfer(4) Step transfer(5) 'if an exchange is not possible at the original relative price, then the quantity of the second good traded is increased until an exchange becomes favourable
-        '        'the quantity of the second good is increased; the quantity of the first good stays constant
-        '        tempagenta = 0
-        '        tempagentb = 0
-        '        transfer(2) = quantityY
-        '        If directionchange = False Then 'if a change in direction occurs, the quantity is not incremented
-        '            transfer(2) = quantityY
-        '        ElseIf directionchange = True Then
-        '            quantityY = transfer(2)
-        '            directionchange = False
-        '        End If
-
-        '        If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
-        '            If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
-        '                tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
-        '            ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
-        '                tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
-        '            ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
-        '                tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
-        '            ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
-        '                tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
-        '            End If
-        '        End If
-
-        '        If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
-        '            If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
-        '                tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
-        '            ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
-        '                tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
-        '            ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
-        '                tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
-        '            ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
-        '                tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
-        '            End If
-        '        End If
-
-
-        '        If tempagenta > max(1) And tempagentb > max(2) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
-        '            max(1) = tempagenta
-        '            max(2) = tempagentb
-        '            max(3) = transfer(2)
-        '        End If
-        '        'MessageBox.Show(transfer(2) & vbCrLf & transfer(6) & vbCrLf & transfer(4))
-        '        'If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
-        '        '    generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
-        '        '    directionchange = True
-        '        'End If
-        '        'If tempagentb <= generator.agentlocation(opp, 14) Then 'changes direction
-        '        '    generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
-        '        '    directionchange = True
-        '        'End If
-        '    Next
-        '    ' Use a for loop
-        '    If max(1) > generator.agentlocation(i, 14) And max(2) > generator.agentlocation(opp, 14) Then
-        '        transfer(2) = max(3) 'new quantity of the second good being exchanged
-        '        generator.agentlocation(i, 11) += (transfer(1) * generator.agentlocation(i, 17))
-        '        generator.agentlocation(i, 12) += (transfer(2) * generator.agentlocation(i, 17) * -1)
-        '        generator.agentlocation(opp, 11) += (transfer(1) * generator.agentlocation(opp, 17))
-        '        generator.agentlocation(opp, 12) += (transfer(2) * generator.agentlocation(opp, 17) * -1)
-        '        generator.agentlocation(i, 14) = max(1)
-        '        generator.agentlocation(opp, 14) = max(2)
-        '        Call trade(opp)
-        '        generator.agentlocation(i, 18) = transfer(1) * generator.agentlocation(i, 17)
-        '        generator.agentlocation(i, 19) = transfer(2) * generator.agentlocation(i, 17) * -1
-        '        generator.agentlocation(opp, 18) = transfer(1) * generator.agentlocation(opp, 17)
-        '        generator.agentlocation(opp, 19) = transfer(2) * generator.agentlocation(opp, 17) * -1
-        '        Exit Sub
-        '    End If
-
-        '    If max(1) <= generator.agentlocation(i, 14) Then 'changes direction
-        '        generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
-        '    End If
-        '    If max(2) <= generator.agentlocation(opp, 14) Then 'changes direction
-        '        generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1
-        '    End If
-        '    Exit Sub
-        'End If
-
         If transfer(3) = 2 Then
             Dim max(3) As Decimal
 
@@ -1317,28 +1234,16 @@ Public Class Form1
                     End If
                 End If
 
-
-
                 If tempagenta > generator.agentlocation(i, 14) And tempagentb > generator.agentlocation(opp, 14) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
-
                     acceptabletempagenta(t) = tempagenta   'if a potential trade improves both utilities (ie tempagent>agentlocation for both) then store the trade, and both utilities in an array. 
                     acceptabletempagentb(t) = tempagentb
                     acceptabley(t) = transfer(2)
-
-
-
-
 
                     ReDim Preserve acceptabley(t + 1)
                     ReDim Preserve acceptabletempagenta(t + 1)
                     ReDim Preserve acceptabletempagentb(t + 1)
                     t = t + 1
                 End If
-
-
-
-
-
 
                 'MessageBox.Show(transfer(2) & vbCrLf & transfer(6) & vbCrLf & transfer(4))
                 'If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
@@ -1737,6 +1642,7 @@ Public Class Form1
         VBMath.Randomize()
         total = 0
         tick = 0
+        tslblCurrentTick.Text = tick
 
         Dim number As Integer
 
@@ -2247,7 +2153,7 @@ Public Class Form1
         Return stringBuilder.ToString()
     End Function
 
-    Sub loadProjectFromStream(ByRef stream As System.IO.Stream)
+    Sub loadProjectFromXmlStream(ByRef stream As System.IO.Stream)
         Using xR = XmlReader.Create(stream)
             While xR.Read()
                 ' Check for start elements
@@ -2409,9 +2315,12 @@ Public Class Form1
             Next
         Next
 
+        tick = 0
+        Timerxy.Stop()
         draw()
 
-        tick = 0
+
+
         staticagentcheck()
     End Sub
 
@@ -2745,9 +2654,10 @@ Public Class Form1
 
 
 
+        tick = 0
+        Timerxy.Stop()
         draw()
 
-        tick = 0
         staticagentcheck()
     End Sub
 
@@ -2841,6 +2751,7 @@ Public Class Form1
     End Sub
 
     Private Sub StartToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles StartToolStripMenuItem.Click
+        If (xn = 0 Or yn = 0 Or zn = 0) Then Return
         Timerxy.Start()
     End Sub
 
@@ -2927,7 +2838,7 @@ Public Class Form1
 
                 xmlStream.Flush() '//Adjust this If you want read your data 
                 xmlStream.Position = 0
-                loadProjectFromStream(xmlStream)
+                loadProjectFromXmlStream(xmlStream)
                 'loadProjectFromStream(OpenFilepro.FileName)
                 'loadProjectFromStream(OpenFilepro.OpenFile())
                 '  loadProjectFromString(objreader.ReadToEnd)
@@ -3011,6 +2922,7 @@ Public Class Form1
     End Sub
 
     Private Sub ResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetToolStripMenuItem.Click
+        Timerxy.Stop()
         resetSimulation()
     End Sub
 End Class

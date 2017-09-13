@@ -1,8 +1,14 @@
 ﻿Imports COBWEB_3D
+Imports System.Windows.Controls
 
 Public Class RenderingEngine
-    Public mRenderTarget As Bitmap
-    Public Shared mGraphicsContext As Graphics
+    Private mRenderTargetXY As Bitmap
+    Private mRenderTargetXZ As Bitmap
+    Private mRenderTargetZY As Bitmap
+
+    Private mGraphicsContextXY As Graphics
+    Private mGraphicsContextXZ As Graphics
+    Private mGraphicsContextZY As Graphics
 
     Private mPrespective As Prespective = Prespective.XY
     Private mSizeRatio As Double = 3 / 4
@@ -20,13 +26,46 @@ Public Class RenderingEngine
     Private mCellXZ_X, mCellXZ_Z As Integer
     Private mCellZY_Z, mCellZY_Y As Integer
 
+
+    Public ReadOnly Property RenderTarget As Bitmap
+        Get
+            Select Case mPrespective
+                Case Prespective.XY
+                    If (mRenderTargetXY Is Nothing) Then calculateResolutionDimensions()
+                    Return mRenderTargetXY
+                Case Prespective.XZ
+                    If (mRenderTargetXZ Is Nothing) Then calculateResolutionDimensions()
+                    Return mRenderTargetXZ
+                Case Prespective.ZY
+                    If (mRenderTargetZY Is Nothing) Then calculateResolutionDimensions()
+                    Return mRenderTargetZY
+            End Select
+            Return Nothing
+        End Get
+    End Property
+    Public ReadOnly Property GraphicsContext As Graphics
+        Get
+            Select Case mPrespective
+                Case Prespective.XY
+                    If (mGraphicsContextXY Is Nothing) Then calculateResolutionDimensions()
+                    Return mGraphicsContextXY
+                Case Prespective.XZ
+                    If (mGraphicsContextXZ Is Nothing) Then calculateResolutionDimensions()
+                    Return mGraphicsContextXZ
+                Case Prespective.ZY
+                    If (mGraphicsContextZY Is Nothing) Then calculateResolutionDimensions()
+                    Return mGraphicsContextZY
+            End Select
+            Return Nothing
+        End Get
+    End Property
+
     Public Property Prespective As Prespective
         Get
             Return mPrespective
         End Get
         Set(value As Prespective)
             mPrespective = value
-            recreateRenderTarget()
         End Set
     End Property
     Public Property SizeRatio As Double
@@ -73,22 +112,18 @@ Public Class RenderingEngine
         mCellZY_Z = mSizeZY_Z / mWorldSize_Z
         mCellZY_Y = mSizeZY_Y / mWorldSize_Y
 
+
         recreateRenderTarget()
     End Sub
 
     Private Sub recreateRenderTarget()
-        If mRenderTarget IsNot Nothing Then mRenderTarget.Dispose()
-        If mGraphicsContext IsNot Nothing Then mGraphicsContext.Dispose()
-        Select Case mPrespective
-            Case Prespective.XY
-                mRenderTarget = New Bitmap(mSizeXY_X, mSizeXY_Y)
-            Case Prespective.XZ
-                mRenderTarget = New Bitmap(mSizeXZ_X, mSizeXZ_Z)
-            Case Prespective.ZY
-                mRenderTarget = New Bitmap(mSizeZY_Z, mSizeZY_Y)
-        End Select
+        mRenderTargetXY = New Bitmap(mSizeXY_X, mSizeXY_Y)
+        mRenderTargetXZ = New Bitmap(mSizeXZ_X, mSizeXZ_Z)
+        mRenderTargetZY = New Bitmap(mSizeZY_Z, mSizeZY_Y)
 
-        mGraphicsContext = Graphics.FromImage(mRenderTarget)
+        mGraphicsContextXY = Graphics.FromImage(mRenderTargetXY)
+        mGraphicsContextXZ = Graphics.FromImage(mRenderTargetXZ)
+        mGraphicsContextZY = Graphics.FromImage(mRenderTargetZY)
     End Sub
 
     Public Sub renderGrid(ByRef graphicsContext As Graphics, Optional ByVal depth As Integer = Integer.MaxValue)

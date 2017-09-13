@@ -58,9 +58,9 @@
     Sub creatora()
         RenderingEngine = New RenderingEngine(Form1.xn, Form1.yn, Form1.zn)
         RenderingEngine.Prespective = Prespective.XY
-        RenderingEngine.mGraphicsContext.Clear(Color.White)
+        RenderingEngine.GraphicsContext.Clear(Color.White)
 
-        RenderingEngine.renderGrid(RenderingEngine.mGraphicsContext, 1)
+        RenderingEngine.renderGrid(RenderingEngine.GraphicsContext, 1)
 
         Dim max As Integer = generator.abiotic(1, 1, 1, 1)
         For i = 1 To Form1.agent
@@ -86,13 +86,13 @@
                                                               255 - (generator.abiotic(ComboBoxagent.SelectedIndex + 1, x, y, z) / max * 255),
                                                               255 - (generator.abiotic(ComboBoxagent.SelectedIndex + 1, x, y, z) / max * 255),
                                                               255),
-                                               RenderingEngine.mGraphicsContext)
+                                               RenderingEngine.GraphicsContext)
 
                 Next
             Next
         Next
-        RenderingEngine.renderGridFrontFace(RenderingEngine.mGraphicsContext)
-        PictureBox1.Image = RenderingEngine.mRenderTarget
+        RenderingEngine.renderGridFrontFace(RenderingEngine.GraphicsContext)
+        PictureBox1.Image = RenderingEngine.RenderTarget
     End Sub
 
     'assigns a random value from 1-100 to each possible location in 3d space

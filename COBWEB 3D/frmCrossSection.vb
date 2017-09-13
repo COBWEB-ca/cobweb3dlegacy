@@ -221,9 +221,9 @@
     Sub creatorCrossSection()
         RenderingEngine = New RenderingEngine(Form1.xn, Form1.yn, Form1.zn)
         RenderingEngine.Prespective = Prespective.XY
-        RenderingEngine.mGraphicsContext.Clear(Color.White)
+        RenderingEngine.GraphicsContext.Clear(Color.White)
 
-        RenderingEngine.renderGrid(RenderingEngine.mGraphicsContext, 1)
+        RenderingEngine.renderGrid(RenderingEngine.GraphicsContext, 1)
 
         For ii = 1 To Form1.total
             Dim xx As Integer = generator.agentlocation(ii, 0)
@@ -232,7 +232,7 @@
             Dim dd As Integer = generator.agentlocation(ii, 3)
             Dim agag As Integer = generator.agentlocation(ii, 4)
             If zz = ComboBox2.SelectedIndex + 1 Then
-                RenderingEngine.renderAgent(xx, yy, 1, dd, generator.agentcolour(agag), RenderingEngine.mGraphicsContext,
+                RenderingEngine.renderAgent(xx, yy, 1, dd, generator.agentcolour(agag), RenderingEngine.GraphicsContext,
                                              generator.staticagent(agag) = 2, generator.agentreservoir(agag, 0) = 2, generator.agentreservoir(agag, 1), generator.agentreservoir(agag, 2))
             End If
         Next
@@ -246,9 +246,9 @@
                             If generator.occupied(xxi, yyi, zzi) = False Then
                                 If zzi = ComboBox2.SelectedIndex + 1 Then
                                     If direction(aai) = 0 Then
-                                        RenderingEngine.renderAgent(xxi, yyi, 1, CInt(Math.Floor((6) * Rnd())) + 1, generator.agentcolour(aai), RenderingEngine.mGraphicsContext, generator.staticagentid(aai) = 2)
+                                        RenderingEngine.renderAgent(xxi, yyi, 1, CInt(Math.Floor((6) * Rnd())) + 1, generator.agentcolour(aai), RenderingEngine.GraphicsContext, generator.staticagentid(aai) = 2)
                                     Else
-                                        RenderingEngine.renderAgent(xxi, yyi, 1, direction(aai), generator.agentcolour(aai), RenderingEngine.mGraphicsContext, generator.staticagentid(aai) = 2)
+                                        RenderingEngine.renderAgent(xxi, yyi, 1, direction(aai), generator.agentcolour(aai), RenderingEngine.GraphicsContext, generator.staticagentid(aai) = 2)
                                     End If
                                 End If
                             End If
@@ -258,9 +258,9 @@
             Next
         Next
 
-        RenderingEngine.renderGridFrontFace(RenderingEngine.mGraphicsContext)
+        RenderingEngine.renderGridFrontFace(RenderingEngine.GraphicsContext)
 
-        PictureBox1.Image = RenderingEngine.mRenderTarget
+        PictureBox1.Image = RenderingEngine.RenderTarget
     End Sub
 
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click

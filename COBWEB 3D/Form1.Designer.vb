@@ -61,13 +61,14 @@ Partial Class Form1
         Me.InteractionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PopulationGraphToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.DataOnExchangesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.TickButtonToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StartToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StopToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ResetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timerxy = New System.Windows.Forms.Timer(Me.components)
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.tslblCurrentTickLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.tslblCurentTick = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.tslblCurrentTick = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tslblStopLabel = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tslblStopTicks = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tslblSpeedLabel = New System.Windows.Forms.ToolStripStatusLabel()
@@ -80,7 +81,6 @@ Partial Class Form1
         Me.SaveFilepro = New System.Windows.Forms.SaveFileDialog()
         Me.OpenFilepro = New System.Windows.Forms.OpenFileDialog()
         Me.picRenderFrame = New System.Windows.Forms.PictureBox()
-        Me.TickButtonToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.picRenderFrame, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -156,7 +156,7 @@ Partial Class Form1
         'TickToolStripMenuItem
         '
         Me.TickToolStripMenuItem.Name = "TickToolStripMenuItem"
-        Me.TickToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.TickToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
         Me.TickToolStripMenuItem.Text = "Tick"
         '
         'AddAgentsToolStripMenuItem
@@ -164,7 +164,7 @@ Partial Class Form1
         Me.AddAgentsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InRangeToolStripMenuItem, Me.InSpecificPositionsToolStripMenuItem})
         Me.AddAgentsToolStripMenuItem.Enabled = False
         Me.AddAgentsToolStripMenuItem.Name = "AddAgentsToolStripMenuItem"
-        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
         Me.AddAgentsToolStripMenuItem.Text = "Add Agents"
         '
         'InRangeToolStripMenuItem
@@ -329,6 +329,13 @@ Partial Class Form1
         Me.DataOnExchangesToolStripMenuItem.Size = New System.Drawing.Size(173, 22)
         Me.DataOnExchangesToolStripMenuItem.Text = "Data on Exchanges"
         '
+        'TickButtonToolStripMenuItem
+        '
+        Me.TickButtonToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.TickButtonToolStripMenuItem.Name = "TickButtonToolStripMenuItem"
+        Me.TickButtonToolStripMenuItem.Size = New System.Drawing.Size(41, 20)
+        Me.TickButtonToolStripMenuItem.Text = "Tick"
+        '
         'StartToolStripMenuItem
         '
         Me.StartToolStripMenuItem.BackColor = System.Drawing.Color.GreenYellow
@@ -356,7 +363,7 @@ Partial Class Form1
         '
         'StatusStrip1
         '
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tslblCurrentTickLabel, Me.tslblCurentTick, Me.tslblStopLabel, Me.tslblStopTicks, Me.tslblSpeedLabel, Me.tsprgSpeed, Me.spacebar, Me.viewlabel, Me.tslblStatus, Me.tsprgStatus})
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tslblCurrentTickLabel, Me.tslblCurrentTick, Me.tslblStopLabel, Me.tslblStopTicks, Me.tslblSpeedLabel, Me.tsprgSpeed, Me.spacebar, Me.viewlabel, Me.tslblStatus, Me.tsprgStatus})
         Me.StatusStrip1.Location = New System.Drawing.Point(0, 534)
         Me.StatusStrip1.Name = "StatusStrip1"
         Me.StatusStrip1.Size = New System.Drawing.Size(1215, 22)
@@ -369,11 +376,11 @@ Partial Class Form1
         Me.tslblCurrentTickLabel.Size = New System.Drawing.Size(75, 17)
         Me.tslblCurrentTickLabel.Text = "Current Tick:"
         '
-        'tslblCurentTick
+        'tslblCurrentTick
         '
-        Me.tslblCurentTick.Name = "tslblCurentTick"
-        Me.tslblCurentTick.Size = New System.Drawing.Size(13, 17)
-        Me.tslblCurentTick.Text = "0"
+        Me.tslblCurrentTick.Name = "tslblCurrentTick"
+        Me.tslblCurrentTick.Size = New System.Drawing.Size(13, 17)
+        Me.tslblCurrentTick.Text = "0"
         '
         'tslblStopLabel
         '
@@ -401,7 +408,7 @@ Partial Class Form1
         'spacebar
         '
         Me.spacebar.Name = "spacebar"
-        Me.spacebar.Size = New System.Drawing.Size(860, 17)
+        Me.spacebar.Size = New System.Drawing.Size(668, 17)
         Me.spacebar.Spring = True
         '
         'viewlabel
@@ -446,13 +453,6 @@ Partial Class Form1
         Me.picRenderFrame.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.picRenderFrame.TabIndex = 1
         Me.picRenderFrame.TabStop = False
-        '
-        'TickButtonToolStripMenuItem
-        '
-        Me.TickButtonToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.TickButtonToolStripMenuItem.Name = "TickButtonToolStripMenuItem"
-        Me.TickButtonToolStripMenuItem.Size = New System.Drawing.Size(41, 20)
-        Me.TickButtonToolStripMenuItem.Text = "Tick"
         '
         'Form1
         '
@@ -499,7 +499,7 @@ Partial Class Form1
     Friend WithEvents Timerxy As System.Windows.Forms.Timer
     Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
     Friend WithEvents tslblCurrentTickLabel As System.Windows.Forms.ToolStripStatusLabel
-    Friend WithEvents tslblCurentTick As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents tslblCurrentTick As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents tslblStopLabel As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents tslblStopTicks As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents tslblSpeedLabel As System.Windows.Forms.ToolStripStatusLabel
