@@ -45,8 +45,8 @@
             Exit Sub
         End If
 
-        For i = 1 To Form1.agent
-            For a = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
+            For a = 1 To Form1.agentTypeCount
                 If generator.action(i, a, 1, 0, 0) <> 0 Then
                     interactions += 1
                     If interactions = remove Then
@@ -69,12 +69,12 @@
 
     Private Sub listview()
         Dim interaction As Integer
-        For i = 1 To Form1.agent
-            For a = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
+            For a = 1 To Form1.agentTypeCount
                 If generator.action(i, a, 1, 0, 0) = 1 Then
 
                     'reproduction only
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             interaction += 1
                             Dim interactionlisting As New ListViewItem()
@@ -127,7 +127,7 @@
                 ElseIf generator.action(i, a, 1, 0, 0) = 4 Then
 
                     'consume and reproduce
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             interaction += 1
                             Dim interactionlisting As New ListViewItem()
@@ -170,7 +170,7 @@
 
                     'reproduce and diminish
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             interaction += 1
                             Dim interactionlisting As New ListViewItem()
@@ -190,7 +190,7 @@
 
                     'consume, reproduce and diminish
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             interaction += 1
                             Dim interactionlisting As New ListViewItem()

@@ -4,7 +4,7 @@
 
     'adding the ability to make agents static (stay stationary). 
     Private Sub AI_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.FixedSingle

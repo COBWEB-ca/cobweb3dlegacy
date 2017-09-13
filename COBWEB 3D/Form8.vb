@@ -3,7 +3,7 @@ Public Class frmAdd
     Public newagents As Integer
 
     Private Sub Form8_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
         TextBox1.Text = 0

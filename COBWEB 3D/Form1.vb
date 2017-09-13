@@ -3,13 +3,14 @@ Imports System.Xml
 Imports System.Text
 
 Public Class Form1
+    Public Const COBWEB_VERSION As String = "1.3.0"
     Private mRenderingEngine As RenderingEngine
     Private mExcelLogger As ExcelLogger
 
     Public tick As Integer
 
     ' Number of Agents
-    Public agent As Integer
+    Public agentTypeCount As Integer
     Public total As Integer
 
     ' The variables for the size of grid
@@ -297,7 +298,7 @@ Public Class Form1
     ''' Logs data for each agent type to the excel graph sheets.
     ''' </summary>
     Private Sub logDataToGraphs()
-        If mExcelLogger IsNot Nothing Then mExcelLogger.logDataToExcel(tick, agent, total)
+        If mExcelLogger IsNot Nothing Then mExcelLogger.logDataToExcel(tick, agentTypeCount, total)
     End Sub
 
     Function isSimulationRunning() As Boolean
@@ -494,7 +495,7 @@ Public Class Form1
             For xi = xlow To xup
                 For yi = ylow To yup
                     For zi = zlow To zup
-                        For agenti = 1 To agent
+                        For agenti = 1 To agentTypeCount
                             generator.abiotic(agenti, xi, yi, zi) = generator.zones(i, 7)
                         Next
                     Next
@@ -1387,7 +1388,7 @@ Public Class Form1
         generator.agentchange = True
 
         Dim totalagentstobeproduced As Integer
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             totalagentstobeproduced = totalagentstobeproduced + generator.action(ag1, ag2, 2, i, 1)
         Next
 
@@ -1401,7 +1402,7 @@ Public Class Form1
 
             Dim indexproduced As Integer = 1
             Dim agenttobeproduced(totalagentstobeproduced) As Integer
-            For i = 1 To agent
+            For i = 1 To agentTypeCount
                 Dim something As Integer = 0
                 Do
                     If generator.action(ag1, ag2, 2, i, 1) > something Then
@@ -1525,7 +1526,7 @@ Public Class Form1
 
     Private Sub reservoirrelase(ByVal i As Integer)
         For i = 1 To total
-            For j = 1 To agent
+            For j = 1 To agentTypeCount
 
                 If generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 1) <> 0 Then
 
@@ -1646,9 +1647,9 @@ Public Class Form1
 
         Dim number As Integer
 
-        Dim agents(agent) As Integer
+        Dim agents(agentTypeCount) As Integer
 
-        For a = 1 To agent
+        For a = 1 To agentTypeCount
             Dim agentsadded As Integer = 0
             For i = 1 To generator.agentcount(a)
                 number = number + 1
@@ -1728,7 +1729,7 @@ Public Class Form1
 
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             total = total + agents(i)
             'Form1.total = Form1.total + generator.agentcount(i)
         Next
@@ -1797,7 +1798,7 @@ Public Class Form1
         Next
 
         'changes the direction of new agents according to user input
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             If generator.agentdirection(i) <> 0 Then
                 For a = 1 To total
                     If generator.agentlocation(a, 4) = i Then
@@ -2032,12 +2033,16 @@ Public Class Form1
     Function saveProjectToString() As String
         ' The Text Outputted to the Save File
         Dim save = ""
-
+        Dim xmlWriterSettings = New XmlWriterSettings()
+        xmlWriterSettings.Indent = True
+        '  xmlWriterSettings.IndentChars = "     " 'note: Default is two spaces
+        xmlWriterSettings.NewLineOnAttributes = False
+        xmlWriterSettings.OmitXmlDeclaration = True
         Dim stringBuilder = New System.IO.StringWriter()
-        Using xW = XmlWriter.Create(stringBuilder)
+        Using xW = XmlWriter.Create(stringBuilder, xmlWriterSettings)
 
             xW.WriteStartElement("Cobweb3DConfig", "http://cobweb.ca/schema/cobweb2/config")
-            xW.WriteAttributeString("cobweb-version", "1")
+            xW.WriteAttributeString("cobweb3d-version", COBWEB_VERSION)
 
 
             xW.WriteStartElement("Environment")
@@ -2047,12 +2052,12 @@ Public Class Form1
             xW.WriteEndElement()
 
             xW.WriteStartElement("AgentParams")
-            xW.WriteElementString("AgentTypes", agent)
+            xW.WriteElementString("AgentTypes", agentTypeCount)
 
             xW.WriteStartElement("AgentTypeProperties")
 
             Dim colourConverter As New System.Drawing.ColorConverter
-            For i = 1 To agent ' For all agent types
+            For i = 1 To agentTypeCount ' For all agent types
                 ' <save>_<type name for type (i)>_  Ex: <save>_<agent name for (i)>_<agent name for (i+1)>_<agent name for (i+2)>_
                 save = save & generator.agentname(i) & "_"
                 xW.WriteStartElement("AgentType")
@@ -2092,9 +2097,9 @@ Public Class Form1
                 xW.WriteEndElement()
 
                 xW.WriteStartElement("ActionCombinations") ' Type Action Combinations
-                For i2 = 1 To agent
+                For i2 = 1 To agentTypeCount
                     For i3 = 1 To 6
-                        For i4 = 0 To agent
+                        For i4 = 0 To agentTypeCount
                             For ee = 0 To 1 ' What in tarnation did ee stand for... ??
                                 xW.WriteStartElement("Action")
                                 xW.WriteAttributeString("Agent2", i2)
@@ -2170,7 +2175,7 @@ Public Class Form1
 
                     ElseIf xR.Name = "AgentParams" Then
                         xR.ReadToDescendant("AgentTypes")
-                        agent = Integer.Parse(xR.ReadInnerXml())
+                        agentTypeCount = Integer.Parse(xR.ReadInnerXml())
 
                         mRenderingEngine.onWorldSizeChanged(xn, yn, zn)
 
@@ -2187,7 +2192,7 @@ Public Class Form1
                         AbioticFactorsToolStripMenuItem.Enabled = True
                     ElseIf xR.Name = "AgentTypeProperties" Then
                         Dim colourConverter As New System.Drawing.ColorConverter
-                        For j = 1 To agent
+                        For j = 1 To agentTypeCount
                             xR.ReadToFollowing("AgentType")
                             Dim i = Integer.Parse(xR.GetAttribute("TypeIndex"))
                             generator.staticagentid(i) = Integer.Parse(xR.GetAttribute("StaticAgentId"))
@@ -2305,12 +2310,12 @@ Public Class Form1
                 End If
             End While
         End Using
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             total = total + generator.agentcount(i)
         Next
 
-        For i = 1 To agent
-            For j = 1 To agent
+        For i = 1 To agentTypeCount
+            For j = 1 To agentTypeCount
                 generator.interactionprobability(i, j) = 100
             Next
         Next
@@ -2343,7 +2348,7 @@ Public Class Form1
         xn = import(1)
         yn = import(2)
         zn = import(3)
-        agent = import(4)
+        agentTypeCount = import(4)
 
         mRenderingEngine.onWorldSizeChanged(xn, yn, zn)
 
@@ -2364,79 +2369,79 @@ Public Class Form1
 
         Dim lastimport As Integer
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = 4 + i
             generator.agentname(i) = import(lastimport)
         Next
 
         Dim tot As Integer
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.agentcount(i) = import(lastimport)
             tot += import(lastimport)
         Next
 
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.initialenergy(i) = import(lastimport)
         Next
 
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.stepenergy(i) = import(lastimport)
         Next
 
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.bumpenergy(i) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.aging(i) = import(lastimport)
         Next
 
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.agelimit(i) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.asr(i) = import(lastimport)
         Next
 
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.asrtime(i) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.asrenergy(i) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             Dim colourconverter As New System.Drawing.ColorConverter
             generator.agentcolour(i) = colourconverter.ConvertFromString(import(lastimport))
         Next
 
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport = lastimport + 1
             generator.agentrangeabsolute(i) = import(lastimport)
         Next
 
 
 
-        For a = 1 To agent
+        For a = 1 To agentTypeCount
             For b = 0 To 2
                 For c = 0 To 1
                     lastimport = lastimport + 1
@@ -2446,10 +2451,10 @@ Public Class Form1
         Next
 
 
-        For a = 1 To agent
-            For b = 1 To agent
+        For a = 1 To agentTypeCount
+            For b = 1 To agentTypeCount
                 For c = 1 To 6
-                    For d = 0 To agent
+                    For d = 0 To agentTypeCount
                         For ee = 0 To 1
                             lastimport = lastimport + 1
                             generator.action(a, b, c, d, ee) = import(lastimport)
@@ -2486,7 +2491,7 @@ Public Class Form1
             agloc(i, 4) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport += 1
             generator.staticagentid(i) = import(lastimport)
         Next
@@ -2506,17 +2511,17 @@ Public Class Form1
             generator.agentreservoir(i, 2) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport += 1
             generator.reservoiragentid(i, 0) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport += 1
             generator.reservoiragentid(i, 1) = import(lastimport)
         Next
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             lastimport += 1
             generator.reservoiragentid(i, 2) = import(lastimport)
         Next
@@ -2526,7 +2531,7 @@ Public Class Form1
         total = 0
 
         Dim number As Integer
-        For a = 1 To agent
+        For a = 1 To agentTypeCount
             Dim m As Integer = 0
             For i = 1 To generator.agentcount(a)
                 number = number + 1
@@ -2590,7 +2595,7 @@ Public Class Form1
 
         ''...........................................................................................................
 
-        For i = 1 To agent
+        For i = 1 To agentTypeCount
             total = total + generator.agentcount(i)
         Next
 
@@ -2646,8 +2651,8 @@ Public Class Form1
         Next
 
 
-        For i = 1 To agent
-            For j = 1 To agent
+        For i = 1 To agentTypeCount
+            For j = 1 To agentTypeCount
                 generator.interactionprobability(i, j) = 100
             Next
         Next
@@ -2859,7 +2864,7 @@ Public Class Form1
     End Sub
 
     Private Sub CreditToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles CreditToolStripMenuItem.Click
-        MsgBox("Instructor: Dr. Brad Bass" & vbCrLf & "Programmer: Mohammad Zavvarian" & vbCrLf & "Additional programming by: Neilket Patel")
+        MsgBox("Instructor: Dr. Brad Bass" & vbCrLf & "Programmer: Mohammad Zavvarian" & vbCrLf & "Additional programming by: Neilket Patel" & vbCrLf & "Maintained by: Adam Adli (adam.adli@mail.utoronto.ca)")
     End Sub
 
     Private Sub InteractionsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles InteractionsToolStripMenuItem.Click
@@ -2891,7 +2896,7 @@ Public Class Form1
     End Sub
 
     Private Sub AboutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
-        MessageBox.Show("Cobweb 3D" & vbCrLf & "Version: 1.2.5" & vbCrLf & "Release Date: Nov. 28, 2016", "About", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show("Cobweb 3D" & vbCrLf & "Version: " & COBWEB_VERSION & vbCrLf & "Release Date: September 13, 2017", "About", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
     Private Sub AbioticFactorsEnergyChangeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AbioticFactorsEnergyChangeToolStripMenuItem.Click

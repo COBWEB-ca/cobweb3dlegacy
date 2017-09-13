@@ -1,7 +1,7 @@
 ﻿Public Class productions
 
     Private Sub Form6_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBox1.Items.Add(generator.agentname(i))
         Next
 
@@ -33,7 +33,7 @@
         ListView1.Columns.Add("Agent to be Produced", 225)
         ListView1.Columns.Add("Number of Agents to be Produced", 225)
         ListView1.GridLines = True
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             If generator.action(Form5.holdera, Form5.holderb, 2, i, 1) <> 0 Then
                 Dim agentproduction As New ListViewItem
                 agentproduction.SubItems.Add(generator.action(Form5.holdera, Form5.holderb, 2, i, 1))

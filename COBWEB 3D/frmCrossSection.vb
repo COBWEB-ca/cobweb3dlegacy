@@ -1,12 +1,12 @@
 ﻿Public Class frmCrossSection
     Private newbutton(Form1.xn * Form1.yn) As Button
     Public zdimension As Integer
-    Public proposedlocation(Form1.agent, Form1.xn, Form1.yn, Form1.zn) As Integer
-    Public direction(Form1.agent) As Integer
+    Public proposedlocation(Form1.agentTypeCount, Form1.xn, Form1.yn, Form1.zn) As Integer
+    Public direction(Form1.agentTypeCount) As Integer
     Public agentid As Integer
 
     Private Sub frmCrossSection_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        For ii = 1 To Form1.agent
+        For ii = 1 To Form1.agentTypeCount
             ComboBox1.Items.Add(generator.agentname(ii))
         Next
 
@@ -38,7 +38,7 @@
         For xx = 1 To Form1.xn
             For yy = 1 To Form1.yn
                 For zz = 1 To Form1.zn
-                    For aa = 1 To Form1.agent
+                    For aa = 1 To Form1.agentTypeCount
                         proposedlocation(aa, xx, yy, zz) = 0
                     Next
                 Next
@@ -172,7 +172,7 @@
         For xx = 1 To Form1.xn
             For yy = 1 To Form1.yn
                 For zz = 1 To Form1.zn
-                    For aa = 1 To Form1.agent
+                    For aa = 1 To Form1.agentTypeCount
                         If proposedlocation(aa, xx, yy, zz) = 2 Then
                             If generator.occupied(xx, yy, zz) = False Then
                                 Form1.total = Form1.total + 1
@@ -241,7 +241,7 @@
         For xxi = 1 To Form1.xn
             For yyi = 1 To Form1.yn
                 For zzi = 1 To Form1.zn
-                    For aai = 1 To Form1.agent
+                    For aai = 1 To Form1.agentTypeCount
                         If proposedlocation(aai, xxi, yyi, zzi) = 2 Then
                             If generator.occupied(xxi, yyi, zzi) = False Then
                                 If zzi = ComboBox2.SelectedIndex + 1 Then

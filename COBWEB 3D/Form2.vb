@@ -4,15 +4,15 @@
         Form1.xn = TextBox1.Text
         Form1.yn = TextBox2.Text
         Form1.zn = TextBox3.Text
-        Form1.agent = TextBox4.Text
+        Form1.agentTypeCount = TextBox4.Text
 
         Form1.RenderingEngine.onWorldSizeChanged(Form1.xn, Form1.yn, Form1.zn)
 
         generator.Close()
         generator.Show()
 
-        For i = 1 To Form1.agent
-            For j = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
+            For j = 1 To Form1.agentTypeCount
                 generator.interactionprobability(i, j) = 100
             Next
         Next

@@ -15,7 +15,7 @@
     End Sub
 
     Private Sub Genetics_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBox1.Items.Add(generator.agentname(i))
         Next
     End Sub

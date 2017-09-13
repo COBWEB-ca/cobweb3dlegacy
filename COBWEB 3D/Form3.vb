@@ -6,7 +6,7 @@
 
 
     Private Sub Form3_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
     End Sub
@@ -29,7 +29,7 @@
 
 
         TextBoxcount.Text = ""
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             If ComboBoxagent.SelectedIndex + 1 = i Then
                 TextBoxcount.Text = generator.agentcount(ComboBoxagent.SelectedIndex + 1)
                 TextBoxname.Text = generator.agentname(ComboBoxagent.SelectedIndex + 1)
@@ -70,9 +70,9 @@
 
         Dim number As Integer
 
-        Dim agents(Form1.agent) As Integer
+        Dim agents(Form1.agentTypeCount) As Integer
 
-        For a = 1 To Form1.agent
+        For a = 1 To Form1.agentTypeCount
             Dim agentsadded As Integer = 0
             For i = 1 To generator.agentcount(a)
                 number = number + 1
@@ -155,7 +155,7 @@
 
         '...........................................................................................................
 
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             Form1.total = Form1.total + agents(i)
             'Form1.total = Form1.total + generator.agentcount(i)
         Next
@@ -226,7 +226,7 @@
         Next
 
         'changes the direction of new agents according to user input
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             If generator.agentdirection(i) <> 0 Then
                 For a = 1 To Form1.total
                     If generator.agentlocation(a, 4) = i Then
@@ -246,7 +246,7 @@
         generator.agentname(ComboBoxagent.SelectedIndex + 1) = TextBoxname.Text
 
         ComboBoxagent.Items.Clear()
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
 

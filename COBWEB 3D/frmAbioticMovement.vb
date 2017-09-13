@@ -1,7 +1,7 @@
 ﻿Public Class frmAbioticMovement
 
     Private Sub frmAbioticMovement_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
         ComboBoxagent.SelectedIndex = 0
@@ -63,7 +63,7 @@
         RenderingEngine.renderGrid(RenderingEngine.GraphicsContext, 1)
 
         Dim max As Integer = generator.abiotic(1, 1, 1, 1)
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             For xk = 1 To Form1.xn
                 For yk = 1 To Form1.yn
                     For zk = 1 To Form1.zn
