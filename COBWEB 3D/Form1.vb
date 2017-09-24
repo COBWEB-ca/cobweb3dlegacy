@@ -2027,7 +2027,154 @@ Public Class Form1
         Next
     End Sub
 
+#Region "Saving/Loading Logic"
     Function saveProjectToString() As String
+        ' The Text Outputted to the Save File
+        Dim save = ""
+
+        Dim stringBuilder = New System.Text.StringBuilder()
+        Dim writer = System.Xml.XmlWriter.Create(stringBuilder)
+        writer.WriteStartElement("Cobweb3DConfig", "http://cobweb.ca/schema/cobweb2/config")
+        writer.WriteAttributeString("cobweb-version", "1")
+        writer.WriteStartElement("Environment")
+        writer.WriteStartElement("Width")
+        writer.WriteValue(xn)
+        writer.WriteEndElement()
+        writer.WriteStartElement("Height")
+        writer.WriteValue(yn)
+        writer.WriteEndElement()
+        writer.WriteStartElement("Depth")
+        writer.WriteValue(zn)
+        writer.WriteEndElement()
+        ' TODO: This
+
+        ' World Sizes: <xn>_<yn>_<zn>_<number of agent types>_
+        save = xn & "_" & yn & "_" & zn & "_" & agentTypeCount & "_"
+        ' Type Names
+        For i = 1 To agentTypeCount ' For all agent types
+            ' <save>_<type name for type (i)>_  Ex: <save>_<agent name for (i)>_<agent name for (i+1)>_<agent name for (i+2)>_
+            save = save & generator.agentname(i) & "_"
+        Next
+        ' Type Counts
+        For i = 1 To agentTypeCount ' For all agent types
+            ' <save>_<agent count for type (i)>_
+            save = save & generator.agentcount(i) & "_"
+        Next
+        ' Type Initial Energy
+        For i = 1 To agentTypeCount ' For all agent types
+            ' <save>_<initial energy for type (i)>_
+            save = save & generator.initialenergy(i) & "_"
+        Next
+        ' Type Step Energy Cost/Gain
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.stepenergy(i) & "_"
+        Next
+        ' Type Bump Energy Cost/Gain
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.bumpenergy(i) & "_"
+        Next
+        ' Type Aging
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.aging(i) & "_"
+        Next
+        ' Type Age Limit
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.agelimit(i) & "_"
+        Next
+        ' Type Asexual Reproduction? Bool
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.asr(i) & "_"
+        Next
+        ' Type Asexual Reproduction Time
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.asrtime(i) & "_"
+        Next
+        ' Type Asexual Reproduction Energy Cost
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.asrenergy(i) & "_"
+        Next
+        ' Type Color
+        For i = 1 To agentTypeCount ' For all agent types
+            Dim colourconverter As New System.Drawing.ColorConverter
+            save = save & colourconverter.ConvertToString(generator.agentcolour(i)) & "_"
+        Next
+        ' Type Range (absolute)
+        For i = 1 To agentTypeCount ' For all agent types
+            save = save & generator.agentrangeabsolute(i) & "_"
+        Next
+        ' Type Agent Range (coords)
+        For a = 1 To agentTypeCount
+            For b = 0 To 2 '0 = x, 1 = y, 2 = z
+                For c = 0 To 1 '0 = min, 1 = max
+                    save = save & generator.agentrange(a, b, c) & "_"
+                Next
+            Next
+        Next
+        ' Type Action Combinations
+        For a = 1 To agentTypeCount
+            For b = 1 To agentTypeCount
+                For c = 1 To 6
+                    For d = 0 To agentTypeCount
+                        For ee = 0 To 1
+                            save = save & generator.action(a, b, c, d, ee) & "_"
+                        Next
+                    Next
+                Next
+            Next
+        Next
+        '------------------- INDIVIDUALS ---------------------
+        ' Individual X Locations
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 0) & "_"
+        Next
+        ' Individual Y Locations
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 1) & "_"
+        Next
+        ' Individual Z Locations
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 2) & "_"
+        Next
+        ' Individual 
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 4) & "_"
+        Next
+        ' Individual 
+        For i = 1 To total
+            save = save & generator.agentlocation(i, 3) & "_"
+        Next
+        '------------------- TYPES ---------------------
+        For i = 1 To agentTypeCount
+            save = save & generator.staticagentid(i) & "_"
+        Next
+        '------------------- INDIVIDUALS --------------------
+        'saves reservoirs (issue saving reservoirs that are partially or completely filled)
+        For i = 1 To total
+            save = save & generator.agentreservoir(i, 0) & "_"
+        Next
+        'saves the capacity of reservoirs
+        For i = 1 To total
+            save = save & generator.agentreservoir(i, 1) & "_"
+        Next
+        'saves the current level in a reservoir
+        For i = 1 To total
+            save = save & generator.agentreservoir(i, 2) & "_"
+        Next
+        For i = 1 To agentTypeCount
+            save = save & generator.reservoiragentid(i, 0) & "_"
+        Next
+        For i = 1 To agentTypeCount
+            save = save & generator.reservoiragentid(i, 1) & "_"
+        Next
+        For i = 1 To agentTypeCount
+            save = save & generator.reservoiragentid(i, 2) & "_"
+        Next
+
+        save = save & "|"
+        Return save
+    End Function
+
+    Function saveProjectToXmlString() As String
         ' The Text Outputted to the Save File
         Dim save = ""
         Dim xmlWriterSettings = New XmlWriterSettings()
@@ -2156,6 +2303,11 @@ Public Class Form1
     End Function
 
     Sub loadProjectFromXmlStream(ByRef stream As System.IO.Stream)
+        ' TODO: Figure this out!!!!!!!! Weird bugs...
+        mRenderingEngine.onWorldSizeChanged(0, 0, 0)
+
+        generator.Close()
+        generator.Show()
         Using xR = XmlReader.Create(stream)
             While xR.Read()
                 ' Check for start elements
@@ -2189,120 +2341,129 @@ Public Class Form1
                         AbioticFactorsToolStripMenuItem.Enabled = True
                     ElseIf xR.Name = "AgentTypeProperties" Then
                         Dim colourConverter As New System.Drawing.ColorConverter
-                        For j = 1 To agentTypeCount
-                            xR.ReadToFollowing("AgentType")
-                            Dim i = Integer.Parse(xR.GetAttribute("TypeIndex"))
-                            generator.staticagentid(i) = Integer.Parse(xR.GetAttribute("StaticAgentId"))
+                        While (xR.Read())
+                            If (xR.NodeType.Equals(XmlNodeType.EndElement)) Then
+                                If (xR.Name.Equals("AgentTypeProperties")) Then
+                                    Exit While
+                                End If
+                            ElseIf (xR.IsStartElement()) Then
+                                If (xR.Name.Equals("AgentType")) Then
 
-                            xR.ReadToFollowing("AgentName")
-                            generator.agentname(i) = xR.ReadInnerXml()
-                            xR.ReadToFollowing("AgentCount")
-                            generator.agentcount(i) = Integer.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("InitialEnergy")
-                            generator.initialenergy(i) = Integer.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("StepEnergy")
-                            generator.stepenergy(i) = Integer.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("BumpEnergy")
-                            generator.bumpenergy(i) = Integer.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("Aging")
-                            generator.aging(i) = Boolean.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("AgeLimit")
-                            generator.agelimit(i) = Integer.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("AsexualReproduction")
-                            generator.asr(i) = Boolean.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("AsexualReproductionTime")
-                            generator.asrtime(i) = Integer.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("AsexualReproductionEnergy")
-                            generator.asrenergy(i) = Integer.Parse(xR.ReadInnerXml())
-                            xR.ReadToFollowing("Color")
-                            generator.agentcolour(i) = colourConverter.ConvertFrom(xR.ReadInnerXml())
+                                    Dim i = Integer.Parse(xR.GetAttribute("TypeIndex"))
+                                    generator.staticagentid(i) = Integer.Parse(xR.GetAttribute("StaticAgentId"))
 
-                            xR.ReadToFollowing("AbsoluteRange")
-                            generator.agentrangeabsolute(i) = Boolean.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("AgentName")
+                                    generator.agentname(i) = xR.ReadInnerXml()
+                                    Console.WriteLine("agentname: " & generator.agentname(i))
+                                    xR.ReadToFollowing("AgentCount")
+                                    generator.agentcount(i) = Integer.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("InitialEnergy")
+                                    generator.initialenergy(i) = Integer.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("StepEnergy")
+                                    generator.stepenergy(i) = Integer.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("BumpEnergy")
+                                    generator.bumpenergy(i) = Integer.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("Aging")
+                                    generator.aging(i) = Boolean.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("AgeLimit")
+                                    generator.agelimit(i) = Integer.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("AsexualReproduction")
+                                    generator.asr(i) = Boolean.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("AsexualReproductionTime")
+                                    generator.asrtime(i) = Integer.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("AsexualReproductionEnergy")
+                                    generator.asrenergy(i) = Integer.Parse(xR.ReadInnerXml())
+                                    xR.ReadToFollowing("Color")
+                                    generator.agentcolour(i) = colourConverter.ConvertFrom(xR.ReadInnerXml())
 
-                            xR.ReadToFollowing("CoordRange")
-                            xR.ReadToFollowing("X")
-                            generator.agentrange(i, 0, 0) = Integer.Parse(xR.GetAttribute("min"))
-                            generator.agentrange(i, 0, 1) = Integer.Parse(xR.GetAttribute("max"))
-                            xR.ReadToFollowing("Y")
-                            generator.agentrange(i, 1, 0) = Integer.Parse(xR.GetAttribute("min"))
-                            generator.agentrange(i, 1, 1) = Integer.Parse(xR.GetAttribute("max"))
-                            xR.ReadToFollowing("Z")
-                            generator.agentrange(i, 2, 0) = Integer.Parse(xR.GetAttribute("min"))
-                            generator.agentrange(i, 2, 1) = Integer.Parse(xR.GetAttribute("max"))
+                                    xR.ReadToFollowing("AbsoluteRange")
+                                    generator.agentrangeabsolute(i) = Boolean.Parse(xR.ReadInnerXml())
+
+                                    xR.ReadToFollowing("CoordRange")
+                                    xR.ReadToFollowing("X")
+                                    generator.agentrange(i, 0, 0) = Integer.Parse(xR.GetAttribute("min"))
+                                    generator.agentrange(i, 0, 1) = Integer.Parse(xR.GetAttribute("max"))
+                                    xR.ReadToFollowing("Y")
+                                    generator.agentrange(i, 1, 0) = Integer.Parse(xR.GetAttribute("min"))
+                                    generator.agentrange(i, 1, 1) = Integer.Parse(xR.GetAttribute("max"))
+                                    xR.ReadToFollowing("Z")
+                                    generator.agentrange(i, 2, 0) = Integer.Parse(xR.GetAttribute("min"))
+                                    generator.agentrange(i, 2, 1) = Integer.Parse(xR.GetAttribute("max"))
 
 
-                            If (xR.ReadToFollowing("ActionCombinations")) Then
-                                While (xR.Read())
-                                    If (xR.NodeType.Equals(XmlNodeType.EndElement)) Then
-                                        If (xR.Name.Equals("ActionCombinations")) Then
-                                            Exit While
-                                        End If
-                                    End If
-                                    If (xR.IsStartElement()) Then
-                                        If (xR.Name.Equals("Action")) Then
-                                            generator.action(i, xR.GetAttribute("Agent2"), xR.GetAttribute("Agent3"), xR.GetAttribute("Agent4"), xR.GetAttribute("AgentEE")) = xR.ReadInnerXml()
-                                        End If
-                                    End If
-                                End While
-                            End If
-
-                            If (xR.ReadToFollowing("ReservoirProperties")) Then
-                                generator.reservoiragentid(i, 0) = xR.GetAttribute("isReservoir")
-                                generator.reservoiragentid(i, 1) = xR.GetAttribute("Capacity")
-                                generator.reservoiragentid(i, 2) = xR.GetAttribute("InitialLevel")
-                            End If
-
-                            If (xR.ReadToFollowing("Agents")) Then
-                                Dim a = 1
-                                While (xR.Read())
-                                    If (xR.NodeType.Equals(XmlNodeType.EndElement)) Then
-                                        If (xR.Name.Equals("Agents")) Then
-                                            Exit While
-                                        End If
-                                    End If
-                                    If (xR.IsStartElement()) Then
-                                        If (xR.Name.Equals("Agent")) Then
-                                            If (xR.ReadToDescendant("Location")) Then
-                                                generator.agentlocation(a, 0) = xR.GetAttribute("X")
-                                                generator.agentlocation(a, 1) = xR.GetAttribute("Y")
-                                                generator.agentlocation(a, 2) = xR.GetAttribute("Z")
-                                                If (xR.ReadToFollowing("ExtraProperties")) Then
-                                                    generator.agentlocation(a, 3) = xR.GetAttribute("DirectionIndex")
-                                                    generator.agentlocation(a, 4) = xR.GetAttribute("ColorIndex")
+                                    If (xR.ReadToFollowing("ActionCombinations")) Then
+                                        While (xR.Read())
+                                            If (xR.NodeType.Equals(XmlNodeType.EndElement)) Then
+                                                If (xR.Name.Equals("ActionCombinations")) Then
+                                                    Exit While
                                                 End If
-                                                If (xR.ReadToFollowing("ReservoirProperties")) Then
-                                                    generator.agentreservoir(a, 0) = xR.GetAttribute("isReservoir")
-                                                    generator.agentreservoir(a, 1) = xR.GetAttribute("Capacity")
-                                                    generator.agentreservoir(a, 2) = xR.GetAttribute("CurrentLevel")
-                                                End If
-
-                                                ' ----- No idea what this does and why/how we generate it, just re-used this code snippet from old loading method. -----
-                                                Dim rangexupper As Integer = generator.agentrange(i, 0, 1)
-                                                Dim rangexlower As Integer = generator.agentrange(i, 0, 0)
-                                                Dim rangeyupper As Integer = generator.agentrange(i, 1, 1)
-                                                Dim rangeylower As Integer = generator.agentrange(i, 1, 0)
-                                                Dim rangezupper As Integer = generator.agentrange(i, 2, 1)
-                                                Dim rangezlower As Integer = generator.agentrange(i, 2, 0)
-                                                Dim dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
-                                                Dim dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-                                                Dim dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
-                                                generator.agentlocation(a, 5) = dx
-                                                generator.agentlocation(a, 6) = dy
-                                                generator.agentlocation(a, 7) = dz
-                                                ' ---------------------------------------------------------------------------------------------------------
-
-                                                generator.agentlocation(a, 8) = generator.initialenergy(i) ' Reset the agent's initial energy
-                                                generator.agentlocation(a, 9) = 0 ' Reset the agent's age to 0
-                                                generator.agentlocation(a, 10) = 0 ' Reset the asex reproduction timer to 0
-
-                                                a += 1
                                             End If
-                                        End If
+                                            If (xR.IsStartElement()) Then
+                                                If (xR.Name.Equals("Action")) Then
+                                                    generator.action(i, xR.GetAttribute("Agent2"), xR.GetAttribute("Agent3"), xR.GetAttribute("Agent4"), xR.GetAttribute("AgentEE")) = xR.ReadInnerXml()
+                                                End If
+                                            End If
+                                        End While
                                     End If
-                                End While
+
+                                    If (xR.ReadToFollowing("ReservoirProperties")) Then
+                                        generator.reservoiragentid(i, 0) = xR.GetAttribute("isReservoir")
+                                        generator.reservoiragentid(i, 1) = xR.GetAttribute("Capacity")
+                                        generator.reservoiragentid(i, 2) = xR.GetAttribute("InitialLevel")
+                                    End If
+
+                                    If (xR.ReadToFollowing("Agents")) Then
+                                        Dim a = 1
+                                        While (xR.Read())
+                                            If (xR.NodeType.Equals(XmlNodeType.EndElement)) Then
+                                                If (xR.Name.Equals("Agents")) Then
+                                                    Exit While
+                                                End If
+                                            End If
+                                            If (xR.IsStartElement()) Then
+                                                If (xR.Name.Equals("Agent")) Then
+                                                    If (xR.ReadToDescendant("Location")) Then
+                                                        generator.agentlocation(a, 0) = xR.GetAttribute("X")
+                                                        generator.agentlocation(a, 1) = xR.GetAttribute("Y")
+                                                        generator.agentlocation(a, 2) = xR.GetAttribute("Z")
+                                                        If (xR.ReadToFollowing("ExtraProperties")) Then
+                                                            generator.agentlocation(a, 3) = xR.GetAttribute("DirectionIndex")
+                                                            generator.agentlocation(a, 4) = xR.GetAttribute("ColorIndex")
+                                                        End If
+                                                        If (xR.ReadToFollowing("ReservoirProperties")) Then
+                                                            generator.agentreservoir(a, 0) = xR.GetAttribute("isReservoir")
+                                                            generator.agentreservoir(a, 1) = xR.GetAttribute("Capacity")
+                                                            generator.agentreservoir(a, 2) = xR.GetAttribute("CurrentLevel")
+                                                        End If
+
+                                                        ' ----- No idea what this does and why/how we generate it, just re-used this code snippet from old loading method. -----
+                                                        Dim rangexupper As Integer = generator.agentrange(i, 0, 1)
+                                                        Dim rangexlower As Integer = generator.agentrange(i, 0, 0)
+                                                        Dim rangeyupper As Integer = generator.agentrange(i, 1, 1)
+                                                        Dim rangeylower As Integer = generator.agentrange(i, 1, 0)
+                                                        Dim rangezupper As Integer = generator.agentrange(i, 2, 1)
+                                                        Dim rangezlower As Integer = generator.agentrange(i, 2, 0)
+                                                        Dim dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                                                        Dim dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                                                        Dim dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
+                                                        generator.agentlocation(a, 5) = dx
+                                                        generator.agentlocation(a, 6) = dy
+                                                        generator.agentlocation(a, 7) = dz
+                                                        ' ---------------------------------------------------------------------------------------------------------
+
+                                                        generator.agentlocation(a, 8) = generator.initialenergy(i) ' Reset the agent's initial energy
+                                                        generator.agentlocation(a, 9) = 0 ' Reset the agent's age to 0
+                                                        generator.agentlocation(a, 10) = 0 ' Reset the asex reproduction timer to 0
+
+                                                        a += 1
+                                                    End If
+                                                End If
+                                            End If
+                                        End While
+                                    End If
+                                End If
                             End If
-                        Next
+                        End While
                     End If
                 End If
             End While
@@ -2662,6 +2823,7 @@ Public Class Form1
 
         staticagentcheck()
     End Sub
+#End Region
 
 #Region "User Interface Event Handlers"
     ' Adam: Update loop
@@ -2806,7 +2968,7 @@ Public Class Form1
         If mExcelLogger Is Nothing Then mExcelLogger = New ExcelLogger()
         mExcelLogger.openExcelWorkbook(SaveFileDialogLogData.FileName)
     End Sub
-#End Region
+
 
 #Region "Project Saving/Loading"
     'saves agent location
@@ -2829,30 +2991,39 @@ Public Class Form1
     End Sub
 
     Private Sub OpenFilepro_FileOk(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles OpenFilepro.FileOk
-        Try
-            ' Encode the XML string in a UTF-8 byte array
-            ' Dim encodedString = Encoding.UTF8.GetBytes(objreader.ReadToEnd())
-            Dim x = New XmlDocument()
-            x.Load(OpenFilepro.FileName)
-            Dim xmlStream = New System.IO.MemoryStream()
-            x.Save(xmlStream)
+        'Try TODO: FIGURE OUT XML SAVING/LOADING
+        '    ' Encode the XML string in a UTF-8 byte array
+        '    ' Dim encodedString = Encoding.UTF8.GetBytes(objreader.ReadToEnd())
+        '    Dim x = New XmlDocument()
+        '    x.Load(OpenFilepro.FileName)
+        '    Dim xmlStream = New System.IO.MemoryStream()
+        '    x.Save(xmlStream)
 
-            xmlStream.Flush() '//Adjust this If you want read your data 
-            xmlStream.Position = 0
-            loadProjectFromXmlStream(xmlStream)
-            xmlStream.Dispose()
-            'loadProjectFromStream(OpenFilepro.FileName)
-            'loadProjectFromStream(OpenFilepro.OpenFile())
-            '  loadProjectFromString(objreader.ReadToEnd)
-        Catch ex As Exception
-            Try
-                Using objreader = New System.IO.StreamReader(OpenFilepro.FileName)
-                    loadProjectFromString(objreader.ReadToEnd)
-                    '  loadProjectFromString(objreader.ReadToEnd)
-                End Using
-            Catch ex2 As Exception
-                MessageBox.Show("Failed to load the project, it may be corrupt." & vbCrLf & vbCrLf & ex2.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            End Try
+        '    xmlStream.Flush() '//Adjust this If you want read your data 
+        '    xmlStream.Position = 0
+        '    loadProjectFromXmlStream(xmlStream)
+        '    xmlStream.Dispose()
+        '    'loadProjectFromStream(OpenFilepro.FileName)
+        '    'loadProjectFromStream(OpenFilepro.OpenFile())
+        '    '  loadProjectFromString(objreader.ReadToEnd)
+        'Catch ex As Exception
+        '    MessageBox.Show("Failed to load the project, it may be corrupt." & vbCrLf & vbCrLf & ex.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        '    Try
+        '        Using objreader = New System.IO.StreamReader(OpenFilepro.FileName)
+        '            loadProjectFromString(objreader.ReadToEnd)
+        '            '  loadProjectFromString(objreader.ReadToEnd)
+        '        End Using
+        '    Catch ex2 As Exception
+        '        MessageBox.Show("Failed to load the project, it may be corrupt." & vbCrLf & vbCrLf & ex2.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        '    End Try
+        'End Try
+        Try
+            Using objreader = New System.IO.StreamReader(OpenFilepro.FileName)
+                loadProjectFromString(objreader.ReadToEnd)
+                '  loadProjectFromString(objreader.ReadToEnd)
+            End Using
+        Catch ex2 As Exception
+            MessageBox.Show("Failed to load the project, it may be corrupt." & vbCrLf & vbCrLf & ex2.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 #End Region
@@ -2928,4 +3099,5 @@ Public Class Form1
         Timerxy.Stop()
         resetSimulation()
     End Sub
+#End Region
 End Class
