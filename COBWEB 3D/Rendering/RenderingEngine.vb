@@ -1,5 +1,4 @@
 ﻿Imports COBWEB_3D
-Imports System.Windows.Controls
 
 Public Class RenderingEngine
     Private mRenderTargetXY As Bitmap
