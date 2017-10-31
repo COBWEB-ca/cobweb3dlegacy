@@ -6,19 +6,19 @@
                 Exit Sub
             End If
             If RadioButton1.Checked = True Then
-                generator.agentdirection(Form3.selectedagent) = 2
+                generator.agentdirection(Form3.selectedagent) = 2 'Up
             ElseIf RadioButton2.Checked = True Then
-                generator.agentdirection(Form3.selectedagent) = 1
+                generator.agentdirection(Form3.selectedagent) = 1 'Down
             ElseIf RadioButton3.Checked = True Then
-                generator.agentdirection(Form3.selectedagent) = 3
+                generator.agentdirection(Form3.selectedagent) = 3 'Left
             ElseIf RadioButton4.Checked = True Then
-                generator.agentdirection(Form3.selectedagent) = 4
+                generator.agentdirection(Form3.selectedagent) = 4 'Right
             ElseIf RadioButton5.Checked = True Then
-                generator.agentdirection(Form3.selectedagent) = 6
+                generator.agentdirection(Form3.selectedagent) = 6 'Forwards
             ElseIf RadioButton6.Checked = True Then
-                generator.agentdirection(Form3.selectedagent) = 5
+                generator.agentdirection(Form3.selectedagent) = 5 'Backwards
             ElseIf RadioButton7.Checked = True Then
-                generator.agentdirection(Form3.selectedagent) = 0
+                generator.agentdirection(Form3.selectedagent) = 0 'Random
             End If
             If TextBox3.Text <> 1 Or TextBox5.Text <> 1 Or TextBox7.Text <> 1 Or TextBox2.Text <> Form1.xn Or TextBox4.Text <> Form1.yn Or TextBox6.Text <> Form1.zn Then
                 generator.agentstart(Form3.selectedagent, 1) = CInt(TextBox2.Text)

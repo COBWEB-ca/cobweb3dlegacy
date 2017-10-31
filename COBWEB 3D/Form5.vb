@@ -46,7 +46,7 @@
     End Sub
 
     Private Sub Form5_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
             ComboBox1.Items.Add(generator.agentname(i))
         Next
@@ -79,8 +79,8 @@
 
     Private Sub ComboBoxagent_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ComboBoxagent.SelectedIndexChanged
 
-        For a = 1 To Form1.agent
-            For b = 1 To Form1.agent
+        For a = 1 To Form1.agentTypeCount
+            For b = 1 To Form1.agentTypeCount
                 If ComboBoxagent.SelectedIndex + 1 = a And ComboBox1.SelectedIndex + 1 = b Then
 
                     If generator.action(a, b, 1, 0, 0) = 1 Then
@@ -149,8 +149,8 @@
     End Sub
 
     Private Sub ComboBox1_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ComboBox1.SelectedIndexChanged
-        For a = 1 To Form1.agent
-            For b = 1 To Form1.agent
+        For a = 1 To Form1.agentTypeCount
+            For b = 1 To Form1.agentTypeCount
                 If ComboBoxagent.SelectedIndex + 1 = a And ComboBox1.SelectedIndex + 1 = b Then
 
                     If generator.action(a, b, 1, 0, 0) = 1 Then

@@ -4,7 +4,7 @@
     End Sub
 
     Private Sub Form10_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBox1.Items.Add(generator.agentname(i))
         Next
         ListView1.View = View.Details
@@ -26,7 +26,7 @@
         ListView1.Columns.Add("Z Distance")
         ListView1.GridLines = True
 
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             If generator.reservoiragentreleased(Form5.holderb, i, 1) <> 0 Then
                 Dim listentry As New ListViewItem
                 listentry.SubItems.Add(generator.reservoiragentreleased(Form5.holderb, i, 1))

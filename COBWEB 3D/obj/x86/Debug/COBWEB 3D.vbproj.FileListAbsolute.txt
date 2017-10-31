@@ -371,3 +371,121 @@ H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB_3D.utility.resou
 H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbproj.GenerateResource.Cache
 H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe.manifest
 H:\Cobweb 3D - Under Development\COBWEB 3D\obj\x86\Debug\COBWEB 3D.application
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.xml
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.pdb
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.exe.manifest
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.application
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.exe
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.pdb
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.xml
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbprojResolveAssemblyReference.cache
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.AI.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.automaticiterations.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmexchange.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.exchangedata.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form1.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form10.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form11.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form2.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form3.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form4.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form5.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.productions.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form7.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAdd.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form9.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbiotic.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbioticMovement.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCatalysis.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCrossSection.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmDirection.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInitialProperties.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInteractions.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.generator.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Genetics.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Resources.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Ratio.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.utility.resources
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbproj.GenerateResource.Cache
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe.manifest
+C:\Users\Adam\Prj\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.application
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.xml
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.pdb
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.exe.manifest
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.application
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.exe
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.pdb
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\bin\Debug\COBWEB 3D.xml
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbprojResolveAssemblyReference.cache
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.AI.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.automaticiterations.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmexchange.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.exchangedata.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form1.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form10.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form11.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form2.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form3.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form4.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form5.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.productions.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form7.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAdd.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form9.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbiotic.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbioticMovement.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCatalysis.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCrossSection.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmDirection.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInitialProperties.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInteractions.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.generator.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Genetics.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Resources.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Ratio.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.utility.resources
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbproj.GenerateResource.Cache
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.exe.manifest
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.application
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.exe.config
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.exe.manifest
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.application
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.exe
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.pdb
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.xml
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.AI.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.automaticiterations.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmexchange.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.exchangedata.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form1.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form10.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form11.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form2.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form3.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form4.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form5.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.productions.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form7.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAdd.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Form9.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbiotic.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmAbioticMovement.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCatalysis.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmCrossSection.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmDirection.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInitialProperties.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.frmInteractions.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.generator.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Genetics.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Resources.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.Ratio.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB_3D.utility.resources
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbproj.GenerateResource.Cache
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.exe.manifest
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.application
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.exe
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.xml
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.pdb
+E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbprojResolveAssemblyReference.cache

@@ -1,10 +1,10 @@
 ﻿Public Class Form9
 
-    Private listing(Form1.agent) As Integer
+    Private listing(Form1.agentTypeCount) As Integer
 
     Private Sub Form9_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Dim count As Integer
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             If generator.localreproduction(Form5.holdera, Form5.holderb, i, 0) <> 0 Then
                 count += 1
                 ComboBox1.Items.Add(generator.agentname(i))

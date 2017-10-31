@@ -99,11 +99,11 @@
                 Dim avg As Decimal = ((((j * range) + min)) + ((((j + 1) * range) + min))) / 2
                 Chart1.Series("Utility Histogram").Points.AddXY(avg, slot(j))
             Next
-
+            ' Use agentlocation to sum values of each tyoe i=1 to total
             If logged = True Then
                 currentcell += 1
                 oSheet.cells(currentcell, 1) = Form1.tick
-                oSheet.cells(currentcell, 2) = totalagents
+                oSheet.cells(currentcell, 2) = totalagents ' Data recorded
                 oSheet.cells(currentcell, 3) = x
                 oSheet.cells(currentcell, 4) = y
                 oSheet.cells(currentcell, 5) = Decimal.Round(totalutility, 2, MidpointRounding.AwayFromZero)
@@ -128,7 +128,8 @@
         oSheet.cells(1, 4) = "Total Y"
         oSheet.cells(1, 5) = "Total Utility"
         oSheet.cells(1, 6) = "Average Agent Utility"
-
+        oSheet.cells(1, 7) = "Agent 1 average utility"
+        oSheet.cells(1, 8) = "Agent 2 average utility"
         currentcell = 1
     End Sub
 
