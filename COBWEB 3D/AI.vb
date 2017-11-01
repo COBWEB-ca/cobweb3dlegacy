@@ -4,7 +4,7 @@
 
     'adding the ability to make agents static (stay stationary). 
     Private Sub AI_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
         Me.FormBorderStyle = Windows.Forms.FormBorderStyle.FixedSingle
@@ -143,26 +143,8 @@
             generator.staticagentid(ComboBoxagent.SelectedIndex + 1) = 0
         End If
 
-        generator.gfxxy.Clear(Color.White)
-        Call generator.gridxy()
-
         generator.agentchange = True
-
-        ' placing the agents
-        For i = 1 To Form1.total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Call Form1.creator(x, y, z, d, generator.agentcolour(ag), i)
-        Next
-
-
-        Call generator.topgridxy()
-        Call Form1.picshow()
-        'Form1.PictureBox1.Image = generator.picxy
-
+        Form1.draw()
     End Sub
 
     Private Sub CheckBox2_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox2.CheckedChanged
@@ -174,11 +156,10 @@
 
         If CheckBox2.Checked = True Then
             Form1.visualizerange = ComboBoxagent.SelectedIndex + 1
-            Call Form1.range()
         Else
             Form1.visualizerange = 0
-            Call Form1.range()
         End If
+        Form1.draw()
     End Sub
 
     Private Sub CheckBox3_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox3.CheckedChanged
@@ -248,23 +229,8 @@
             generator.reservoiragentid(ComboBoxagent.SelectedIndex + 1, 1) = 0
         End If
 
-        generator.gfxxy.Clear(Color.White)
-        Call generator.gridxy()
-
         generator.agentchange = True
-
-        ' placing the agents
-        For i = 1 To Form1.total
-            Dim x As Integer = generator.agentlocation(i, 0)
-            Dim y As Integer = generator.agentlocation(i, 1)
-            Dim z As Integer = generator.agentlocation(i, 2)
-            Dim d As Integer = generator.agentlocation(i, 3)
-            Dim ag As Integer = generator.agentlocation(i, 4)
-            Call Form1.creator(x, y, z, d, generator.agentcolour(ag), i)
-        Next
-
-        Call generator.topgridxy()
-        Call Form1.picshow()
+        Form1.draw()
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click

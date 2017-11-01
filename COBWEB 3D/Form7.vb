@@ -4,7 +4,7 @@
     Private Sub Form7_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Timer1.Start()
         Chart1.Series("Total Agent Population").Points.AddXY(Form1.tick, Form1.total)
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
         ComboBoxagent.Items.Add("All Agents Only")
@@ -29,11 +29,11 @@
         If combo = 0 Then
             Chart1.Series.Add(generator.agentname(ComboBoxagent.SelectedIndex + 1))
             Chart1.Series(1).ChartType = DataVisualization.Charting.SeriesChartType.Spline
-        ElseIf ComboBoxagent.SelectedIndex <> Form1.agent Then
+        ElseIf ComboBoxagent.SelectedIndex <> Form1.agentTypeCount Then
             Chart1.Series(1).Points.Clear()
             Chart1.Series(1).Name = generator.agentname(ComboBoxagent.SelectedIndex + 1)
             Chart1.Series(1).ChartType = DataVisualization.Charting.SeriesChartType.Spline
-        ElseIf ComboBoxagent.SelectedIndex = Form1.agent Then
+        ElseIf ComboBoxagent.SelectedIndex = Form1.agentTypeCount Then
             combo = 0
             Chart1.Series.RemoveAt(1)
             Exit Sub

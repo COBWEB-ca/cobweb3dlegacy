@@ -88,9 +88,9 @@ Partial Class frmAdd
         '
         Me.Button1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button1.Location = New System.Drawing.Point(11, 293)
+        Me.Button1.Location = New System.Drawing.Point(12, 294)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(586, 29)
+        Me.Button1.Size = New System.Drawing.Size(587, 29)
         Me.Button1.TabIndex = 13
         Me.Button1.Text = "Apply"
         Me.Button1.UseVisualStyleBackColor = True
@@ -245,7 +245,7 @@ Partial Class frmAdd
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(609, 334)
+        Me.ClientSize = New System.Drawing.Size(609, 335)
         Me.Controls.Add(Me.Label8)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.GroupBox2)

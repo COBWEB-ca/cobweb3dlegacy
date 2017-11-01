@@ -4,17 +4,17 @@
     Public aa As Integer
 
     Private Sub frmCatalysis_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        For i = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
             ComboBoxagent.Items.Add(generator.agentname(i))
         Next
 
         Dim interaction As Integer
-        For i = 1 To Form1.agent
-            For a = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
+            For a = 1 To Form1.agentTypeCount
                 If generator.action(i, a, 1, 0, 0) = 1 Then
 
                     'reproduction only
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             interaction += 1
                             ComboBox1.Items.Add(interaction.ToString & " - " & generator.agentname(i) & ", " & generator.agentname(a))
@@ -36,7 +36,7 @@
 
                     'consume and reproduce
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             ComboBox1.Items.Add(interaction.ToString & " - " & generator.agentname(i) & ", " & generator.agentname(a))
                         End If
@@ -52,7 +52,7 @@
 
                     'reproduce and diminish
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         ComboBox1.Items.Add(interaction.ToString & " - " & generator.agentname(i) & ", " & generator.agentname(a))
                     Next
 
@@ -60,7 +60,7 @@
 
                     'consume, reproduce and diminish
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         ComboBox1.Items.Add(interaction.ToString & " - " & generator.agentname(i) & ", " & generator.agentname(a))
 
                     Next
@@ -87,12 +87,12 @@
 
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
         Dim interaction As Integer
-        For i = 1 To Form1.agent
-            For a = 1 To Form1.agent
+        For i = 1 To Form1.agentTypeCount
+            For a = 1 To Form1.agentTypeCount
                 If generator.action(i, a, 1, 0, 0) = 1 Then
 
                     'reproduction only
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             interaction += 1
                             If interaction = ComboBox1.SelectedIndex + 1 Then
@@ -139,7 +139,7 @@
 
                     'consume and reproduce
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If generator.action(i, a, 2, r, 1) > 0 Then
                             If interaction = ComboBox1.SelectedIndex + 1 Then
                                 TextBox6.Text = generator.interactionprobability(i, a)
@@ -171,7 +171,7 @@
 
                     'reproduce and diminish
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If interaction = ComboBox1.SelectedIndex + 1 Then
                             TextBox6.Text = generator.interactionprobability(i, a)
                             TextBox5.Text = generator.catalystprobability(i, a)
@@ -187,7 +187,7 @@
 
                     'consume, reproduce and diminish
                     interaction += 1
-                    For r = 1 To Form1.agent
+                    For r = 1 To Form1.agentTypeCount
                         If interaction = ComboBox1.SelectedIndex + 1 Then
                             TextBox6.Text = generator.interactionprobability(i, a)
                             TextBox5.Text = generator.catalystprobability(i, a)
