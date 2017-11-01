@@ -489,3 +489,7 @@ E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.exe
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.xml
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.pdb
 E:\Development\Visual Basic\cobweb3d\COBWEB 3D\obj\x86\Debug\COBWEB 3D.vbprojResolveAssemblyReference.cache
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\bin\Debug\Cobweb3D.exe.config
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.exe
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.xml
+C:\Development\VisualBasic\Sept8\cobweb3d\COBWEB 3D\obj\x86\Debug\Cobweb3D.pdb
