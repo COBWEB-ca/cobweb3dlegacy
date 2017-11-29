@@ -2950,14 +2950,32 @@ Public Class Form1
     End Sub
 
     Private Sub FullScreenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles FullScreenToolStripMenuItem.Click
-        If Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None Then
-            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.Sizable
-            FullScreenToolStripMenuItem.Text = "Full Screen"
+        ToggleFullscreen()
+    End Sub
+
+    Private Sub ToggleFullscreen()
+        If Me.FormBorderStyle = FormBorderStyle.None Then
+            FullscreenOff()
         Else
-            Me.FormBorderStyle = Windows.Forms.FormBorderStyle.None
-            Me.WindowState = FormWindowState.Normal
-            Me.WindowState = FormWindowState.Maximized
-            FullScreenToolStripMenuItem.Text = "Exit Full Screen"
+            FullscreenOn()
+        End If
+    End Sub
+
+    Private Sub FullscreenOff()
+        Me.FormBorderStyle = FormBorderStyle.Sizable
+        FullScreenToolStripMenuItem.Text = "Full Screen"
+    End Sub
+
+    Private Sub FullscreenOn()
+        Me.FormBorderStyle = FormBorderStyle.None
+        Me.WindowState = FormWindowState.Normal
+        Me.WindowState = FormWindowState.Maximized
+        FullScreenToolStripMenuItem.Text = "Exit Full Screen"
+    End Sub
+
+    Sub Form1_KeyPress(ByVal sender As Object, ByVal e As KeyPressEventArgs) Handles Me.KeyPress
+        If e.KeyChar = ChrW(27) And Me.FormBorderStyle = FormBorderStyle.None Then
+            FullscreenOff()
         End If
     End Sub
 
@@ -3046,7 +3064,7 @@ Public Class Form1
     End Sub
 #End Region
 
-    Private Sub TickToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TickToolStripMenuItem.Click, TickButtonToolStripMenuItem.Click
+    Private Sub TickToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TickButtonToolStripMenuItem.Click
         updateSimulation()
     End Sub
 

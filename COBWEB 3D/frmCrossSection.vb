@@ -96,9 +96,9 @@
         Else
             If proposedlocation(x, y, currentZ) = EMPTY_LOCATION Then
                 sender.BackColor = Color.LightSkyBlue
-                proposedlocation(x, y, currentZ) = selectedAgentType + 1
+                proposedlocation(x, y, currentZ) = selectedAgentType
                 renderCrossSection()
-            ElseIf proposedlocation(x, y, currentZ) = selectedAgentType + 1 Then
+            ElseIf proposedlocation(x, y, currentZ) = selectedAgentType Then
                 sender.BackColor = Color.Transparent
                 proposedlocation(x, y, currentZ) = EMPTY_LOCATION
                 renderCrossSection()
@@ -114,7 +114,7 @@
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Call produce()
-        ' Me.Close()
+        Me.Close()
     End Sub
 
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
