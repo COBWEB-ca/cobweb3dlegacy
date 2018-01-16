@@ -5,20 +5,23 @@
     Private oSheet As Object
     Private oSheet2 As Object
     Private oSheet3 As Object
-    Private logged As Boolean
     Private exceldir As String
     Private currentcell As Integer
     Private previoustick As Integer
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        oBook.SaveAs(exceldir)
-        oBook.close()
-
-        oBook = Nothing
-        oExcel.Quit()
-        oExcel = Nothing
-        logged = False
-
+        If (oBook IsNot Nothing) Then
+            If (exceldir IsNot Nothing) Then
+                oBook.SaveAs(exceldir)
+                exceldir = Nothing
+            End If
+            oBook.close()
+            oBook = Nothing
+        End If
+        If (oExcel IsNot Nothing) Then
+            oExcel.Quit()
+            oExcel = Nothing
+        End If
         Timer1.Stop()
         Me.Close()
     End Sub
@@ -36,6 +39,12 @@
 
             Dim totalutility As Decimal
             Dim totalagents As Integer
+
+            Dim totalUtilityByType(Form1.agentTypeCount)
+            For i = 1 To Form1.agentTypeCount
+                totalUtilityByType(i) = 0
+            Next
+
             Dim min As Decimal = 1000000000
             Dim max As Decimal = 0
             Dim uti(Form1.total) As Decimal
@@ -43,24 +52,26 @@
             Dim y As Integer
 
             For i = 1 To Form1.total
-                If generator.agentlocation(i, 14) <> 0 Then
+                Dim individualUtility = generator.agentlocation(i, 14)
+                If individualUtility <> 0 Then
                     l1 &= i & vbCrLf
                     l2 &= generator.agentname(generator.agentlocation(i, 4)) & vbCrLf
-                    totalutility += generator.agentlocation(i, 14)
+                    totalUtilityByType(generator.agentlocation(i, 4)) += individualUtility
+                    totalutility += individualUtility
                     x += generator.agentlocation(i, 11)
                     y += generator.agentlocation(i, 12)
                     totalagents += 1
-                    If max < generator.agentlocation(i, 14) Then
-                        max = generator.agentlocation(i, 14)
+                    If max < individualUtility Then
+                        max = individualUtility
                     End If
-                    If min > generator.agentlocation(i, 14) And generator.agentlocation(i, 14) <> 0 Then
-                        min = generator.agentlocation(i, 14)
+                    If min > individualUtility And individualUtility <> 0 Then
+                        min = individualUtility
                     End If
-                    uti(i) = generator.agentlocation(i, 14)
+                    uti(i) = individualUtility
                     l3 &= generator.agentlocation(i, 18) & vbCrLf
                     l4 &= generator.agentlocation(i, 11) & vbCrLf
                     l5 &= generator.agentlocation(i, 12) & vbCrLf
-                    l6 &= Decimal.Round(generator.agentlocation(i, 14), 2, MidpointRounding.AwayFromZero) & vbCrLf
+                    l6 &= Decimal.Round(individualUtility, 2, MidpointRounding.AwayFromZero) & vbCrLf
                     l7 &= generator.agentlocation(i, 19) & vbCrLf
                 End If
             Next
@@ -100,22 +111,23 @@
                 Chart1.Series("Utility Histogram").Points.AddXY(avg, slot(j))
             Next
             ' Use agentlocation to sum values of each tyoe i=1 to total
-            If logged = True Then
-                currentcell += 1
-                oSheet.cells(currentcell, 1) = Form1.tick
-                oSheet.cells(currentcell, 2) = totalagents ' Data recorded
-                oSheet.cells(currentcell, 3) = x
-                oSheet.cells(currentcell, 4) = y
-                oSheet.cells(currentcell, 5) = Decimal.Round(totalutility, 2, MidpointRounding.AwayFromZero)
+            currentcell += 1
+            oSheet.cells(currentcell, 1) = Form1.tick
+            oSheet.cells(currentcell, 2) = totalagents ' Data recorded
+            oSheet.cells(currentcell, 3) = x
+            oSheet.cells(currentcell, 4) = y
+            oSheet.cells(currentcell, 5) = Decimal.Round(totalutility, 2, MidpointRounding.AwayFromZero)
+            If (totalagents <> 0) Then
                 oSheet.cells(currentcell, 6) = Decimal.Round(totalutility / totalagents, 2, MidpointRounding.AwayFromZero)
+                For i = 1 To Form1.agentTypeCount
+                    oSheet.cells(currentcell, 6 + i) = Decimal.Round(totalUtilityByType(i) / generator.agentcount(i), 2, MidpointRounding.AwayFromZero)
+                Next
             End If
             previoustick = Form1.tick
         End If
     End Sub
 
     Private Sub export_data()
-        SaveFileDialog1.ShowDialog()
-
         oExcel = CreateObject("Excel.Application")
         oExcel.sheetsinnewworkbook = 1
         oBook = oExcel.Workbooks.Add
@@ -128,19 +140,22 @@
         oSheet.cells(1, 4) = "Total Y"
         oSheet.cells(1, 5) = "Total Utility"
         oSheet.cells(1, 6) = "Average Agent Utility"
-        oSheet.cells(1, 7) = "Agent 1 average utility"
-        oSheet.cells(1, 8) = "Agent 2 average utility"
+        For i = 1 To Form1.agentTypeCount
+            oSheet.cells(1, 6 + i) = "Agent " & generator.agentname(i) & " average utility."
+        Next
+        'oSheet.cells(1, 7) = "Agent 1 average utility"
+        'oSheet.cells(1, 8) = "Agent 2 average utility"
         currentcell = 1
     End Sub
 
     Private Sub exchangedata_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         previoustick = 0
+        export_data()
         Timer1.Start()
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Call export_data()
-        logged = True
+        SaveFileDialog1.ShowDialog()
     End Sub
 
     Private Sub SaveFileDialog1_FileOk(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles SaveFileDialog1.FileOk

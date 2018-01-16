@@ -1,7 +1,7 @@
 ﻿Public Class generator
     Public agentcount(Form1.agentTypeCount) As Integer
     Public agentname(Form1.agentTypeCount) As String
-    Public agentlocation(100000, 115) As Decimal
+    Public agentlocation(100000, 115) As Decimal 'Huge array of all the individual agents in the simulation
     Public agentrange(Form1.agentTypeCount, 2, 1) As Integer
     Public agentrangeabsolute(Form1.agentTypeCount) As Boolean
     Public agentcolour(Form1.agentTypeCount) As System.Drawing.Color
@@ -53,6 +53,7 @@
     Public exchange(Form1.agentTypeCount, Form1.agentTypeCount, 100, 10) As Decimal
     Public exchangenames(Form1.agentTypeCount, Form1.agentTypeCount, 100) As String
     Public agentproduct(Form1.total, 100, 2) As Decimal
+    Public agentTypeUtilityFunction(Form1.agentTypeCount) As Integer
 
     Public abiotic(Form1.agentTypeCount, Form1.xn, Form1.yn, Form1.zn) As Integer
     Public abioticenable As Boolean

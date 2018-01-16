@@ -111,7 +111,11 @@
 
     Private Sub TextBox11_TextChanged(sender As Object, e As EventArgs) Handles TextBox11.TextChanged
         TextBox1.Text = TextBox11.Text
-        TextBox2.Text = CInt(TextBox11.Text) + 10
+        Try
+            TextBox2.Text = CInt(TextBox11.Text) + 10
+        Catch ex As InvalidCastException
+            Console.WriteLine(ex.)
+        End Try
     End Sub
 
     Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged

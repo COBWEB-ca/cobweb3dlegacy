@@ -37,7 +37,8 @@ Partial Class automaticiterations
         '
         'TextBox1
         '
-        Me.TextBox1.Location = New System.Drawing.Point(117, 13)
+        Me.TextBox1.Location = New System.Drawing.Point(117, 
+
         Me.TextBox1.Name = "TextBox1"
         Me.TextBox1.Size = New System.Drawing.Size(122, 20)
         Me.TextBox1.TabIndex = 0

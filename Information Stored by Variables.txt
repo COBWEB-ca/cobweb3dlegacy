@@ -2,7 +2,7 @@
 1:y
 2:z
 3:direction
-4:agent
+4:agent type
 5:dx
 6:dy
 7:dz
