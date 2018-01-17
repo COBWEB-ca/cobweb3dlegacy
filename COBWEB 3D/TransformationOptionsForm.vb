@@ -39,11 +39,10 @@
         If (CboxAgent1.Checked) Then
             Dim selectedDestAgent = ComboAgent1.SelectedItem
             If (selectedDestAgent IsNot Nothing) Then
-                Dim index = 0
                 For i = 1 To mGenerator.agentname.Length
                     If (mGenerator.agentname(i).Equals(selectedDestAgent)) Then
                         ' TODO: handle.
-                        mGenerator.transformationPlans.Add(New generator.actKey(agentType1Index, agentType2Index), selectedDestAgent)
+                        mGenerator.transformationPlans.Add(New generator.actKey(agentType1Index, agentType2Index), i)
                         Exit For
                     End If
                 Next
@@ -57,7 +56,7 @@
                 For i = 1 To mGenerator.agentname.Length
                     If (mGenerator.agentname(i).Equals(selectedDestAgent)) Then
                         ' TODO: handle.
-                        mGenerator.transformationPlans.Add(New generator.actKey(agentType2Index, agentType1Index), selectedDestAgent)
+                        mGenerator.transformationPlans.Add(New generator.actKey(agentType2Index, agentType1Index), i)
                         Exit For
                     End If
                 Next
