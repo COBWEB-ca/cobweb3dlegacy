@@ -1,7 +1,10 @@
 ﻿Public Class generator
+    ' Agent Individual Parameters
+    Public agentlocation(100000, 115) As Decimal 'Huge array of all the individual agents in the simulation
+
+    ' Agent Type Parameterss
     Public agentcount(Form1.agentTypeCount) As Integer
     Public agentname(Form1.agentTypeCount) As String
-    Public agentlocation(100000, 115) As Decimal 'Huge array of all the individual agents in the simulation
     Public agentrange(Form1.agentTypeCount, 2, 1) As Integer
     Public agentrangeabsolute(Form1.agentTypeCount) As Boolean
     Public agentcolour(Form1.agentTypeCount) As System.Drawing.Color
@@ -16,9 +19,32 @@
     Public asrenergy(Form1.agentTypeCount) As Integer
 
     Public occupied(Form1.xn, Form1.yn, Form1.zn) As Boolean
-    Public action(Form1.agentTypeCount, Form1.agentTypeCount, 6, Form1.agentTypeCount, 1) As Integer
-    'it was 6, i changed it to 100
     Public maxcell As Integer = Form1.xn * Form1.zn * Form1.yn
+    'it was 6, i changed it to 100
+    Public action(Form1.agentTypeCount, Form1.agentTypeCount, 6, Form1.agentTypeCount, 1) As Integer
+
+    Structure actKey
+        Public AgentType1 As Integer
+        Public AgentType2 As Integer
+        Public Sub New(type1 As Integer, type2 As Integer)
+            AgentType1 = type1
+            AgentType2 = type2
+        End Sub
+
+        Public Overloads Function Equals(ob As Object) As Boolean
+            If TypeOf ob Is actKey Then
+                Dim c As actKey = CType(ob, actKey)
+                Return AgentType1 = c.AgentType1 And AgentType2 = c.AgentType2
+            Else
+                Return False
+            End If
+        End Function
+
+        Public Overloads Function GetHashCode() As Integer
+            Return AgentType1.GetHashCode() ^ AgentType2.GetHashCode()
+        End Function
+    End Structure
+    Public transformationPlans As New Dictionary(Of actKey, Integer)
 
     Public staticagent(100000) As Integer
     Public agentchange As Boolean
@@ -113,5 +139,111 @@
         Form1.SaveProjectToolStripMenuItem.Enabled = True
 
         Form1.draw()
+    End Sub
+
+    Public Sub createAgent(type As Integer, x As Integer, y As Integer, z As Integer, direction As Integer, dx As Integer, dy As Integer, dz As Integer)
+        If (occupied(x, y, z) = True) Then
+            For i = 1 To Form1.total
+                If agentlocation(i, 0) = x And agentlocation(i, 1) = y And agentlocation(i, 2) = z Then
+                    If agentlocation(i, 4) <> type Then
+                        agentcount(agentlocation(i, 4)) -= 1
+                        agentcount(type) += 1
+                    End If
+                End If
+            Next
+        Else
+            agentcount(type) += 1
+            occupied(x, y, z) = True
+            Form1.total += 1
+        End If
+
+        Dim index = Form1.total
+
+        agentlocation(index, 0) = x
+        agentlocation(index, 1) = y
+        agentlocation(index, 2) = z
+        agentlocation(index, 3) = direction
+        agentlocation(index, 4) = type
+        agentlocation(index, 5) = dx
+        agentlocation(index, 6) = dy
+        agentlocation(index, 7) = dz
+        agentlocation(index, 8) = initialenergy(type)
+        agentlocation(index, 9) = 0
+        agentlocation(index, 10) = 0
+
+        If staticagentid(type) = 2 Then
+            staticagent(index) = 2
+            If reservoiragentid(type, 1) = 2 Then
+                agentreservoir(index, 0) = 2
+                agentreservoir(index, 1) = reservoiragentid(type, 2)
+            End If
+        ElseIf staticagentid(type) = 0 Then
+            staticagent(index) = 0
+            agentreservoir(index, 0) = 0
+            agentreservoir(index, 1) = 0
+            agentreservoir(index, 2) = 0
+        End If
+
+        agentchange = True
+        'For c = 1 To total
+        '    If generator.staticagentid(generator.agentlocation(c, 4)) = 2 Then
+        '        generator.staticagent(c) = 2
+        '        If generator.reservoiragentid(generator.agentlocation(c, 4), 1) = 2 Then
+        '            generator.agentreservoir(c, 0) = 2
+        '            generator.agentreservoir(c, 1) = generator.reservoiragentid(generator.agentlocation(c, 4), 2)
+        '        End If
+        '    ElseIf generator.staticagentid(generator.agentlocation(c, 4)) = 0 Then
+        '        generator.staticagent(c) = 0
+        '        generator.agentreservoir(c, 0) = 0
+        '        generator.agentreservoir(c, 1) = 0
+        '        generator.agentreservoir(c, 2) = 0
+        '    End If
+        'Next
+
+        'generator.agentcount(newAgentType) = 0
+        'For f = 1 To Form1.total
+        '    If generator.agentlocation(f, 4) = newAgentType Then
+        '        generator.agentcount(newAgentType) += 1
+        '    End If
+        'Next
+    End Sub
+
+    Public Sub removeAgent(agentIndex As Integer)
+        Dim x = agentlocation(agentIndex, 0)
+        Dim y = agentlocation(agentIndex, 1)
+        Dim z = agentlocation(agentIndex, 2)
+        Dim type = agentlocation(agentIndex, 4)
+        If (occupied(x, y, z) = True) Then
+            agentcount(type) -= 1
+            occupied(x, y, z) = False
+            Form1.total -= 1
+            agentlocation(agentIndex, 0) = 0
+            agentlocation(agentIndex, 1) = 0
+            agentlocation(agentIndex, 2) = 0
+            agentlocation(agentIndex, 3) = 0
+            agentlocation(agentIndex, 4) = 0
+            agentlocation(agentIndex, 5) = 0
+            agentlocation(agentIndex, 6) = 0
+            agentlocation(agentIndex, 7) = 0
+            agentlocation(agentIndex, 8) = 0
+            agentlocation(agentIndex, 9) = 0
+            agentlocation(agentIndex, 10) = 0
+            agentchange = True
+        End If
+    End Sub
+
+    Public Sub removeAgent(x As Integer, y As Integer, z As Integer)
+        If (occupied(x, y, z) = True) Then
+            For i = 1 To Form1.total
+                If agentlocation(i, 0) = x And agentlocation(i, 1) = y And agentlocation(i, 2) = z Then
+                    removeAgent(i)
+                    Exit Sub
+                End If
+            Next
+        End If
+    End Sub
+
+    Public Sub transformAgent(agentIndex As Integer, destType As Integer)
+        agentlocation(agentIndex, 4) = destType
     End Sub
 End Class

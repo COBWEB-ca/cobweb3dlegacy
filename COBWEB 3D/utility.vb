@@ -47,23 +47,46 @@
             holder = Form5.holderb
         End If
 
+        'generator.agentTypeUtilityFunction(
+        If RadioButton1.Checked = True Then
+            generator.agentTypeUtilityFunction(holder) = 1 'Sqrt(XY) - agentlocation(i, 13) represents the index of the utility function being used.
+        ElseIf RadioButton2.Checked = True Then
+            generator.agentTypeUtilityFunction(holder) = 2 'X^a * Y^b
+        ElseIf RadioButton5.Checked = True Then
+            generator.agentTypeUtilityFunction(holder) = 3 'aX + bY
+        ElseIf RadioButton3.Checked = True Then
+            generator.agentTypeUtilityFunction(holder) = 4 'Min(X, Y)
+        End If
+
         For i = 1 To Form1.total
             If generator.agentlocation(i, 4) = holder Then
-                If RadioButton1.Checked = True Then
-                    generator.agentlocation(i, 13) = 1 'Sqrt(XY) - agentlocation(i, 13) represents the index of the utility function being used.
-                ElseIf RadioButton2.Checked = True Then
-                    generator.agentlocation(i, 13) = 2 'X^a * Y^b
+                If RadioButton2.Checked = True Then
                     generator.agentlocation(i, 15) = CDec(TextBox1.Text)
                     generator.agentlocation(i, 16) = CDec(TextBox2.Text)
                 ElseIf RadioButton5.Checked = True Then
-                    generator.agentlocation(i, 13) = 3 'aX + bY
                     generator.agentlocation(i, 15) = CDec(TextBox6.Text)
                     generator.agentlocation(i, 16) = CDec(TextBox5.Text)
-                ElseIf RadioButton3.Checked = True Then
-                    generator.agentlocation(i, 13) = 4 'Min(X, Y)
                 End If
             End If
         Next
+
+        'For i = 1 To Form1.total
+        '    If generator.agentlocation(i, 4) = holder Then
+        '        If RadioButton1.Checked = True Then
+        '            generator.agentlocation(i, 13) = 1 'Sqrt(XY) - agentlocation(i, 13) represents the index of the utility function being used.
+        '        ElseIf RadioButton2.Checked = True Then
+        '            generator.agentlocation(i, 13) = 2 'X^a * Y^b
+        '            generator.agentlocation(i, 15) = CDec(TextBox1.Text)
+        '            generator.agentlocation(i, 16) = CDec(TextBox2.Text)
+        '        ElseIf RadioButton5.Checked = True Then
+        '            generator.agentlocation(i, 13) = 3 'aX + bY
+        '            generator.agentlocation(i, 15) = CDec(TextBox6.Text)
+        '            generator.agentlocation(i, 16) = CDec(TextBox5.Text)
+        '        ElseIf RadioButton3.Checked = True Then
+        '            generator.agentlocation(i, 13) = 4 'Min(X, Y)
+        '        End If
+        '    End If
+        'Next
 
 
         'If frmexchange.ComboBox1.SelectedIndex = 0 Then

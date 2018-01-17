@@ -340,4 +340,15 @@
         holderb = ComboBox1.SelectedIndex + 1
         frmexchange.Show()
     End Sub
+
+    Private Sub BtnTransfOptions_Click(sender As Object, e As EventArgs) Handles BtnTransfOptions.Click
+        If ComboBoxagent.SelectedIndex < 0 Or ComboBox1.SelectedIndex < 0 Then
+            MessageBox.Show("Please select agents.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Exit Sub
+        End If
+        holdera = ComboBoxagent.SelectedIndex + 1
+        holderb = ComboBox1.SelectedIndex + 1
+        Dim transformationOptionsForm As New TransformationOptionsForm(generator, holdera, holderb)
+        transformationOptionsForm.Show()
+    End Sub
 End Class

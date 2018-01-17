@@ -129,32 +129,11 @@
                 For zz = 1 To Form1.zn
                     If proposedlocation(xx, yy, zz) <> EMPTY_LOCATION Then
                         If generator.occupied(xx, yy, zz) = False Then
-                            Form1.total = Form1.total + 1
                             Dim ddx As Integer = CInt(Math.Floor((Form1.xn) * Rnd())) + 1
                             Dim ddy As Integer = CInt(Math.Floor((Form1.yn) * Rnd())) + 1
                             Dim ddz As Integer = CInt(Math.Floor((Form1.zn) * Rnd())) + 1
-                            generator.agentlocation(Form1.total, 0) = xx
-                            generator.agentlocation(Form1.total, 1) = yy
-                            generator.agentlocation(Form1.total, 2) = zz
-                            If selectedDirection = 0 Then
-                                generator.agentlocation(Form1.total, 3) = CInt(Math.Floor((6) * Rnd())) + 1
-                            Else
-                                generator.agentlocation(Form1.total, 3) = selectedDirection
-                            End If
-                            generator.agentlocation(Form1.total, 4) = proposedlocation(xx, yy, zz)
-                            generator.agentlocation(Form1.total, 5) = ddx
-                            generator.agentlocation(Form1.total, 6) = ddy
-                            generator.agentlocation(Form1.total, 7) = ddz
-                            generator.agentlocation(Form1.total, 8) = generator.initialenergy(proposedlocation(xx, yy, zz))
-                            generator.agentlocation(Form1.total, 9) = 0
-                            generator.agentlocation(Form1.total, 10) = 0
-                            generator.occupied(xx, yy, zz) = True
-                            generator.agentcount(proposedlocation(xx, yy, zz)) = 0
-                            For f = 1 To Form1.total
-                                If generator.agentlocation(f, 4) = proposedlocation(xx, yy, zz) Then
-                                    generator.agentcount(proposedlocation(xx, yy, zz)) += 1
-                                End If
-                            Next
+                            If selectedDirection = 0 Then selectedDirection = CInt(Math.Floor((6) * Rnd())) + 1
+                            generator.createAgent(proposedlocation(xx, yy, zz), xx, yy, zz, selectedDirection, ddx, ddy, ddz)
                         End If
                     End If
                 Next

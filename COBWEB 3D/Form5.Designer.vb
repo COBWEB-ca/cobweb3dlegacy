@@ -32,7 +32,7 @@ Partial Class Form5
         Me.Label3 = New System.Windows.Forms.Label()
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.Button6 = New System.Windows.Forms.Button()
+        Me.BtnTransfOptions = New System.Windows.Forms.Button()
         Me.CheckBox2 = New System.Windows.Forms.CheckBox()
         Me.Button5 = New System.Windows.Forms.Button()
         Me.CheckBox1 = New System.Windows.Forms.CheckBox()
@@ -140,7 +140,7 @@ Partial Class Form5
         '
         'GroupBox1
         '
-        Me.GroupBox1.Controls.Add(Me.Button6)
+        Me.GroupBox1.Controls.Add(Me.BtnTransfOptions)
         Me.GroupBox1.Controls.Add(Me.CheckBox2)
         Me.GroupBox1.Controls.Add(Me.Button5)
         Me.GroupBox1.Controls.Add(Me.CheckBox1)
@@ -155,15 +155,14 @@ Partial Class Form5
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Actions:"
         '
-        'Button6
+        'BtnTransfOptions
         '
-        Me.Button6.Enabled = False
-        Me.Button6.Location = New System.Drawing.Point(350, 44)
-        Me.Button6.Name = "Button6"
-        Me.Button6.Size = New System.Drawing.Size(135, 23)
-        Me.Button6.TabIndex = 16
-        Me.Button6.Text = "Transformation Options"
-        Me.Button6.UseVisualStyleBackColor = True
+        Me.BtnTransfOptions.Location = New System.Drawing.Point(350, 44)
+        Me.BtnTransfOptions.Name = "BtnTransfOptions"
+        Me.BtnTransfOptions.Size = New System.Drawing.Size(135, 23)
+        Me.BtnTransfOptions.TabIndex = 16
+        Me.BtnTransfOptions.Text = "Transformation Options"
+        Me.BtnTransfOptions.UseVisualStyleBackColor = True
         '
         'CheckBox2
         '
@@ -407,6 +406,6 @@ Partial Class Form5
     Friend WithEvents Button4 As Button
     Friend WithEvents Button5 As Button
     Friend WithEvents CheckBox1 As CheckBox
-    Friend WithEvents Button6 As Button
+    Friend WithEvents BtnTransfOptions As Button
     Friend WithEvents CheckBox2 As CheckBox
 End Class

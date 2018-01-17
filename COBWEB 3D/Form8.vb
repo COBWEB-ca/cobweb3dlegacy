@@ -31,7 +31,7 @@ Public Class frmAdd
     Sub produce()
         If Form1.total + newagents <= generator.maxcell Then
 
-            Dim agenttobeproduced(newagents) As Integer
+            Dim newAgentType = ComboBoxagent.SelectedIndex + 1
             Dim rangexupper As Integer
             Dim rangexlower As Integer
             Dim rangeyupper As Integer
@@ -40,11 +40,7 @@ Public Class frmAdd
             Dim rangezlower As Integer
 
             For i = 1 To newagents
-                agenttobeproduced(i) = ComboBoxagent.SelectedIndex + 1
-            Next
-
-            For i = 1 To newagents
-                Form1.total = Form1.total + 1
+                'Form1.total = Form1.total + 1
 
                 If IsNumeric(TextBox2.Text) = True And IsNumeric(TextBox3.Text) And IsNumeric(TextBox4.Text) And IsNumeric(TextBox5.Text) And IsNumeric(TextBox6.Text) And IsNumeric(TextBox7.Text) Then
                     rangexupper = CInt(TextBox2.Text)
@@ -62,39 +58,19 @@ Public Class frmAdd
                     Exit Sub
                 End If
 
-                'allows the user to add the new agent in a specific location
-                If (rangexupper - rangexlower) = 0 And (rangeyupper - rangeylower) = 0 And (rangezupper - rangezlower) = 0 And generator.occupied(rangexupper, rangeyupper, rangezupper) = False Then
-                    Dim ddx As Integer = CInt(Math.Floor((Form1.xn) * Rnd())) + 1
-                    Dim ddy As Integer = CInt(Math.Floor((Form1.yn) * Rnd())) + 1
-                    Dim ddz As Integer = CInt(Math.Floor((Form1.zn) * Rnd())) + 1
-
-                    generator.agentlocation(Form1.total, 0) = rangexupper
-                    generator.agentlocation(Form1.total, 1) = rangeyupper
-                    generator.agentlocation(Form1.total, 2) = rangezupper
-                    generator.agentlocation(Form1.total, 3) = CInt(Math.Floor((6) * Rnd())) + 1
-                    generator.agentlocation(Form1.total, 4) = agenttobeproduced(i)
-                    generator.agentlocation(Form1.total, 5) = ddx
-                    generator.agentlocation(Form1.total, 6) = ddy
-                    generator.agentlocation(Form1.total, 7) = ddz
-                    generator.agentlocation(Form1.total, 8) = generator.initialenergy(agenttobeproduced(i))
-                    generator.agentlocation(Form1.total, 9) = 0
-                    generator.agentlocation(Form1.total, 10) = 0
-                    generator.agentcount(agenttobeproduced(i)) = 0
-                    For f = 1 To Form1.total
-                        If generator.agentlocation(f, 4) = agenttobeproduced(i) Then
-                            generator.agentcount(agenttobeproduced(i)) += 1
-                        End If
-                    Next
-
-                    'placing the agents
-                    generator.agentchange = True
-                    Form1.draw()
-                    Exit Sub
-                ElseIf (rangexupper - rangexlower) = 0 And (rangeyupper - rangeylower) = 0 And (rangezupper - rangezlower) = 0 And generator.occupied(rangexupper, rangeyupper, rangezupper) = True Then
-                    MessageBox.Show("The location where you want to insert the agent is occupied. Please enter another location.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                ' If the entered boundary is one cell, simply add one agent to the point if there is room and exit.
+                If (rangexupper - rangexlower) = 0 And (rangeyupper - rangeylower) = 0 And (rangezupper - rangezlower) = 0 Then
+                    If generator.occupied(rangexupper, rangeyupper, rangezupper) = True Then
+                        MessageBox.Show("The location where you want to insert the agent is occupied. Please enter another location.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                    Else
+                        Dim ddx As Integer = CInt(Math.Floor((Form1.xn) * Rnd())) + 1
+                        Dim ddy As Integer = CInt(Math.Floor((Form1.yn) * Rnd())) + 1
+                        Dim ddz As Integer = CInt(Math.Floor((Form1.zn) * Rnd())) + 1
+                        generator.createAgent(newAgentType, rangexupper, rangeyupper, rangezupper, CInt(Math.Floor((6) * Rnd())) + 1, ddx, ddy, ddz)
+                        Form1.draw()
+                    End If
                     Exit Sub
                 End If
-
 
                 Dim x As Integer = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
                 Dim y As Integer = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
@@ -103,6 +79,7 @@ Public Class frmAdd
                 Dim dy As Integer = CInt(Math.Floor((Form1.yn) * Rnd())) + 1
                 Dim dz As Integer = CInt(Math.Floor((Form1.zn) * Rnd())) + 1
 
+                ' Search for a non-occupied cell if (x, y, z) is occupied.
                 Dim number As Integer = 0
                 Do While generator.occupied(x, y, z) = True And number < generator.maxcell
                     number = number + 1
@@ -110,32 +87,8 @@ Public Class frmAdd
                     y = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
                     z = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
                 Loop
-
-
-                generator.occupied(x, y, z) = True
-
-                Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                generator.agentlocation(Form1.total, 0) = x
-                generator.agentlocation(Form1.total, 1) = y
-                generator.agentlocation(Form1.total, 2) = z
-                generator.agentlocation(Form1.total, 3) = d
-                generator.agentlocation(Form1.total, 4) = agenttobeproduced(i)
-                generator.agentlocation(Form1.total, 5) = dx
-                generator.agentlocation(Form1.total, 6) = dy
-                generator.agentlocation(Form1.total, 7) = dz
-                generator.agentlocation(Form1.total, 8) = generator.initialenergy(agenttobeproduced(i))
-                generator.agentlocation(Form1.total, 9) = 0
-                generator.agentlocation(Form1.total, 10) = 0
-
-                generator.agentcount(agenttobeproduced(i)) = 0
-                For f = 1 To Form1.total
-                    If generator.agentlocation(f, 4) = agenttobeproduced(i) Then
-                        generator.agentcount(agenttobeproduced(i)) += 1
-                    End If
-                Next
+                generator.createAgent(newAgentType, x, y, z, CInt(Math.Floor((6) * Rnd())) + 1, dx, dy, dz)
             Next
-
-            'placing the agents
             generator.agentchange = True
             Form1.draw()
         Else

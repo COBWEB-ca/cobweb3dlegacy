@@ -1,7 +1,9 @@
-﻿Public Class exchangedata
+﻿Imports Microsoft.Office.Interop.Excel
+
+Public Class exchangedata
 
     Private oExcel As Object
-    Private oBook As Object
+    Private oBook As Workbook
     Private oSheet As Object
     Private oSheet2 As Object
     Private oSheet3 As Object
@@ -15,7 +17,7 @@
                 oBook.SaveAs(exceldir)
                 exceldir = Nothing
             End If
-            oBook.close()
+            oBook.Close(SaveChanges:=False)
             oBook = Nothing
         End If
         If (oExcel IsNot Nothing) Then

@@ -50,7 +50,7 @@ Public Class Form1
     Private Sub updateLogic()
         For i = 1 To total
             If generator.agentchange = True Then
-                Call staticagentcheck()
+                'Call staticagentcheck()
             End If
 
             'I know this if statment doesnt make sense but if agent gets deminished i goes above total and one agent goes missing 
@@ -978,133 +978,140 @@ Public Class Form1
             opponentz = generator.agentlocation(i, 2) + 1
         End If
         'MsgBox(opponentx & " " & opponenty & " " & opponentz)
-        Dim ag As Integer
+        Dim oppType As Integer
 
         For opp = 1 To total
             If generator.agentlocation(opp, 0) = opponentx And generator.agentlocation(opp, 1) = opponenty And generator.agentlocation(opp, 2) = opponentz And i <> opp Then
-                ag = generator.agentlocation(opp, 4)
-                If generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 2 Then
+                oppType = generator.agentlocation(opp, 4)
+                If generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 2 Then ' This is what limits to one interaction between agent types.
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call consume(opp, opponentx, opponenty, opponentz, i)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
                             Call consume(opp, opponentx, opponenty, opponentz, i)
                         End If
                     End If
 
-                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 1 Then
+                ElseIf generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 1 Then
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                         End If
                     End If
 
-                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 3 Then
+                ElseIf generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 3 Then
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
                             Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp)
                         End If
                     End If
 
 
-                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 4 Then
+                ElseIf generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 4 Then
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                             Call consume(opp, opponentx, opponenty, opponentz, i)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                             Call consume(opp, opponentx, opponenty, opponentz, i)
                         End If
                     End If
 
 
-                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 5 Then
+                ElseIf generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 5 Then
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
                             Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
                         End If
                     End If
 
 
-                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 6 Then
+                ElseIf generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 6 Then
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                             Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), 0)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                             Call deminish(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), 0)
                         End If
                     End If
 
 
-                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 7 Then
+                ElseIf generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 7 Then
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                             Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
-                            Call produce(generator.agentlocation(i, 4), ag, i, opp)
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
+                            Call produce(generator.agentlocation(i, 4), oppType, i, opp)
                             Call deminishconsume(i, generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2), opp, opponentx, opponenty, opponentz)
                         End If
                     End If
                     'exchange
-                ElseIf generator.action(generator.agentlocation(i, 4), ag, 1, 0, 0) = 8 Then
+                ElseIf generator.action(generator.agentlocation(i, 4), oppType, 1, 0, 0) = 8 Then
                     generator.interactioncount(generator.agentlocation(i, 4)) += 1
-                    generator.interactioncount(ag) += 1
+                    generator.interactioncount(oppType) += 1
                     Dim randomvalue As Decimal = CDec(Math.Floor(101) * Rnd())
                     If catalysispresence(i, opp) = True Then
                         If randomvalue > 0 And randomvalue <= generator.catalystprobability(generator.agentlocation(i, 4), generator.agentlocation(opp, 4)) Then
                             Call exchange(i, opp)
                         End If
                     Else
-                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), ag) Then
+                        If randomvalue > 0 And randomvalue <= generator.interactionprobability(generator.agentlocation(i, 4), oppType) Then
                             Call exchange(i, opp)
                         End If
                     End If
                 End If
+                ' TODO: Test transforming
+                Dim transformKey = New generator.actKey(generator.agentlocation(i, 4), oppType)
+                If generator.transformationPlans.ContainsKey(transformKey) Then
+                    generator.agentlocation(i, 4) = generator.transformationPlans.Item(transformKey)
+                    ' TODO:
+                End If
+                Exit For ' TODO: TEST THIS OPTIMIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             End If
         Next
     End Sub
@@ -1150,27 +1157,27 @@ Public Class Form1
         transfer(5) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 15) 'the values by which quantity of y is incremented
         transfer(6) = generator.product(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 16) 'the minimum quantity of y that can be exchanged
         'MessageBox.Show(transfer(4) & vbCrLf & transfer(5) & vbCrLf & transfer(6))
-
+        Dim itypeUtilityFunction = generator.agentTypeUtilityFunction(generator.agentlocation(i, 4))
         If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
-            If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
+            If itypeUtilityFunction = 1 Then 'sqrt(xy)
                 tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
-            ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+            ElseIf itypeUtilityFunction = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
                 tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
-            ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
+            ElseIf itypeUtilityFunction = 3 Then 'third utility function ax + by
                 tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
-            ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
+            ElseIf itypeUtilityFunction = 4 Then 'min(x,y)
                 tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
             End If
         End If
-
+        Dim opptypeUtilityFunction = generator.agentTypeUtilityFunction(generator.agentlocation(opp, 4))
         If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
-            If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
+            If opptypeUtilityFunction = 1 Then 'sqrt(xy)
                 tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
-            ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+            ElseIf opptypeUtilityFunction = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
                 tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
-            ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
+            ElseIf opptypeUtilityFunction = 3 Then 'third utility function ax + by
                 tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
-            ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
+            ElseIf opptypeUtilityFunction = 4 Then 'min(x,y)
                 tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
             End If
         End If
@@ -1209,25 +1216,25 @@ Public Class Form1
                 End If
 
                 If (generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) >= 0 And (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) >= 0 Then 'prevents invalid operations (ie. sqrt(negative number))
-                    If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
+                    If itypeUtilityFunction = 1 Then 'sqrt(xy)
                         tempagenta = Math.Sqrt((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) * (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
-                    ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                    ElseIf itypeUtilityFunction = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
                         tempagenta = ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)) ^ generator.agentlocation(i, 16))
-                    ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function ax + by
+                    ElseIf itypeUtilityFunction = 3 Then 'third utility function ax + by
                         tempagenta = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1))))
-                    ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
+                    ElseIf itypeUtilityFunction = 4 Then 'min(x,y)
                         tempagenta = Math.Min((generator.agentlocation(i, 11) + (transfer(1) * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (transfer(2) * generator.agentlocation(i, 17) * -1)))
                     End If
                 End If
 
                 If (generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) >= 0 And (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) >= 0 Then
-                    If generator.agentlocation(opp, 13) = 1 Then 'sqrt(xy)
+                    If opptypeUtilityFunction = 1 Then 'sqrt(xy)
                         tempagentb = Math.Sqrt((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) * (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
-                    ElseIf generator.agentlocation(opp, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                    ElseIf opptypeUtilityFunction = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
                         tempagentb = ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))) ^ generator.agentlocation(opp, 15)) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)) ^ generator.agentlocation(opp, 16))
-                    ElseIf generator.agentlocation(opp, 13) = 3 Then 'third utility function ax + by
+                    ElseIf opptypeUtilityFunction = 3 Then 'third utility function ax + by
                         tempagentb = (generator.agentlocation(opp, 15) * ((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))))) + (generator.agentlocation(opp, 16) * ((generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1))))
-                    ElseIf generator.agentlocation(opp, 13) = 4 Then 'min(x,y)
+                    ElseIf opptypeUtilityFunction = 4 Then 'min(x,y)
                         tempagentb = Math.Min((generator.agentlocation(opp, 11) + (transfer(1) * generator.agentlocation(opp, 17))), (generator.agentlocation(opp, 12) + (transfer(2) * generator.agentlocation(opp, 17) * -1)))
                     End If
                 End If
@@ -1307,20 +1314,7 @@ Public Class Form1
             generator.agentreservoir(opp, 2) += generator.reservoirchange(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 1)
         End If
 
-        generator.agentlocation(i, 0) = 0
-        generator.agentlocation(i, 1) = 0
-        generator.agentlocation(i, 2) = 0
-        generator.agentlocation(i, 3) = 0
-        generator.agentlocation(i, 4) = 0
-        generator.agentlocation(i, 5) = 0
-        generator.agentlocation(i, 6) = 0
-        generator.agentlocation(i, 7) = 0
-        generator.agentlocation(i, 8) = 0
-        generator.agentlocation(i, 9) = 0
-        generator.agentlocation(i, 10) = 0
-        generator.occupied(ix, iy, iz) = False
-
-        total = total - 1
+        generator.removeAgent(i)
     End Sub
 
     Sub consume(ByVal opp, ByVal opponentx, ByVal opponenty, ByVal opponentz, ByVal i)
@@ -1330,20 +1324,8 @@ Public Class Form1
             generator.agentlocation(i, 8) = generator.agentlocation(i, 8) + generator.action(generator.agentlocation(i, 4), generator.agentlocation(opp, 4), 4, 0, 0)
         End If
 
-        generator.agentlocation(opp, 0) = 0
-        generator.agentlocation(opp, 1) = 0
-        generator.agentlocation(opp, 2) = 0
-        generator.agentlocation(opp, 3) = 0
-        generator.agentlocation(opp, 4) = 0
-        generator.agentlocation(opp, 5) = 0
-        generator.agentlocation(opp, 6) = 0
-        generator.agentlocation(opp, 7) = 0
-        generator.agentlocation(opp, 8) = 0
-        generator.agentlocation(opp, 9) = 0
-        generator.agentlocation(opp, 10) = 0
-        generator.occupied(opponentx, opponenty, opponentz) = False
 
-        total = total - 1
+        generator.removeAgent(opp)
     End Sub
 
     Sub produce(ByVal ag1, ByVal ag2, ByVal i, ByVal opp)
@@ -1380,7 +1362,7 @@ Public Class Form1
             Next
 
             For i = 1 To totalagentstobeproduced
-                total = total + 1
+                'total = total + 1
                 Dim rangexupper As Integer = generator.agentrange(agenttobeproduced(i), 0, 1)
                 Dim rangexlower As Integer = generator.agentrange(agenttobeproduced(i), 0, 0)
                 Dim rangeyupper As Integer = generator.agentrange(agenttobeproduced(i), 1, 1)
@@ -1438,54 +1420,29 @@ Public Class Form1
                     z = CInt(Math.Floor((zupper - zlower + 1) * Rnd())) + zlower
                 Loop
 
+                generator.createAgent(agenttobeproduced(i), x, y, z, CInt(Math.Floor((6) * Rnd())) + 1, dx, dy, dz)
 
-                generator.occupied(x, y, z) = True
+                'generator.occupied(x, y, z) = True
 
-                Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                generator.agentlocation(total, 0) = x
-                generator.agentlocation(total, 1) = y
-                generator.agentlocation(total, 2) = z
-                generator.agentlocation(total, 3) = d
-                generator.agentlocation(total, 4) = agenttobeproduced(i)
-                generator.agentlocation(total, 5) = dx
-                generator.agentlocation(total, 6) = dy
-                generator.agentlocation(total, 7) = dz
-                generator.agentlocation(total, 8) = generator.initialenergy(agenttobeproduced(i))
-                generator.agentlocation(total, 9) = 0
-                generator.agentlocation(total, 10) = 0
+                'Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+                'generator.agentlocation(total, 0) = x
+                'generator.agentlocation(total, 1) = y
+                'generator.agentlocation(total, 2) = z
+                'generator.agentlocation(total, 3) = d
+                'generator.agentlocation(total, 4) = agenttobeproduced(i)
+                'generator.agentlocation(total, 5) = dx
+                'generator.agentlocation(total, 6) = dy
+                'generator.agentlocation(total, 7) = dz
+                'generator.agentlocation(total, 8) = generator.initialenergy(agenttobeproduced(i))
+                'generator.agentlocation(total, 9) = 0
+                'generator.agentlocation(total, 10) = 0
             Next
         End If
     End Sub
 
     Sub deminishconsume(ByVal i, ByVal ix, ByVal iy, ByVal iz, ByVal opp, ByVal opponentx, ByVal opponenty, ByVal opponentz)
-        generator.agentlocation(i, 0) = 0
-        generator.agentlocation(i, 1) = 0
-        generator.agentlocation(i, 2) = 0
-        generator.agentlocation(i, 3) = 0
-        generator.agentlocation(i, 4) = 0
-        generator.agentlocation(i, 5) = 0
-        generator.agentlocation(i, 6) = 0
-        generator.agentlocation(i, 7) = 0
-        generator.agentlocation(i, 8) = 0
-        generator.agentlocation(i, 9) = 0
-        generator.agentlocation(i, 10) = 0
-        generator.occupied(ix, iy, iz) = False
-
-
-        generator.agentlocation(opp, 0) = 0
-        generator.agentlocation(opp, 1) = 0
-        generator.agentlocation(opp, 2) = 0
-        generator.agentlocation(opp, 3) = 0
-        generator.agentlocation(opp, 4) = 0
-        generator.agentlocation(opp, 5) = 0
-        generator.agentlocation(opp, 6) = 0
-        generator.agentlocation(opp, 7) = 0
-        generator.agentlocation(opp, 8) = 0
-        generator.agentlocation(opp, 9) = 0
-        generator.agentlocation(opp, 10) = 0
-        generator.occupied(opponentx, opponenty, opponentz) = False
-
-        total = total - 2
+        generator.removeAgent(i)
+        generator.removeAgent(opp)
     End Sub
 
     Private Sub reservoirrelase(ByVal i As Integer)
@@ -1527,7 +1484,7 @@ Public Class Form1
                         Next
 
                         For k = 1 To newagents
-                            total = total + 1
+                            'total = total + 1
 
 
                             rangexupper = generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 3) + generator.agentlocation(i, 0)
@@ -1571,21 +1528,21 @@ Public Class Form1
                                 z = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
                             Loop
 
+                            generator.createAgent(agenttobeproduced(k), x, y, z, CInt(Math.Floor((6) * Rnd())) + 1, dx, dy, dz)
+                            'generator.occupied(x, y, z) = True
 
-                            generator.occupied(x, y, z) = True
-
-                            Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                            generator.agentlocation(total, 0) = x
-                            generator.agentlocation(total, 1) = y
-                            generator.agentlocation(total, 2) = z
-                            generator.agentlocation(total, 3) = d
-                            generator.agentlocation(total, 4) = agenttobeproduced(k)
-                            generator.agentlocation(total, 5) = dx
-                            generator.agentlocation(total, 6) = dy
-                            generator.agentlocation(total, 7) = dz
-                            generator.agentlocation(total, 8) = generator.initialenergy(agenttobeproduced(k))
-                            generator.agentlocation(total, 9) = 0
-                            generator.agentlocation(total, 10) = 0
+                            'Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+                            'generator.agentlocation(total, 0) = x
+                            'generator.agentlocation(total, 1) = y
+                            'generator.agentlocation(total, 2) = z
+                            'generator.agentlocation(total, 3) = d
+                            'generator.agentlocation(total, 4) = agenttobeproduced(k)
+                            'generator.agentlocation(total, 5) = dx
+                            'generator.agentlocation(total, 6) = dy
+                            'generator.agentlocation(total, 7) = dz
+                            'generator.agentlocation(total, 8) = generator.initialenergy(agenttobeproduced(k))
+                            'generator.agentlocation(total, 9) = 0
+                            'generator.agentlocation(total, 10) = 0
 
                             generator.agentreservoir(i, 2) -= generator.reservoiragentreleased(generator.agentlocation(i, 4), j, 2)
 
@@ -1601,9 +1558,9 @@ Public Class Form1
             Next
         Next
     End Sub
-    Sub asrproduce(ByVal agent As Integer)
+    Sub asrproduce(ByVal agentType As Integer)
         If total < generator.maxcell Then
-            total = total + 1
+            ' total = total + 1
 
             Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
             Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
@@ -1616,12 +1573,12 @@ Public Class Form1
             'look here
 
 
-            Dim rangexupper As Integer = generator.agentrange(agent, 0, 1)
-            Dim rangexlower As Integer = generator.agentrange(agent, 0, 0)
-            Dim rangeyupper As Integer = generator.agentrange(agent, 1, 1)
-            Dim rangeylower As Integer = generator.agentrange(agent, 1, 0)
-            Dim rangezupper As Integer = generator.agentrange(agent, 2, 1)
-            Dim rangezlower As Integer = generator.agentrange(agent, 2, 0)
+            Dim rangexupper As Integer = generator.agentrange(agentType, 0, 1)
+            Dim rangexlower As Integer = generator.agentrange(agentType, 0, 0)
+            Dim rangeyupper As Integer = generator.agentrange(agentType, 1, 1)
+            Dim rangeylower As Integer = generator.agentrange(agentType, 1, 0)
+            Dim rangezupper As Integer = generator.agentrange(agentType, 2, 1)
+            Dim rangezlower As Integer = generator.agentrange(agentType, 2, 0)
 
             dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
             dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
@@ -1637,21 +1594,21 @@ Public Class Form1
                 z = CInt(Math.Floor((zn) * Rnd())) + 1
             Loop
 
+            generator.createAgent(agentType, x, y, z, CInt(Math.Floor((6) * Rnd())) + 1, dx, dy, dz)
+            'generator.occupied(x, y, z) = True
 
-            generator.occupied(x, y, z) = True
-
-            Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-            generator.agentlocation(total, 0) = x
-            generator.agentlocation(total, 1) = y
-            generator.agentlocation(total, 2) = z
-            generator.agentlocation(total, 3) = d
-            generator.agentlocation(total, 4) = agent
-            generator.agentlocation(total, 5) = dx
-            generator.agentlocation(total, 6) = dy
-            generator.agentlocation(total, 7) = dz
-            generator.agentlocation(total, 8) = generator.initialenergy(agent)
-            generator.agentlocation(total, 9) = 0
-            generator.agentlocation(total, 10) = 0
+            'Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
+            'generator.agentlocation(total, 0) = x
+            'generator.agentlocation(total, 1) = y
+            'generator.agentlocation(total, 2) = z
+            'generator.agentlocation(total, 3) = d
+            'generator.agentlocation(total, 4) = agent
+            'generator.agentlocation(total, 5) = dx
+            'generator.agentlocation(total, 6) = dy
+            'generator.agentlocation(total, 7) = dz
+            'generator.agentlocation(total, 8) = generator.initialenergy(agent)
+            'generator.agentlocation(total, 9) = 0
+            'generator.agentlocation(total, 10) = 0
         End If
     End Sub
 #End Region

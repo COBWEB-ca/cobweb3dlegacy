@@ -58,14 +58,15 @@
         Next
 
         For i = 1 To Form1.total
+            Dim typeUtilityFunction = generator.agentTypeUtilityFunction(generator.agentlocation(i, 4))
             If generator.agentlocation(i, 11) <> 0 And generator.agentlocation(i, 12) <> 0 Then
-                If generator.agentlocation(i, 13) = 1 Then 'sqrt(xy)
+                If typeUtilityFunction = 1 Then 'sqrt(xy)
                     generator.agentlocation(i, 14) = Math.Sqrt((generator.agentlocation(i, 11)) * (generator.agentlocation(i, 12)))
-                ElseIf generator.agentlocation(i, 13) = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
+                ElseIf typeUtilityFunction = 2 Then 'second utility function U = (C^0.5)*(P^0.5)
                     generator.agentlocation(i, 14) = ((generator.agentlocation(i, 11)) ^ generator.agentlocation(i, 15)) * ((generator.agentlocation(i, 12)) ^ generator.agentlocation(i, 16))
-                ElseIf generator.agentlocation(i, 13) = 3 Then 'third utility function
+                ElseIf typeUtilityFunction = 3 Then 'third utility function
                     generator.agentlocation(i, 14) = (generator.agentlocation(i, 15) * ((generator.agentlocation(i, 11) + (1 * generator.agentlocation(i, 17))))) + (generator.agentlocation(i, 16) * ((generator.agentlocation(i, 12) + (1 * generator.agentlocation(i, 17) * -1))))
-                ElseIf generator.agentlocation(i, 13) = 4 Then 'min(x,y)
+                ElseIf typeUtilityFunction = 4 Then 'min(x,y)
                     generator.agentlocation(i, 14) = Math.Min((generator.agentlocation(i, 11) + (1 * generator.agentlocation(i, 17))), (generator.agentlocation(i, 12) + (1 * generator.agentlocation(i, 17) * -1)))
                 End If
             End If
@@ -114,7 +115,7 @@
         Try
             TextBox2.Text = CInt(TextBox11.Text) + 10
         Catch ex As InvalidCastException
-            Console.WriteLine(ex.)
+            Console.WriteLine(ex.Message)
         End Try
     End Sub
 
