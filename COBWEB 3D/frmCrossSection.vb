@@ -140,7 +140,6 @@
             Next
         Next
 
-        generator.agentchange = True
         Form1.draw()
 
         clearProposedLocations()

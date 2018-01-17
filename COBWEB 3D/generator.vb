@@ -1,6 +1,6 @@
 ﻿Public Class generator
     ' Agent Individual Parameters
-    Public agentlocation(100000, 115) As Decimal 'Huge array of all the individual agents in the simulation
+    Public agentlocation(100, 22) As Decimal 'Huge array of all the individual agents in the simulation
 
     ' Agent Type Parameterss
     Public agentcount(Form1.agentTypeCount) As Integer
@@ -47,7 +47,6 @@
     Public transformationPlans As New Dictionary(Of actKey, Integer)
 
     Public staticagent(100000) As Integer
-    Public agentchange As Boolean
     Public staticagentid(Form1.agentTypeCount) As Integer
 
     'keeps track of the probability of there being an interaction between two agents
@@ -92,10 +91,10 @@
     Public multipleiterations(1) As Decimal
 
     Private Sub generator_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
         Me.Hide()
-
-
+        ReDim agentlocation((Form1.xn * Form1.yn * Form1.zn) + 1, 22)
+        ReDim staticagent((Form1.xn * Form1.yn * Form1.zn) + 1)
+        ReDim agentreservoir((Form1.xn * Form1.yn * Form1.zn) + 1, 2)
         For i = 1 To Form1.agentTypeCount
             agentname(i) = "Agent" & i
             initialenergy(i) = 1
@@ -141,24 +140,74 @@
         Form1.draw()
     End Sub
 
-    Public Sub createAgent(type As Integer, x As Integer, y As Integer, z As Integer, direction As Integer, dx As Integer, dy As Integer, dz As Integer)
-        If (occupied(x, y, z) = True) Then
-            For i = 1 To Form1.total
-                If agentlocation(i, 0) = x And agentlocation(i, 1) = y And agentlocation(i, 2) = z Then
-                    If agentlocation(i, 4) <> type Then
-                        agentcount(agentlocation(i, 4)) -= 1
-                        agentcount(type) += 1
-                    End If
+    Public Sub resetAgents()
+        ReDim agentlocation(agentlocation.GetLength(0), agentlocation.GetLength(1))
+        Dim tempAgentTypeCounts(agentcount.Length)
+        Array.Copy(agentcount, tempAgentTypeCounts, agentcount.Length)
+        Array.Clear(agentcount, 0, agentcount.Length)
+        For i = 1 To Form1.agentTypeCount
+            Dim type = i
+            For j = 1 To tempAgentTypeCounts(type)
+                Dim x As Integer = CInt(Math.Floor((Form1.xn) * Rnd())) + 1
+                Dim y As Integer = CInt(Math.Floor((Form1.yn) * Rnd())) + 1
+                Dim z As Integer = CInt(Math.Floor((Form1.zn) * Rnd())) + 1
+
+                Dim dx As Integer
+                Dim dy As Integer
+                Dim dz As Integer
+
+                Dim rangexupper As Integer = agentrange(type, 0, 1)
+                Dim rangexlower As Integer = agentrange(type, 0, 0)
+                Dim rangeyupper As Integer = agentrange(type, 1, 1)
+                Dim rangeylower As Integer = agentrange(type, 1, 0)
+                Dim rangezupper As Integer = agentrange(type, 2, 1)
+                Dim rangezlower As Integer = agentrange(type, 2, 0)
+
+
+                dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
+                dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
+                dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
+
+
+                Do While occupied(x, y, z) = True
+                    x = CInt(Math.Floor((Form1.xn) * Rnd())) + 1
+                    y = CInt(Math.Floor((Form1.yn) * Rnd())) + 1
+                    z = CInt(Math.Floor((Form1.zn) * Rnd())) + 1
+                Loop
+
+                'this allows agents to start in a specific range. if all or almost all spaces in a region are occupied, the program moves onto the next agent type
+                If agentstart(type, 0) = 2 Then
+                    Dim maxiterations As Double
+                    x = CInt(Math.Floor(((agentstart(type, 1) - agentstart(type, 2)) + 1) * Rnd()) + agentstart(type, 2))
+                    y = CInt(Math.Floor(((agentstart(type, 3) - agentstart(type, 4)) + 1) * Rnd()) + agentstart(type, 4))
+                    z = CInt(Math.Floor(((agentstart(type, 5) - agentstart(type, 6)) + 1) * Rnd()) + agentstart(type, 6))
+                    Try
+                        Do While occupied(x, y, z) = True And maxiterations < ((agentstart(type, 1) - agentstart(type, 2)) + 1) * ((agentstart(type, 3) - agentstart(type, 4)) + 1) * ((agentstart(type, 5) - agentstart(type, 6)) + 1) * 3
+                            x = CInt(Math.Floor((agentstart(type, 1) - agentstart(type, 2) + 1) * Rnd()) + agentstart(type, 2))
+                            y = CInt(Math.Floor((agentstart(type, 3) - agentstart(type, 4) + 1) * Rnd()) + agentstart(type, 4))
+                            z = CInt(Math.Floor((agentstart(type, 5) - agentstart(type, 6) + 1) * Rnd()) + agentstart(type, 6))
+                            maxiterations += 1
+                        Loop
+                        If maxiterations >= ((agentstart(type, 1) - agentstart(type, 2)) + 1) * ((agentstart(type, 3) - agentstart(type, 4)) + 1) * ((agentstart(type, 5) - agentstart(type, 6)) + 1) * 3 Then
+                            Continue For
+                        End If
+                    Catch ex As Exception
+                        MessageBox.Show(x & " " & y & " " & z)
+                    End Try
                 End If
+
+                Dim Offset = If(i > 1, tempAgentTypeCounts(type), 0)
+                createAgent(type, x, y, z, CInt(Math.Floor((6) * Rnd())) + 1, dx, dy, dz)
             Next
-        Else
-            agentcount(type) += 1
-            occupied(x, y, z) = True
-            Form1.total += 1
-        End If
+        Next
+    End Sub
 
-        Dim index = Form1.total
-
+    Private Sub addAgent(index As Integer, type As Integer, x As Integer, y As Integer, z As Integer, direction As Integer, dx As Integer, dy As Integer, dz As Integer)
+        'If (index >= agentlocation.GetLength(0)) Then TODO: Adapt size later?
+        '    Dim temp(agentlocation.GetLength(0) * 2, agentlocation.GetLength(1)) As Decimal
+        '    Array.ConstrainedCopy(agentlocation, 0, temp, 0, agentlocation.Length)
+        '    agentlocation = temp
+        'End If
         agentlocation(index, 0) = x
         agentlocation(index, 1) = y
         agentlocation(index, 2) = z
@@ -183,29 +232,36 @@
             agentreservoir(index, 1) = 0
             agentreservoir(index, 2) = 0
         End If
+    End Sub
 
-        agentchange = True
-        'For c = 1 To total
-        '    If generator.staticagentid(generator.agentlocation(c, 4)) = 2 Then
-        '        generator.staticagent(c) = 2
-        '        If generator.reservoiragentid(generator.agentlocation(c, 4), 1) = 2 Then
-        '            generator.agentreservoir(c, 0) = 2
-        '            generator.agentreservoir(c, 1) = generator.reservoiragentid(generator.agentlocation(c, 4), 2)
-        '        End If
-        '    ElseIf generator.staticagentid(generator.agentlocation(c, 4)) = 0 Then
-        '        generator.staticagent(c) = 0
-        '        generator.agentreservoir(c, 0) = 0
-        '        generator.agentreservoir(c, 1) = 0
-        '        generator.agentreservoir(c, 2) = 0
-        '    End If
-        'Next
-
+    Private Sub createAgent(countChanges As Boolean, type As Integer, x As Integer, y As Integer, z As Integer, direction As Integer, dx As Integer, dy As Integer, dz As Integer)
+        If (countChanges) Then
+            If (occupied(x, y, z) = True) Then
+                For i = 1 To Form1.total
+                    If agentlocation(i, 0) = x And agentlocation(i, 1) = y And agentlocation(i, 2) = z Then
+                        If agentlocation(i, 4) <> type Then
+                            agentcount(agentlocation(i, 4)) -= 1
+                            agentcount(type) += 1
+                        End If
+                    End If
+                Next
+            Else
+                agentcount(type) += 1
+                occupied(x, y, z) = True
+                Form1.total += 1
+            End If
+        End If
+        addAgent(Form1.total, type, x, y, z, direction, dx, dy, dz)
         'generator.agentcount(newAgentType) = 0
         'For f = 1 To Form1.total
         '    If generator.agentlocation(f, 4) = newAgentType Then
         '        generator.agentcount(newAgentType) += 1
         '    End If
         'Next
+    End Sub
+
+    Public Sub createAgent(type As Integer, x As Integer, y As Integer, z As Integer, direction As Integer, dx As Integer, dy As Integer, dz As Integer)
+        createAgent(True, type, x, y, z, direction, dx, dy, dz)
     End Sub
 
     Public Sub removeAgent(agentIndex As Integer)
@@ -217,18 +273,13 @@
             agentcount(type) -= 1
             occupied(x, y, z) = False
             Form1.total -= 1
-            agentlocation(agentIndex, 0) = 0
-            agentlocation(agentIndex, 1) = 0
-            agentlocation(agentIndex, 2) = 0
-            agentlocation(agentIndex, 3) = 0
-            agentlocation(agentIndex, 4) = 0
-            agentlocation(agentIndex, 5) = 0
-            agentlocation(agentIndex, 6) = 0
-            agentlocation(agentIndex, 7) = 0
-            agentlocation(agentIndex, 8) = 0
-            agentlocation(agentIndex, 9) = 0
-            agentlocation(agentIndex, 10) = 0
-            agentchange = True
+            For i = 0 To agentlocation.GetLength(1) - 1
+                agentlocation(agentIndex, i) = 0
+            Next
+            staticagent(agentIndex) = 0
+            For i = 0 To agentreservoir.GetLength(1) - 1
+                agentreservoir(agentIndex, i) = 0
+            Next
         End If
     End Sub
 
@@ -245,5 +296,36 @@
 
     Public Sub transformAgent(agentIndex As Integer, destType As Integer)
         agentlocation(agentIndex, 4) = destType
+    End Sub
+
+    Public Sub swapAgentIndices(srcAgentIndex As Integer, dstAgentIndex As Integer)
+        ' Destination -> Temp
+        Dim tempAgentParams(agentlocation.GetLength(1)) As Decimal
+        For i = 0 To agentlocation.GetLength(1) - 1
+            tempAgentParams(i) = agentlocation(dstAgentIndex, i)
+        Next
+        Dim tempStaticParam As Integer = staticagent(dstAgentIndex)
+        Dim tempReservoirParams(agentreservoir.GetLength(1)) As Integer
+        For i = 0 To agentreservoir.GetLength(1) - 1
+            tempReservoirParams(i) = agentreservoir(dstAgentIndex, i)
+        Next
+
+        ' Source -> Destination
+        For i = 0 To agentlocation.GetLength(1) - 1
+            agentlocation(dstAgentIndex, i) = agentlocation(srcAgentIndex, i)
+        Next
+        staticagent(dstAgentIndex) = staticagent(srcAgentIndex)
+        For i = 0 To agentreservoir.GetLength(1) - 1
+            agentreservoir(dstAgentIndex, i) = agentreservoir(srcAgentIndex, i)
+        Next
+
+        ' Temp -> Source
+        For i = 0 To agentlocation.GetLength(1) - 1
+            agentlocation(srcAgentIndex, i) = tempAgentParams(i)
+        Next
+        staticagent(srcAgentIndex) = tempStaticParam
+        For i = 0 To agentreservoir.GetLength(1) - 1
+            agentreservoir(srcAgentIndex, i) = tempReservoirParams(i)
+        Next
     End Sub
 End Class

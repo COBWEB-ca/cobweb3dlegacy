@@ -236,7 +236,6 @@
             End If
         Next
 
-        generator.agentchange = True
         Form1.draw()
         Me.Close()
     End Sub

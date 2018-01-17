@@ -89,14 +89,12 @@ Public Class frmAdd
                 Loop
                 generator.createAgent(newAgentType, x, y, z, CInt(Math.Floor((6) * Rnd())) + 1, dx, dy, dz)
             Next
-            generator.agentchange = True
             Form1.draw()
         Else
             MessageBox.Show("The number of new agents exceeds the number of empty spaces available. Please enter a lower value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Exit Sub
         End If
 
-        generator.agentchange = True
         ' Me.Close()
     End Sub
 

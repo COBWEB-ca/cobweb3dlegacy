@@ -143,7 +143,6 @@
             generator.staticagentid(ComboBoxagent.SelectedIndex + 1) = 0
         End If
 
-        generator.agentchange = True
         Form1.draw()
     End Sub
 
@@ -152,8 +151,6 @@
     End Sub
 
     Sub rangeview()
-        generator.agentchange = True
-
         If CheckBox2.Checked = True Then
             Form1.visualizerange = ComboBoxagent.SelectedIndex + 1
         Else
@@ -228,8 +225,6 @@
             Next
             generator.reservoiragentid(ComboBoxagent.SelectedIndex + 1, 1) = 0
         End If
-
-        generator.agentchange = True
         Form1.draw()
     End Sub
 

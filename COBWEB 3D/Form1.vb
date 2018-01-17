@@ -49,10 +49,6 @@ Public Class Form1
 
     Private Sub updateLogic()
         For i = 1 To total
-            If generator.agentchange = True Then
-                'Call staticagentcheck()
-            End If
-
             'I know this if statment doesnt make sense but if agent gets deminished i goes above total and one agent goes missing 
             If i > total Then
                 Exit For
@@ -854,7 +850,6 @@ Public Class Form1
         'End If
         'Next
         '  Next
-        generator.agentchange = False
     End Sub
 
     Sub contact(ByVal agentt As Integer, ByVal i As Integer)
@@ -1331,8 +1326,6 @@ Public Class Form1
     Sub produce(ByVal ag1, ByVal ag2, ByVal i, ByVal opp)
         Dim originalagent As Integer = i
 
-        generator.agentchange = True
-
         Dim totalagentstobeproduced As Integer
         For i = 1 To agentTypeCount
             totalagentstobeproduced = totalagentstobeproduced + generator.action(ag1, ag2, 2, i, 1)
@@ -1553,7 +1546,6 @@ Public Class Form1
                         Console.WriteLine("Weird thing called")
                         draw() 'TODO: What is this? Why doesnt this code ever get executed in my own tests?
                     End If
-                    generator.agentchange = True
                 End If
             Next
         Next
@@ -1618,158 +1610,7 @@ Public Class Form1
         total = 0
         tick = 0
         tslblCurrentTick.Text = tick
-
-        Dim number As Integer
-
-        Dim agents(agentTypeCount) As Integer
-
-        For a = 1 To agentTypeCount
-            Dim agentsadded As Integer = 0
-            For i = 1 To generator.agentcount(a)
-                number = number + 1
-                Dim x As Integer = CInt(Math.Floor((xn) * Rnd())) + 1
-                Dim y As Integer = CInt(Math.Floor((yn) * Rnd())) + 1
-                Dim z As Integer = CInt(Math.Floor((zn) * Rnd())) + 1
-
-                Dim dx As Integer
-                Dim dy As Integer
-                Dim dz As Integer
-
-                Dim rangexupper As Integer = generator.agentrange(a, 0, 1)
-                Dim rangexlower As Integer = generator.agentrange(a, 0, 0)
-                Dim rangeyupper As Integer = generator.agentrange(a, 1, 1)
-                Dim rangeylower As Integer = generator.agentrange(a, 1, 0)
-                Dim rangezupper As Integer = generator.agentrange(a, 2, 1)
-                Dim rangezlower As Integer = generator.agentrange(a, 2, 0)
-
-
-
-                dx = CInt(Math.Floor((rangexupper - rangexlower + 1) * Rnd())) + rangexlower
-                dy = CInt(Math.Floor((rangeyupper - rangeylower + 1) * Rnd())) + rangeylower
-                dz = CInt(Math.Floor((rangezupper - rangezlower + 1) * Rnd())) + rangezlower
-
-
-                Do While generator.occupied(x, y, z) = True
-                    x = CInt(Math.Floor((xn) * Rnd())) + 1
-                    y = CInt(Math.Floor((yn) * Rnd())) + 1
-                    z = CInt(Math.Floor((zn) * Rnd())) + 1
-                Loop
-
-                'this allows agents to start in a specific range. if all or almost all spaces in a region are occupied, the program moves onto the next agent type
-                If generator.agentstart(a, 0) = 2 Then
-                    Dim maxiterations As Double
-                    x = CInt(Math.Floor(((generator.agentstart(a, 1) - generator.agentstart(a, 2)) + 1) * Rnd()) + generator.agentstart(a, 2))
-                    y = CInt(Math.Floor(((generator.agentstart(a, 3) - generator.agentstart(a, 4)) + 1) * Rnd()) + generator.agentstart(a, 4))
-                    z = CInt(Math.Floor(((generator.agentstart(a, 5) - generator.agentstart(a, 6)) + 1) * Rnd()) + generator.agentstart(a, 6))
-                    Try
-                        Do While generator.occupied(x, y, z) = True And maxiterations < 100000
-                            x = CInt(Math.Floor((generator.agentstart(a, 1) - generator.agentstart(a, 2) + 1) * Rnd()) + generator.agentstart(a, 2))
-                            y = CInt(Math.Floor((generator.agentstart(a, 3) - generator.agentstart(a, 4) + 1) * Rnd()) + generator.agentstart(a, 4))
-                            z = CInt(Math.Floor((generator.agentstart(a, 5) - generator.agentstart(a, 6) + 1) * Rnd()) + generator.agentstart(a, 6))
-                            maxiterations += 1
-                        Loop
-                    Catch ex As Exception
-                        MessageBox.Show(x & " " & y & " " & z)
-                    End Try
-
-                    If maxiterations = 100000 Then
-                        i = generator.agentcount(a) + 1
-                        agents(a) = agentsadded
-                    End If
-                End If
-
-                generator.occupied(x, y, z) = True
-
-                If i <> generator.agentcount(a) + 1 Then
-                    Dim d As Integer = CInt(Math.Floor((6) * Rnd())) + 1
-                    generator.agentlocation(number, 0) = x
-                    generator.agentlocation(number, 1) = y
-                    generator.agentlocation(number, 2) = z
-                    generator.agentlocation(number, 3) = d
-                    generator.agentlocation(number, 4) = a
-                    generator.agentlocation(number, 5) = dx
-                    generator.agentlocation(number, 6) = dy
-                    generator.agentlocation(number, 7) = dz
-                    generator.agentlocation(number, 8) = generator.initialenergy(a)
-                    generator.agentlocation(number, 9) = 0
-                    generator.agentlocation(number, 10) = 0
-                    agentsadded += 1
-                End If
-
-                If i = generator.agentcount(a) Then
-                    agents(a) = agentsadded
-                End If
-            Next
-
-        Next
-
-        For i = 1 To agentTypeCount
-            total = total + agents(i)
-            'Form1.total = Form1.total + generator.agentcount(i)
-        Next
-
-        For index = 2 To total
-            Dim tempz As Integer = generator.agentlocation(index, 2)
-            Dim tempx As Integer = generator.agentlocation(index, 0)
-            Dim tempy As Integer = generator.agentlocation(index, 1)
-            Dim tempd As Integer = generator.agentlocation(index, 3)
-            Dim tempa As Integer = generator.agentlocation(index, 4)
-            Dim tempstatic As Integer = generator.staticagent(index)
-
-            Dim tempdx As Integer = generator.agentlocation(index, 5)
-            Dim tempdy As Integer = generator.agentlocation(index, 6)
-            Dim tempdz As Integer = generator.agentlocation(index, 7)
-
-            Dim tempenergy As Integer = generator.agentlocation(index, 8)
-            Dim tempage As Integer = generator.agentlocation(index, 9)
-            Dim tempasr As Integer = generator.agentlocation(index, 10)
-
-            Dim previousposition As Integer = index - 1
-            Do While tempz > generator.agentlocation(previousposition, 2) And previousposition >= 1
-                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
-                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
-                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
-                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
-                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
-
-                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
-                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
-                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
-
-                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
-                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
-                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
-
-                If generator.staticagent(previousposition) = 2 Then
-                    generator.staticagent(previousposition + 1) = 2
-                ElseIf generator.staticagent(previousposition) = 0 Then
-                    generator.staticagent(previousposition + 1) = 0
-                End If
-
-                previousposition = previousposition - 1
-            Loop
-
-            If tempstatic = 2 Then
-                generator.staticagent(previousposition + 1) = 2
-            ElseIf tempstatic = 0 Then
-                generator.staticagent(previousposition + 1) = 0
-            End If
-
-            generator.agentlocation(previousposition + 1, 2) = tempz
-            generator.agentlocation(previousposition + 1, 0) = tempx
-            generator.agentlocation(previousposition + 1, 1) = tempy
-            generator.agentlocation(previousposition + 1, 3) = tempd
-            generator.agentlocation(previousposition + 1, 4) = tempa
-
-            generator.agentlocation(previousposition + 1, 5) = tempdx
-            generator.agentlocation(previousposition + 1, 6) = tempdy
-            generator.agentlocation(previousposition + 1, 7) = tempdz
-
-            generator.agentlocation(previousposition + 1, 8) = tempenergy
-            generator.agentlocation(previousposition + 1, 9) = tempage
-            generator.agentlocation(previousposition + 1, 10) = tempasr
-
-        Next
+        generator.resetAgents()
 
         'changes the direction of new agents according to user input
         For i = 1 To agentTypeCount
@@ -1782,11 +1623,6 @@ Public Class Form1
             End If
         Next
 
-        generator.agentchange = True
-        Array.Clear(generator.occupied, 0, generator.occupied.Length)
-        For i = 1 To total
-            generator.occupied(generator.agentlocation(i, 0), generator.agentlocation(i, 1), generator.agentlocation(i, 2)) = True
-        Next
         draw()
     End Sub
 
@@ -1873,31 +1709,6 @@ Public Class Form1
             Dim tempz As Integer = generator.agentlocation(index, 2)
             Dim tempx As Integer = generator.agentlocation(index, 0)
             Dim tempy As Integer = generator.agentlocation(index, 1)
-            Dim tempd As Integer = generator.agentlocation(index, 3)
-            Dim tempa As Integer = generator.agentlocation(index, 4)
-            Dim tempstatic As Integer = generator.staticagent(index)
-            Dim tempreservoir(2) As Integer
-            tempreservoir(0) = generator.agentreservoir(index, 0)
-            tempreservoir(1) = generator.agentreservoir(index, 1)
-            tempreservoir(2) = generator.agentreservoir(index, 2)
-
-            Dim tempsellerbuyer As Integer = generator.agentlocation(index, 13)
-            Dim temputility As Decimal = generator.agentlocation(index, 14)
-            Dim tempcurrency As Decimal = generator.agentlocation(index, 11)
-            Dim tempproduct As Decimal = generator.agentlocation(index, 12)
-            Dim tempprice As Decimal = generator.agentlocation(index, 15)
-            Dim temp16 As Decimal = generator.agentlocation(index, 16)
-            Dim temp17 As Decimal = generator.agentlocation(index, 17)
-            Dim temp18 As Decimal = generator.agentlocation(index, 18)
-            Dim temp19 As Decimal = generator.agentlocation(index, 19)
-
-            Dim tempdx As Integer = generator.agentlocation(index, 5)
-            Dim tempdy As Integer = generator.agentlocation(index, 6)
-            Dim tempdz As Integer = generator.agentlocation(index, 7)
-
-            Dim tempenergy As Integer = generator.agentlocation(index, 8)
-            Dim tempage As Integer = generator.agentlocation(index, 9)
-            Dim tempasr As Integer = generator.agentlocation(index, 10)
 
             Dim previousposition As Integer = index - 1
 
@@ -1913,92 +1724,9 @@ Public Class Form1
             End Select
 
             Do While tempProjectedZ > tempProjectedComparisonZ And previousposition >= 1
-
-                generator.agentlocation(previousposition + 1, 0) = generator.agentlocation(previousposition, 0)
-                generator.agentlocation(previousposition + 1, 1) = generator.agentlocation(previousposition, 1)
-                generator.agentlocation(previousposition + 1, 2) = generator.agentlocation(previousposition, 2)
-                generator.agentlocation(previousposition + 1, 3) = generator.agentlocation(previousposition, 3)
-                generator.agentlocation(previousposition + 1, 4) = generator.agentlocation(previousposition, 4)
-
-                generator.agentlocation(previousposition + 1, 5) = generator.agentlocation(previousposition, 5)
-                generator.agentlocation(previousposition + 1, 6) = generator.agentlocation(previousposition, 6)
-                generator.agentlocation(previousposition + 1, 7) = generator.agentlocation(previousposition, 7)
-
-                generator.agentlocation(previousposition + 1, 8) = generator.agentlocation(previousposition, 8)
-                generator.agentlocation(previousposition + 1, 9) = generator.agentlocation(previousposition, 9)
-                generator.agentlocation(previousposition + 1, 10) = generator.agentlocation(previousposition, 10)
-
-                generator.agentlocation(previousposition + 1, 11) = generator.agentlocation(previousposition, 11)
-                generator.agentlocation(previousposition + 1, 12) = generator.agentlocation(previousposition, 12)
-                generator.agentlocation(previousposition + 1, 13) = generator.agentlocation(previousposition, 13)
-                generator.agentlocation(previousposition + 1, 14) = generator.agentlocation(previousposition, 14)
-                generator.agentlocation(previousposition + 1, 15) = generator.agentlocation(previousposition, 15)
-                generator.agentlocation(previousposition + 1, 16) = generator.agentlocation(previousposition, 16)
-                generator.agentlocation(previousposition + 1, 17) = generator.agentlocation(previousposition, 17)
-                generator.agentlocation(previousposition + 1, 18) = generator.agentlocation(previousposition, 18)
-                generator.agentlocation(previousposition + 1, 19) = generator.agentlocation(previousposition, 19)
-
-                'makes sure the new agent is static if the previous one was static
-                If generator.staticagent(previousposition) = 2 Then
-                    generator.staticagent(previousposition + 1) = 2
-                ElseIf generator.staticagent(previousposition) = 0 Then
-                    generator.staticagent(previousposition + 1) = 0
-                End If
-
-                If generator.agentreservoir(previousposition, 0) = 2 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 2
-                    generator.agentreservoir(previousposition + 1, 1) = generator.agentreservoir(previousposition, 1)
-                    generator.agentreservoir(previousposition + 1, 2) = generator.agentreservoir(previousposition, 2)
-                ElseIf generator.agentreservoir(previousposition, 0) = 0 Then
-                    generator.agentreservoir(previousposition + 1, 0) = 0
-                    generator.agentreservoir(previousposition + 1, 1) = 0
-                    generator.agentreservoir(previousposition + 1, 2) = 0
-                End If
-
+                generator.swapAgentIndices(previousposition, previousposition + 1)
                 previousposition = previousposition - 1
-
             Loop
-
-            'makes sure the new agent is static if the previous one was static
-            If tempstatic = 2 Then
-                generator.staticagent(previousposition + 1) = 2
-            ElseIf tempstatic = 0 Then
-                generator.staticagent(previousposition + 1) = 0
-            End If
-
-            If tempreservoir(0) = 2 Then
-                generator.agentreservoir(previousposition + 1, 0) = 2
-                generator.agentreservoir(previousposition + 1, 1) = tempreservoir(1)
-                generator.agentreservoir(previousposition + 1, 2) = tempreservoir(2)
-            ElseIf tempreservoir(0) = 0 Then
-                generator.agentreservoir(previousposition + 1, 0) = 0
-                generator.agentreservoir(previousposition + 1, 1) = 0
-                generator.agentreservoir(previousposition + 1, 2) = 0
-            End If
-
-            generator.agentlocation(previousposition + 1, 2) = tempz
-            generator.agentlocation(previousposition + 1, 0) = tempx
-            generator.agentlocation(previousposition + 1, 1) = tempy
-            generator.agentlocation(previousposition + 1, 3) = tempd
-            generator.agentlocation(previousposition + 1, 4) = tempa
-
-            generator.agentlocation(previousposition + 1, 5) = tempdx
-            generator.agentlocation(previousposition + 1, 6) = tempdy
-            generator.agentlocation(previousposition + 1, 7) = tempdz
-
-            generator.agentlocation(previousposition + 1, 8) = tempenergy
-            generator.agentlocation(previousposition + 1, 9) = tempage
-            generator.agentlocation(previousposition + 1, 10) = tempasr
-
-            generator.agentlocation(previousposition + 1, 11) = tempcurrency
-            generator.agentlocation(previousposition + 1, 12) = tempproduct
-            generator.agentlocation(previousposition + 1, 13) = tempsellerbuyer
-            generator.agentlocation(previousposition + 1, 14) = temputility
-            generator.agentlocation(previousposition + 1, 15) = tempprice
-            generator.agentlocation(previousposition + 1, 16) = temp16
-            generator.agentlocation(previousposition + 1, 17) = temp17
-            generator.agentlocation(previousposition + 1, 18) = temp18
-            generator.agentlocation(previousposition + 1, 19) = temp19
         Next
     End Sub
 
