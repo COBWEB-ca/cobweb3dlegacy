@@ -1100,16 +1100,24 @@ Public Class Form1
                         End If
                     End If
                 End If
-                ' TODO: Test transforming
-                Dim transformKey = New generator.actKey(generator.agentlocation(i, 4), oppType)
-                If generator.transformationPlans.ContainsKey(transformKey) Then
-                    generator.agentlocation(i, 4) = generator.transformationPlans.Item(transformKey)
-                    ' TODO:
-                End If
-                Exit For ' TODO: TEST THIS OPTIMIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                If tryTransform(i, opp) Then Exit For
+                'Exit For ' TODO: TEST THIS OPTIMIZATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             End If
         Next
     End Sub
+
+    Function tryTransform(agentIndex As Integer, oppType As Integer) As Boolean
+        Dim transformKey = New generator.actKey(generator.agentlocation(agentIndex, 4), oppType)
+        If generator.transformationPlans.ContainsKey(transformKey) Then
+            Dim transProp = generator.transformationPlans.Item(transformKey)
+            If (generator.agentlocation(agentIndex, 11) >= transProp.xThreshold) Then
+                generator.agentlocation(agentIndex, 4) = transProp.destType
+                Return True
+            End If
+        End If
+        Return False
+    End Function
 
     ''' <summary>
     ''' Indicates whether or not a catalyst is present in close proximity to the potential interaction.

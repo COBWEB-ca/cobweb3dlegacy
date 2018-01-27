@@ -44,7 +44,28 @@
             Return AgentType1.GetHashCode() ^ AgentType2.GetHashCode()
         End Function
     End Structure
-    Public transformationPlans As New Dictionary(Of actKey, Integer)
+    Structure TransformationProperties
+        Public destType As Integer
+        Public xThreshold As Integer
+        Public Sub New(destinationType As Integer, xTriggerhreshold As Integer)
+            destType = destinationType
+            xTriggerhreshold = xTriggerhreshold
+        End Sub
+
+        Public Overloads Function Equals(ob As Object) As Boolean
+            If TypeOf ob Is TransformationProperties Then
+                Dim c As TransformationProperties = CType(ob, TransformationProperties)
+                Return destType = c.destType And xThreshold = c.xThreshold
+            Else
+                Return False
+            End If
+        End Function
+
+        Public Overloads Function GetHashCode() As Integer
+            Return destType.GetHashCode() ^ xThreshold.GetHashCode()
+        End Function
+    End Structure
+    Public transformationPlans As New Dictionary(Of actKey, TransformationProperties)
 
     Public staticagent(100000) As Integer
     Public staticagentid(Form1.agentTypeCount) As Integer

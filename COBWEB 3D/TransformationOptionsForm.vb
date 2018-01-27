@@ -35,6 +35,17 @@
         ComboAgent2.Enabled = CboxAgent2.Checked
     End Sub
 
+    Private Sub TextboxKeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles TbxAgent1.KeyPress, TbxAgent2.KeyPress
+        '97 - 122 = Ascii codes for simple letters
+        '65 - 90  = Ascii codes for capital letters
+        '48 - 57  = Ascii codes for numbers
+        If Asc(e.KeyChar) <> 8 Then
+            If Asc(e.KeyChar) < 48 Or Asc(e.KeyChar) > 57 Then
+                e.Handled = True
+            End If
+        End If
+    End Sub
+
     Private Sub BtnApply_Click(sender As Object, e As EventArgs) Handles BtnApply.Click
         If (CboxAgent1.Checked) Then
             Dim selectedDestAgent = ComboAgent1.SelectedItem
@@ -42,7 +53,9 @@
                 For i = 1 To mGenerator.agentname.Length
                     If (mGenerator.agentname(i).Equals(selectedDestAgent)) Then
                         ' TODO: handle.
-                        mGenerator.transformationPlans.Add(New generator.actKey(agentType1Index, agentType2Index), i)
+                        Dim threshold = Integer.Parse(TbxAgent1.Text)
+                        Dim transProp As New generator.TransformationProperties(i, threshold)
+                        mGenerator.transformationPlans.Add(New generator.actKey(agentType1Index, agentType2Index), transProp)
                         Exit For
                     End If
                 Next
@@ -52,11 +65,13 @@
         If (CboxAgent2.Checked) Then
             Dim selectedDestAgent = ComboAgent2.SelectedItem
             If (selectedDestAgent IsNot Nothing) Then
-                Dim index = 0
                 For i = 1 To mGenerator.agentname.Length
                     If (mGenerator.agentname(i).Equals(selectedDestAgent)) Then
+                        Dim threshold = Integer.Parse(TbxAgent2.Text)
+                        Dim transProp As New generator.TransformationProperties(i, threshold)
+                        mGenerator.transformationPlans.Add(New generator.actKey(agentType2Index, agentType1Index), transProp)
                         ' TODO: handle.
-                        mGenerator.transformationPlans.Add(New generator.actKey(agentType2Index, agentType1Index), i)
+                        ' mGenerator.transformationPlans.Add(New generator.actKey(agentType2Index, agentType1Index), i)
                         Exit For
                     End If
                 Next

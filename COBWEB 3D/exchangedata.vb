@@ -122,7 +122,9 @@ Public Class exchangedata
             If (totalagents <> 0) Then
                 oSheet.cells(currentcell, 6) = Decimal.Round(totalutility / totalagents, 2, MidpointRounding.AwayFromZero)
                 For i = 1 To Form1.agentTypeCount
-                    oSheet.cells(currentcell, 6 + i) = Decimal.Round(totalUtilityByType(i) / generator.agentcount(i), 2, MidpointRounding.AwayFromZero)
+                    If (generator.agentcount(i) <> 0) Then
+                        oSheet.cells(currentcell, 6 + i) = Decimal.Round(totalUtilityByType(i) / generator.agentcount(i), 2, MidpointRounding.AwayFromZero)
+                    End If
                 Next
             End If
             previoustick = Form1.tick
