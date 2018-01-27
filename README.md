@@ -3,7 +3,7 @@ This is a 3D port of COBWEB (Complexity & Organized Behaviour Within Environment
 
 ### Running COBWEB 3D
 * COBWEB 3D only supports Windows Operating Systems (Windows XP or newer)
-* Get the latest COBWEB 3D installer file: https://github.com/AdamAdli/cobweb3d/releases
+* Get the latest COBWEB 3D installer file: https://github.com/COBWEB-ca/cobweb3d/releases
 
 ### Setting up the development environment
 * Install Microsoft Visual Studio 2015 for Visual Basic development: https://www.visualstudio.com/vs/older-downloads/
