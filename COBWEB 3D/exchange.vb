@@ -78,8 +78,9 @@
         generator.product(Form5.holdera, Form5.holderb, 14) = CInt(TextBox2.Text)
         generator.product(Form5.holdera, Form5.holderb, 15) = CInt(TextBox5.Text)
 
-        Form5.Show()
+        ' Form5.Show()
         Me.Close()
+        Form5.BringToFront()
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click

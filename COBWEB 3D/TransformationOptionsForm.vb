@@ -23,8 +23,27 @@
 
         AddRangeSkipNulls(ComboAgent1.Items, mGenerator.agentname)
         AddRangeSkipNulls(ComboAgent2.Items, mGenerator.agentname)
-        ComboAgent1.Enabled = False
-        ComboAgent2.Enabled = False
+        Dim key1 As New TransformationKey(agentType1Index, agentType2Index)
+        Dim key2 As New TransformationKey(agentType2Index, agentType1Index)
+        Dim prop As New TransformationProperties
+        If (mGenerator.transformationPlans.TryGetValue(key1, prop)) Then
+            ComboAgent1.Enabled = True
+            ComboAgent1.SelectedItem = mGenerator.agentname(prop.destType)
+            TbxAgent1.Text = prop.xThreshold.ToString()
+            CboxAgent1.Checked = True
+        Else
+            ComboAgent1.Enabled = False
+            CboxAgent1.Checked = False
+        End If
+        If (mGenerator.transformationPlans.TryGetValue(key2, prop)) Then
+            ComboAgent2.Enabled = True
+            ComboAgent2.SelectedItem = mGenerator.agentname(prop.destType)
+            TbxAgent2.Text = prop.xThreshold.ToString()
+            CboxAgent2.Checked = True
+        Else
+            ComboAgent2.Enabled = False
+            CboxAgent2.Checked = False
+        End If
     End Sub
 
     Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CboxAgent1.CheckedChanged
@@ -52,10 +71,11 @@
             If (selectedDestAgent IsNot Nothing) Then
                 For i = 1 To mGenerator.agentname.Length
                     If (mGenerator.agentname(i).Equals(selectedDestAgent)) Then
-                        ' TODO: handle.
                         Dim threshold = Integer.Parse(TbxAgent1.Text)
-                        Dim transProp As New generator.TransformationProperties(i, threshold)
-                        mGenerator.transformationPlans.Add(New generator.actKey(agentType1Index, agentType2Index), transProp)
+                        Dim transProp As New TransformationProperties(i, threshold)
+                        Dim key As New TransformationKey(agentType1Index, agentType2Index)
+                        If (mGenerator.transformationPlans.ContainsKey(key)) Then mGenerator.transformationPlans.Remove(key)
+                        mGenerator.transformationPlans.Add(key, transProp)
                         Exit For
                     End If
                 Next
@@ -68,10 +88,10 @@
                 For i = 1 To mGenerator.agentname.Length
                     If (mGenerator.agentname(i).Equals(selectedDestAgent)) Then
                         Dim threshold = Integer.Parse(TbxAgent2.Text)
-                        Dim transProp As New generator.TransformationProperties(i, threshold)
-                        mGenerator.transformationPlans.Add(New generator.actKey(agentType2Index, agentType1Index), transProp)
-                        ' TODO: handle.
-                        ' mGenerator.transformationPlans.Add(New generator.actKey(agentType2Index, agentType1Index), i)
+                        Dim transProp As New TransformationProperties(i, threshold)
+                        Dim key As New TransformationKey(agentType2Index, agentType1Index)
+                        If (mGenerator.transformationPlans.ContainsKey(key)) Then mGenerator.transformationPlans.Remove(key)
+                        mGenerator.transformationPlans.Add(key, transProp)
                         Exit For
                     End If
                 Next

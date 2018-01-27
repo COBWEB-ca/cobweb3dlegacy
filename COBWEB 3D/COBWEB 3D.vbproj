@@ -278,6 +278,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Logging\ExcelLogger.vb" />
+    <Compile Include="Model\TransformationKey.vb" />
+    <Compile Include="Model\TransformationProperties.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -459,9 +461,7 @@
   <ItemGroup>
     <Content Include="logo_Ef4_icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -78,142 +78,131 @@
     End Sub
 
     Private Sub ComboBoxagent_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ComboBoxagent.SelectedIndexChanged
-
-        For a = 1 To Form1.agentTypeCount
-            For b = 1 To Form1.agentTypeCount
-                If ComboBoxagent.SelectedIndex + 1 = a And ComboBox1.SelectedIndex + 1 = b Then
-
-                    If generator.action(a, b, 1, 0, 0) = 1 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 2 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 3 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 4 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 5 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 6 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 7 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 8 Then
-                        CheckBox1.Checked = True
-                        CheckBoxdeminish.Checked = False
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 0 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    End If
+        Dim a = ComboBoxagent.SelectedIndex + 1
+        Dim b = ComboBox1.SelectedIndex + 1
+        If generator.action(a, b, 1, 0, 0) = 1 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 2 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 3 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 4 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 5 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 6 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 7 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 8 Then
+            CheckBox1.Checked = True
+            CheckBoxdeminish.Checked = False
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 0 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        End If
 
 
-                    'ComboBox2.SelectedIndex = generator.action(a, b, 2) - 1
-                    TextBox1.Text = generator.action(a, b, 3, 0, 0)
-                    TextBox2.Text = generator.action(a, b, 4, 0, 0)
-                    TextBox3.Text = generator.action(a, b, 5, 0, 0)
-                    TextBox4.Text = generator.interactionprobability(a, b)
-                    If generator.action(a, b, 6, 0, 0) = 1 Then
-                        RadioButton1.Checked = True
-                    ElseIf generator.action(a, b, 6, 0, 0) = 2 Then
-                        RadioButton2.Checked = True
-                    End If
+        'ComboBox2.SelectedIndex = generator.action(a, b, 2) - 1
+        TextBox1.Text = generator.action(a, b, 3, 0, 0)
+        TextBox2.Text = generator.action(a, b, 4, 0, 0)
+        TextBox3.Text = generator.action(a, b, 5, 0, 0)
+        TextBox4.Text = generator.interactionprobability(a, b)
+        If generator.action(a, b, 6, 0, 0) = 1 Then
+            RadioButton1.Checked = True
+        ElseIf generator.action(a, b, 6, 0, 0) = 2 Then
+            RadioButton2.Checked = True
+        End If
 
-
-                End If
-            Next
-        Next
+        CheckBoxTransform.Checked = loadTransformationOptions(a, b)
     End Sub
 
     Private Sub ComboBox1_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ComboBox1.SelectedIndexChanged
-        For a = 1 To Form1.agentTypeCount
-            For b = 1 To Form1.agentTypeCount
-                If ComboBoxagent.SelectedIndex + 1 = a And ComboBox1.SelectedIndex + 1 = b Then
+        Dim a = ComboBoxagent.SelectedIndex + 1
+        Dim b = ComboBox1.SelectedIndex + 1
 
-                    If generator.action(a, b, 1, 0, 0) = 1 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 2 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 3 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 4 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 5 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 6 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 7 Then
-                        CheckBoxconsume.Checked = True
-                        CheckBoxproduce.Checked = True
-                        CheckBoxdeminish.Checked = True
-                        CheckBox1.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 8 Then
-                        CheckBox1.Checked = True
-                        CheckBoxdeminish.Checked = False
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = False
-                    ElseIf generator.action(a, b, 1, 0, 0) = 0 Then
-                        CheckBoxconsume.Checked = False
-                        CheckBoxproduce.Checked = False
-                        CheckBoxdeminish.Checked = False
-                        CheckBox1.Checked = False
-                    End If
+        If generator.action(a, b, 1, 0, 0) = 1 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 2 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 3 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 4 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 5 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 6 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 7 Then
+            CheckBoxconsume.Checked = True
+            CheckBoxproduce.Checked = True
+            CheckBoxdeminish.Checked = True
+            CheckBox1.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 8 Then
+            CheckBox1.Checked = True
+            CheckBoxdeminish.Checked = False
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = False
+        ElseIf generator.action(a, b, 1, 0, 0) = 0 Then
+            CheckBoxconsume.Checked = False
+            CheckBoxproduce.Checked = False
+            CheckBoxdeminish.Checked = False
+            CheckBox1.Checked = False
+        End If
 
-
-                    'ComboBox2.SelectedIndex = generator.action(a, b, 2) - 1
-                    TextBox1.Text = generator.action(a, b, 3, 0, 0)
-                    TextBox2.Text = generator.action(a, b, 4, 0, 0)
-                    TextBox3.Text = generator.action(a, b, 5, 0, 0)
-                    TextBox4.Text = generator.interactionprobability(a, b)
-                    If generator.action(a, b, 6, 0, 0) = 1 Then
-                        RadioButton1.Checked = True
-                    ElseIf generator.action(a, b, 6, 0, 0) = 2 Then
-                        RadioButton2.Checked = True
-                    End If
-                End If
-            Next
-        Next
+        'ComboBox2.SelectedIndex = generator.action(a, b, 2) - 1
+        TextBox1.Text = generator.action(a, b, 3, 0, 0)
+        TextBox2.Text = generator.action(a, b, 4, 0, 0)
+        TextBox3.Text = generator.action(a, b, 5, 0, 0)
+        TextBox4.Text = generator.interactionprobability(a, b)
+        If generator.action(a, b, 6, 0, 0) = 1 Then
+            RadioButton1.Checked = True
+        ElseIf generator.action(a, b, 6, 0, 0) = 2 Then
+            RadioButton2.Checked = True
+        End If
 
         If generator.reservoiragentid(ComboBox1.SelectedIndex + 1, 1) = 2 And CheckBoxconsume.Checked = False And CheckBoxproduce.Checked = False And CheckBoxdeminish.Checked = True Then
             CheckBox3.Enabled = True
@@ -235,7 +224,15 @@
             TextBox5.Clear()
             CheckBox3.Text = "This option is not available."
         End If
+
+        CheckBoxTransform.Checked = loadTransformationOptions(a, b)
     End Sub
+
+    Private Function loadTransformationOptions(agentA As Integer, agentB As Integer) As Boolean
+        Dim key1 As New TransformationKey(agentA, agentB)
+        Dim key2 As New TransformationKey(agentB, agentA)
+        Return generator.transformationPlans.ContainsKey(key1) Or generator.transformationPlans.ContainsKey(key2)
+    End Function
 
     Private Sub TextBox1_TextChanged(sender As System.Object, e As System.EventArgs) Handles TextBox1.TextChanged
         If IsNumeric(TextBox1.Text) Then

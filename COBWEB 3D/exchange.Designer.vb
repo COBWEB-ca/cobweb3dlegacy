@@ -189,7 +189,7 @@ Partial Class frmexchange
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(348, 241)
+        Me.Button1.Location = New System.Drawing.Point(536, 241)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(142, 37)
         Me.Button1.TabIndex = 15
@@ -390,7 +390,7 @@ Partial Class frmexchange
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(543, 241)
+        Me.Button2.Location = New System.Drawing.Point(348, 241)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(142, 37)
         Me.Button2.TabIndex = 27

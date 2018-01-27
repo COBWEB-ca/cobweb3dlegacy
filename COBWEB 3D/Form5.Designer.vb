@@ -33,7 +33,7 @@ Partial Class Form5
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.BtnTransfOptions = New System.Windows.Forms.Button()
-        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
+        Me.CheckBoxTransform = New System.Windows.Forms.CheckBox()
         Me.Button5 = New System.Windows.Forms.Button()
         Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.Button2 = New System.Windows.Forms.Button()
@@ -141,7 +141,7 @@ Partial Class Form5
         'GroupBox1
         '
         Me.GroupBox1.Controls.Add(Me.BtnTransfOptions)
-        Me.GroupBox1.Controls.Add(Me.CheckBox2)
+        Me.GroupBox1.Controls.Add(Me.CheckBoxTransform)
         Me.GroupBox1.Controls.Add(Me.Button5)
         Me.GroupBox1.Controls.Add(Me.CheckBox1)
         Me.GroupBox1.Controls.Add(Me.Button2)
@@ -164,15 +164,15 @@ Partial Class Form5
         Me.BtnTransfOptions.Text = "Transformation Options"
         Me.BtnTransfOptions.UseVisualStyleBackColor = True
         '
-        'CheckBox2
+        'CheckBoxTransform
         '
-        Me.CheckBox2.AutoSize = True
-        Me.CheckBox2.Location = New System.Drawing.Point(248, 48)
-        Me.CheckBox2.Name = "CheckBox2"
-        Me.CheckBox2.Size = New System.Drawing.Size(96, 17)
-        Me.CheckBox2.TabIndex = 15
-        Me.CheckBox2.Text = "Transformation"
-        Me.CheckBox2.UseVisualStyleBackColor = True
+        Me.CheckBoxTransform.AutoSize = True
+        Me.CheckBoxTransform.Location = New System.Drawing.Point(248, 48)
+        Me.CheckBoxTransform.Name = "CheckBoxTransform"
+        Me.CheckBoxTransform.Size = New System.Drawing.Size(96, 17)
+        Me.CheckBoxTransform.TabIndex = 15
+        Me.CheckBoxTransform.Text = "Transformation"
+        Me.CheckBoxTransform.UseVisualStyleBackColor = True
         '
         'Button5
         '
@@ -407,5 +407,5 @@ Partial Class Form5
     Friend WithEvents Button5 As Button
     Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents BtnTransfOptions As Button
-    Friend WithEvents CheckBox2 As CheckBox
+    Friend WithEvents CheckBoxTransform As CheckBox
 End Class

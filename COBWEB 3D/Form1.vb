@@ -2,7 +2,7 @@
 Imports System.Xml
 
 Public Class Form1
-    Public Const COBWEB_VERSION As String = "1.3.0"
+    Public Const COBWEB_VERSION As String = "1.3.2"
     Private mRenderingEngine As RenderingEngine
     Private mExcelLogger As ExcelLogger
 
@@ -1108,7 +1108,7 @@ Public Class Form1
     End Sub
 
     Function tryTransform(agentIndex As Integer, oppType As Integer) As Boolean
-        Dim transformKey = New generator.actKey(generator.agentlocation(agentIndex, 4), oppType)
+        Dim transformKey = New TransformationKey(generator.agentlocation(agentIndex, 4), oppType)
         If generator.transformationPlans.ContainsKey(transformKey) Then
             Dim transProp = generator.transformationPlans.Item(transformKey)
             If (generator.agentlocation(agentIndex, 11) >= transProp.xThreshold) Then
