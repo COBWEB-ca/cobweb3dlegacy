@@ -2,11 +2,11 @@
 Imports System.Xml
 
 Public Class Form1
-    Public Const COBWEB_VERSION As String = "1.3.3"
+    Public Const COBWEB_VERSION As String = "1.3.4"
 
     Private mRenderingEngine As RenderingEngine
     Private mFrameCounter As Integer = 0
-    Private mFrameSkip As Integer = 0
+    Public mFrameSkip As Integer = 0
 
     Private mExcelLogger As ExcelLogger
 
@@ -39,6 +39,7 @@ Public Class Form1
     Sub initializeSimulation()
         mRenderingEngine = New RenderingEngine(xn, yn, zn)
         Timerxy.Interval = 1
+        mFrameCounter = 0
     End Sub
 
     Private Sub updateSimulation()
@@ -275,7 +276,7 @@ Public Class Form1
 
     Public Sub draw(Optional ByVal ignoreSimulationLoop As Boolean = False)
         If ignoreSimulationLoop = False And isSimulationRunning() Then Return ' Optimization, its unnecessary to manually render when the simulation is running!
-        If Me.mFrameCounter >= Me.mFrameSkip Then
+        If Me.mFrameCounter >= Me.mFrameSkip Or ignoreSimulationLoop = False Then
             If Me.RenderingEngine IsNot Nothing Then
                 If Me.RenderingEngine.GraphicsContext IsNot Nothing Then
                     Me.RenderingEngine.GraphicsContext.Clear(Color.White)
@@ -1675,6 +1676,7 @@ Public Class Form1
             End If
         Next
 
+        mFrameCounter = 0
         draw()
     End Sub
 
@@ -2637,7 +2639,7 @@ Public Class Form1
         tslblStopTicks.Text = CInt(input)
     End Sub
 
-    Private Sub ToolStripStatusLabel4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tslblSpeedLabel.Click
+    Private Sub ToolStripStatusLabel4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Dim input As String = InputBox("Enter speed in percentage:")
         Dim speed As Integer
         If input = "" Then
@@ -2871,6 +2873,11 @@ Public Class Form1
     Private Sub ResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ResetToolStripMenuItem.Click
         Timerxy.Stop()
         resetSimulation()
+    End Sub
+
+    Private Sub FrameSkippingToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FrameSkippingToolStripMenuItem.Click
+        Dim form As New FrameSkipForm()
+        form.Show()
     End Sub
 #End Region
 End Class

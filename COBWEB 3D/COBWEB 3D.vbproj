@@ -29,7 +29,7 @@
     <ProductName>Cobweb3D</ProductName>
     <PublisherName>University of Toronto - School of the Environment</PublisherName>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.3.2.0</ApplicationVersion>
+    <ApplicationVersion>1.3.3.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -226,10 +226,10 @@
     <Compile Include="Form9.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrameSkipForm.Designer.vb">
+    <Compile Include="View\FrameSkipForm.Designer.vb">
       <DependentUpon>FrameSkipForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="FrameSkipForm.vb">
+    <Compile Include="View\FrameSkipForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmAbiotic.Designer.vb">
@@ -311,10 +311,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Rendering\RenderingEngine.vb" />
-    <Compile Include="TransformationOptionsForm.Designer.vb">
+    <Compile Include="View\TransformationOptionsForm.Designer.vb">
       <DependentUpon>TransformationOptionsForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="TransformationOptionsForm.vb">
+    <Compile Include="View\TransformationOptionsForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="utility.Designer.vb">
@@ -370,7 +370,7 @@
     <EmbeddedResource Include="Form9.resx">
       <DependentUpon>Form9.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FrameSkipForm.resx">
+    <EmbeddedResource Include="View\FrameSkipForm.resx">
       <DependentUpon>FrameSkipForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmAbiotic.resx">
@@ -409,7 +409,7 @@
     <EmbeddedResource Include="Ratio.resx">
       <DependentUpon>Ratio.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TransformationOptionsForm.resx">
+    <EmbeddedResource Include="View\TransformationOptionsForm.resx">
       <DependentUpon>TransformationOptionsForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="utility.resx">

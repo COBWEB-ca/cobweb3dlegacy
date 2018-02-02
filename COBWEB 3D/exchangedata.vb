@@ -2,11 +2,11 @@
 
 Public Class exchangedata
 
-    Private oExcel As Object
+    Private oExcel As Microsoft.Office.Interop.Excel.Application
     Private oBook As Workbook
-    Private oSheet As Object
-    Private oSheet2 As Object
-    Private oSheet3 As Object
+    Private oSheet As Worksheet
+    Private oSheet2 As Worksheet
+    Private oSheet3 As Worksheet
     Private exceldir As String
     Private currentcell As Integer
     Private previoustick As Integer
@@ -55,8 +55,8 @@ Public Class exchangedata
 
             For i = 1 To Form1.total
                 Dim individualUtility = generator.agentlocation(i, 14)
-                If individualUtility <> 0 Then
-                    l1 &= i & vbCrLf
+                ' If individualUtility <> 0 Then
+                l1 &= i & vbCrLf
                     l2 &= generator.agentname(generator.agentlocation(i, 4)) & vbCrLf
                     totalUtilityByType(generator.agentlocation(i, 4)) += individualUtility
                     totalutility += individualUtility
@@ -75,7 +75,7 @@ Public Class exchangedata
                     l5 &= generator.agentlocation(i, 12) & vbCrLf
                     l6 &= Decimal.Round(individualUtility, 2, MidpointRounding.AwayFromZero) & vbCrLf
                     l7 &= generator.agentlocation(i, 19) & vbCrLf
-                End If
+                '  End If
             Next
 
             l8 &= "Total Utility: " & Decimal.Round(totalutility, 2, MidpointRounding.AwayFromZero) & vbCrLf
@@ -100,7 +100,7 @@ Public Class exchangedata
             Dim slot(19) As Integer
             For i = 0 To Form1.total
                 For j = 0 To 19
-                    If uti(i) >= ((j * range) + min) And uti(i) <= (((j + 1) * range) + min) And uti(i) <> 0 Then
+                    If uti(i) >= ((j * range) + min) And uti(i) <= (((j + 1) * range) + min) Then ' And uti(i) <> 0
                         slot(j) += 1
                         Exit For
                     End If
@@ -132,7 +132,7 @@ Public Class exchangedata
     End Sub
 
     Private Sub export_data()
-        oExcel = CreateObject("Excel.Application")
+        oExcel = New Microsoft.Office.Interop.Excel.Application() 'CreateObject("Excel.Application")
         oExcel.sheetsinnewworkbook = 1
         oBook = oExcel.Workbooks.Add
         oSheet = oBook.Worksheets(1)

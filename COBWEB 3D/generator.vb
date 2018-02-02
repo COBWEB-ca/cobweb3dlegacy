@@ -59,6 +59,8 @@
     Public exchangenames(Form1.agentTypeCount, Form1.agentTypeCount, 100) As String
     Public agentproduct(Form1.total, 100, 2) As Decimal
     Public agentTypeUtilityFunction(Form1.agentTypeCount) As Integer
+    'Public agentTypeXY(Form1.agentTypeCount, 2) As Integer
+    'Public agentTypeAB(Form1.agentTypeCount, 2) As Integer
 
     Public abiotic(Form1.agentTypeCount, Form1.xn, Form1.yn, Form1.zn) As Integer
     Public abioticenable As Boolean
