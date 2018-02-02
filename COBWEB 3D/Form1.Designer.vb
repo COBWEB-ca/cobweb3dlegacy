@@ -80,6 +80,7 @@ Partial Class Form1
         Me.SaveFilepro = New System.Windows.Forms.SaveFileDialog()
         Me.OpenFilepro = New System.Windows.Forms.OpenFileDialog()
         Me.picRenderFrame = New System.Windows.Forms.PictureBox()
+        Me.FrameSkippingToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.StatusStrip1.SuspendLayout()
         CType(Me.picRenderFrame, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -159,7 +160,7 @@ Partial Class Form1
         Me.AddAgentsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InRangeToolStripMenuItem, Me.InSpecificPositionsToolStripMenuItem})
         Me.AddAgentsToolStripMenuItem.Enabled = False
         Me.AddAgentsToolStripMenuItem.Name = "AddAgentsToolStripMenuItem"
-        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(181, 26)
+        Me.AddAgentsToolStripMenuItem.Size = New System.Drawing.Size(162, 26)
         Me.AddAgentsToolStripMenuItem.Text = "Add Agents"
         '
         'InRangeToolStripMenuItem
@@ -250,7 +251,7 @@ Partial Class Form1
         '
         'ProjectToolStripMenuItem
         '
-        Me.ProjectToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.XZTopViewToolStripMenuItem, Me.XYSideViewToolStripMenuItem, Me.ZYSideViewToolStripMenuItem, Me.ToolStripSeparator1, Me.AdjustFocalPointToolStripMenuItem, Me.FullScreenToolStripMenuItem})
+        Me.ProjectToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.XZTopViewToolStripMenuItem, Me.XYSideViewToolStripMenuItem, Me.ZYSideViewToolStripMenuItem, Me.ToolStripSeparator1, Me.AdjustFocalPointToolStripMenuItem, Me.FullScreenToolStripMenuItem, Me.FrameSkippingToolStripMenuItem})
         Me.ProjectToolStripMenuItem.Name = "ProjectToolStripMenuItem"
         Me.ProjectToolStripMenuItem.Size = New System.Drawing.Size(53, 24)
         Me.ProjectToolStripMenuItem.Text = "View"
@@ -445,12 +446,18 @@ Partial Class Form1
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.picRenderFrame.Image = Global.COBWEB_3D.My.Resources.Resources.Cobweb_3D_2
         Me.picRenderFrame.Location = New System.Drawing.Point(16, 33)
-        Me.picRenderFrame.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.picRenderFrame.Margin = New System.Windows.Forms.Padding(4)
         Me.picRenderFrame.Name = "picRenderFrame"
         Me.picRenderFrame.Size = New System.Drawing.Size(1588, 620)
         Me.picRenderFrame.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.picRenderFrame.TabIndex = 1
         Me.picRenderFrame.TabStop = False
+        '
+        'FrameSkippingToolStripMenuItem
+        '
+        Me.FrameSkippingToolStripMenuItem.Name = "FrameSkippingToolStripMenuItem"
+        Me.FrameSkippingToolStripMenuItem.Size = New System.Drawing.Size(225, 26)
+        Me.FrameSkippingToolStripMenuItem.Text = "Frame Skipping"
         '
         'Form1
         '
@@ -462,7 +469,7 @@ Partial Class Form1
         Me.Controls.Add(Me.MenuStrip1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MainMenuStrip = Me.MenuStrip1
-        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
+        Me.Margin = New System.Windows.Forms.Padding(4)
         Me.Name = "Form1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.Manual
         Me.Text = "COBWEB 3D"
@@ -532,4 +539,5 @@ Partial Class Form1
     Friend WithEvents AutomaticRunsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ResetToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents TickButtonToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents FrameSkippingToolStripMenuItem As ToolStripMenuItem
 End Class

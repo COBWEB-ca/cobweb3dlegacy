@@ -2,8 +2,12 @@
 Imports System.Xml
 
 Public Class Form1
-    Public Const COBWEB_VERSION As String = "1.3.2"
+    Public Const COBWEB_VERSION As String = "1.3.3"
+
     Private mRenderingEngine As RenderingEngine
+    Private mFrameCounter As Integer = 0
+    Private mFrameSkip As Integer = 0
+
     Private mExcelLogger As ExcelLogger
 
     Public tick As Integer
@@ -270,15 +274,20 @@ Public Class Form1
     End Sub
 
     Public Sub draw(Optional ByVal ignoreSimulationLoop As Boolean = False)
-        If (ignoreSimulationLoop = False) And isSimulationRunning() Then Return ' Optimization, its unnecessary to manually render when the simulation is running!
-        If Me.RenderingEngine IsNot Nothing Then
-            If Me.RenderingEngine.GraphicsContext IsNot Nothing Then
-                Me.RenderingEngine.GraphicsContext.Clear(Color.White)
-                drawScene(Me.RenderingEngine.GraphicsContext)
+        If ignoreSimulationLoop = False And isSimulationRunning() Then Return ' Optimization, its unnecessary to manually render when the simulation is running!
+        If Me.mFrameCounter >= Me.mFrameSkip Then
+            If Me.RenderingEngine IsNot Nothing Then
+                If Me.RenderingEngine.GraphicsContext IsNot Nothing Then
+                    Me.RenderingEngine.GraphicsContext.Clear(Color.White)
+                    drawScene(Me.RenderingEngine.GraphicsContext)
+                End If
+                If Me.RenderingEngine.RenderTarget IsNot Nothing Then
+                    picRenderFrame.Image = Me.RenderingEngine.RenderTarget
+                End If
             End If
-            If Me.RenderingEngine.RenderTarget IsNot Nothing Then
-                picRenderFrame.Image = Me.RenderingEngine.RenderTarget
-            End If
+            mFrameCounter = 0
+        Else
+            mFrameCounter += 1
         End If
     End Sub
 
@@ -1202,14 +1211,16 @@ Public Class Form1
 
         If transfer(3) = 2 Then
             Dim max(3) As Decimal
-            max(1) = generator.agentlocation(i, 14)
-            max(2) = generator.agentlocation(opp, 14)
-            Dim directionchange As Boolean = False
+            Dim acceptabley(0) As Integer
+            Dim acceptabletempagenta(0) As Decimal
+            Dim acceptabletempagentb(0) As Decimal 'stores the new utilities that are higher than old ones per trade
+            Dim t As Integer = 0 'extends the array 
+            Dim directionchange As Boolean = False '
 
             For quantityY = transfer(6) To transfer(4) Step transfer(5) 'if an exchange is not possible at the original relative price, then the quantity of the second good traded is increased until an exchange becomes favourable
                 'the quantity of the second good is increased; the quantity of the first good stays constant
-                tempagenta = 0
-                tempagentb = 0
+                'tempagenta = 0
+                'tempagentb = 0
                 transfer(2) = quantityY
                 If directionchange = False Then 'if a change in direction occurs, the quantity is not incremented
                     transfer(2) = quantityY
@@ -1243,10 +1254,14 @@ Public Class Form1
                 End If
 
 
-                If tempagenta > max(1) And tempagentb > max(2) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
-                    max(1) = tempagenta
-                    max(2) = tempagentb
-                    max(3) = transfer(2)
+                If tempagenta > generator.agentlocation(i, 14) And tempagentb > generator.agentlocation(opp, 14) And (generator.agentlocation(i, 17) <> generator.agentlocation(opp, 17)) Then 'the exchange occurs
+                    acceptabletempagenta(t) = tempagenta   'if a potential trade improves both utilities (ie tempagent>agentlocation for both) then store the trade, and both utilities in an array. 
+                    acceptabletempagentb(t) = tempagentb
+                    acceptabley(t) = transfer(2)
+                    ReDim Preserve acceptabley(t + 1)
+                    ReDim Preserve acceptabletempagenta(t + 1)
+                    ReDim Preserve acceptabletempagentb(t + 1)
+                    t = t + 1
                 End If
                 'MessageBox.Show(transfer(2) & vbCrLf & transfer(6) & vbCrLf & transfer(4))
                 'If tempagenta <= generator.agentlocation(i, 14) Then 'changes direction
@@ -1258,6 +1273,34 @@ Public Class Form1
                 '    directionchange = True
                 'End If
             Next
+
+            Dim randomnmbr As Integer = CInt(Math.Floor(Rnd() * 10)) 'just want to make the median trade random
+
+            If t Mod 2 = 1 And t <> 0 Then
+                max(1) = acceptabletempagenta((t - 1) / 2) 'cobweb will just take the median trade (randomize instead of rounding)
+                max(2) = acceptabletempagentb((t - 1) / 2) ' t starts at 0 so this is kind of confusing
+                max(3) = acceptabley((t - 1) / 2)
+
+            End If
+
+
+
+
+            If t Mod 2 = 0 And t <> 0 And randomnmbr Mod 2 = 1 Then
+                max(1) = acceptabletempagenta((t - 2) / 2)
+                max(2) = acceptabletempagentb((t - 2) / 2)
+                max(3) = acceptabley((t - 2) / 2)
+            ElseIf t Mod 2 = 0 And t <> 0 And randomnmbr Mod 2 = 0 Then
+                max(1) = acceptabletempagenta((t) / 2)
+                max(2) = acceptabletempagentb((t) / 2)
+                max(3) = acceptabley((t) / 2)
+            End If
+
+            If t = 0 Then
+                max(1) = acceptabletempagenta(0)
+                max(2) = acceptabletempagentb(0)
+                max(3) = acceptabley(0)
+            End If
 
             If max(1) > generator.agentlocation(i, 14) And max(2) > generator.agentlocation(opp, 14) Then
                 transfer(2) = max(3) 'new quantity of the second good being exchanged
@@ -1272,11 +1315,12 @@ Public Class Form1
                 generator.agentlocation(i, 19) = transfer(2) * generator.agentlocation(i, 17) * -1
                 generator.agentlocation(opp, 18) = transfer(1) * generator.agentlocation(opp, 17)
                 generator.agentlocation(opp, 19) = transfer(2) * generator.agentlocation(opp, 17) * -1
+                t = 1
                 Exit Sub
             End If
 
             If max(1) <= generator.agentlocation(i, 14) Then 'changes direction
-                generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1
+                generator.agentlocation(i, 17) = generator.agentlocation(i, 17) * -1 'problem:this doesn't rerun the code, or make all the agentlocations -1 the first time.
             End If
             If max(2) <= generator.agentlocation(opp, 14) Then 'changes direction
                 generator.agentlocation(opp, 17) = generator.agentlocation(opp, 17) * -1

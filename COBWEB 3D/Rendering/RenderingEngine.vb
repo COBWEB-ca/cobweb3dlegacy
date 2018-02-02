@@ -25,7 +25,6 @@ Public Class RenderingEngine
     Private mCellXZ_X, mCellXZ_Z As Integer
     Private mCellZY_Z, mCellZY_Y As Integer
 
-
     Public ReadOnly Property RenderTarget As Bitmap
         Get
             Select Case mPrespective

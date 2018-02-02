@@ -16,7 +16,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>E:\Data\Desktop\Cobweb\</PublishUrl>
+    <PublishUrl>C:\Users\Adam\Desktop\Cobweb\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -226,6 +226,12 @@
     <Compile Include="Form9.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FrameSkipForm.Designer.vb">
+      <DependentUpon>FrameSkipForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FrameSkipForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmAbiotic.Designer.vb">
       <DependentUpon>frmAbiotic.vb</DependentUpon>
     </Compile>
@@ -363,6 +369,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form9.resx">
       <DependentUpon>Form9.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrameSkipForm.resx">
+      <DependentUpon>FrameSkipForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmAbiotic.resx">
       <DependentUpon>frmAbiotic.vb</DependentUpon>
